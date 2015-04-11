@@ -25,6 +25,7 @@
 package org.openjdk.jmh.samples
 
 import org.openjdk.jmh.annotations._
+import org.openjdk.jmh.infra.Blackhole
 
 class JMHSample_01_HelloWorld {
   /*
@@ -55,6 +56,7 @@ class JMHSample_01_HelloWorld {
   @Benchmark
   def wellHelloThere(): Unit = {
     // this method was intentionally left blank.
+    Blackhole.consumeCPU(100)
   }
 
 }
