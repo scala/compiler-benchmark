@@ -32,3 +32,21 @@ javaOptions in run ++= Seq(
   "-XX:+UnlockDiagnosticVMOptions",
   "-XX:+DebugNonSafepoints"
 )
+
+sources in Compile := {
+  if (isOracleJvmWithCommercial) (sources in Compile).value
+  else (sources in Compile).value.filterNot(_.getName == "FlightRecordingProfiler.java")
+}
+
+resources in Compile := {
+  if (isOracleJvmWithCommercial) (resources in Compile).value
+  else (resources in Compile).value.filterNot(_.getName == "org.openjdk.jmh.profile.Profiler")
+}
+
+def isOracleJvmWithCommercial = {
+  import java.lang.management.ManagementFactory
+  val jvmArgs = ManagementFactory.getRuntimeMXBean().getInputArguments()
+  jvmArgs.contains(unlockCommercial)
+}
+
+def unlockCommercial = "-XX:+UnlockCommercialFeatures"
