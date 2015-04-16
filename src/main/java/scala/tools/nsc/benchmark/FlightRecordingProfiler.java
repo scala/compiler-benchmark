@@ -81,7 +81,7 @@ public class FlightRecordingProfiler implements ExternalProfiler {
 
     @Override
     public Collection<? extends Result> afterTrial(BenchmarkResult benchmarkResult, long l, File stdOut, File stdErr) {
-        String target = SAVE_FLIGHT_OUTPUT_TO + "/" + benchmarkResult.getParams().id() + "-" + currentId++ + ".jfr";
+        String target = SAVE_FLIGHT_OUTPUT_TO + "/" + benchmarkResult.getParams().id().replaceAll("/", "-") + "-" + currentId++ + ".jfr";
 
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
