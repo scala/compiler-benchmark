@@ -30,7 +30,8 @@ javaOptions in run ++= {
 javaOptions in run ++= Seq(
   s"-Djmh.jfr.saveTo=${target.value}",
   "-XX:+UnlockDiagnosticVMOptions",
-  "-XX:+DebugNonSafepoints"
+  "-XX:+DebugNonSafepoints",
+  "-Xmx2G"
 )
 
 sources in Compile := {
