@@ -1,53 +1,35 @@
-import JmhKeys._
-
-name := """sbt-jmh-seed"""
+name := """scala-jmh-suite"""
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion := "2.11.6"
+scalaVersion in ThisBuild := "2.11.8"
 
-jmhSettings
-
-outputTarget in Jmh := target.value / s"scala-${scalaBinaryVersion.value}"
-
-libraryDependencies ++= Seq(
-  // Add your own project dependencies in the form:
-  "org.scala-lang" % "scala-compiler" % scalaVersion.value
+// Convenient access to builds from PR validation
+resolvers ++= (
+  if (scalaVersion.value.endsWith("-SNAPSHOT"))
+    List(
+      "pr-scala snapshots old" at "http://private-repo.typesafe.com/typesafe/scala-pr-validation-snapshots/",
+      "pr-scala snapshots" at "https://scala-ci.typesafe.com/artifactory/scala-pr-validation-snapshots/",
+      Resolver.mavenLocal,
+      Resolver.sonatypeRepo("snapshots")
+    )
+  else
+    Nil
 )
 
-// Start SBT with `sbt -J-XX:+UnlockCommercialFeatures` to unlock use of the
-// Java Flight Recorder based profiler
-//
-// Enable with `sbt> run ... -prof jrf`
-//
-javaOptions in run ++= {
-  import java.lang.management.ManagementFactory
-  val jvmArgs = ManagementFactory.getRuntimeMXBean().getInputArguments()
-  val unlockCommercial = "-XX:+UnlockCommercialFeatures"
-  if (jvmArgs.contains(unlockCommercial)) Seq(unlockCommercial) else Seq()
-}
-
-javaOptions in run ++= Seq(
-  s"-Djmh.jfr.saveTo=${target.value}",
-  "-XX:+UnlockDiagnosticVMOptions",
-  "-XX:+DebugNonSafepoints",
-  "-Xmx2G"
+val compilation = project.enablePlugins(JmhPlugin).settings(
+  // We should be able to switch this project to a broad range of Scala versions for comparative
+  // benchmarking. As such, this project should only depend on the high level `MainClass` compiler API.
+  description := "Black box benchmark of the compiler",
+  libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
 )
 
-sources in Compile := {
-  if (isOracleJvmWithCommercial) (sources in Compile).value
-  else (sources in Compile).value.filterNot(_.getName == "FlightRecordingProfiler.java")
-}
+val micro = project.enablePlugins(JmhPlugin).settings(
+  description := "Finer grained benchmarks of compiler internals",
+  libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
+)
 
-resources in Compile := {
-  if (isOracleJvmWithCommercial) (resources in Compile).value
-  else (resources in Compile).value.filterNot(_.getName == "org.openjdk.jmh.profile.Profiler")
-}
-
-def isOracleJvmWithCommercial = {
-  import java.lang.management.ManagementFactory
-  val jvmArgs = ManagementFactory.getRuntimeMXBean().getInputArguments()
-  jvmArgs.contains(unlockCommercial)
-}
-
-def unlockCommercial = "-XX:+UnlockCommercialFeatures"
+val jvm = project.enablePlugins(JmhPlugin).settings(
+  description := "Pure Java benchmarks for demonstrating performance anomolies independent from the Scala language/library",
+  autoScalaLibrary := false
+)
