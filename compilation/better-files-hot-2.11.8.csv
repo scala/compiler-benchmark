@@ -1,0 +1,2 @@
+"Benchmark","Mode","Threads","Samples","Score","Score Error (99.9%)","Unit","Param: extraArgs","Param: source"
+"scala.tools.nsc.HotScalacBenchmark.compile","sample",1,148,845.031811,13.927973,"ms/op",,@/code/better-files/args.txt

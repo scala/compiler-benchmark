@@ -30,6 +30,23 @@ val micro = project.enablePlugins(JmhPlugin).settings(
 )
 
 val jvm = project.enablePlugins(JmhPlugin).settings(
-  description := "Pure Java benchmarks for demonstrating performance anomolies independent from the Scala language/library",
+  description := "Pure Java benchmarks for demonstrating performance anomalies independent from the Scala language/library",
   autoScalaLibrary := false
 )
+
+val ui = project.settings(
+  scalaVersion := "2.11.8",
+  libraryDependencies += "co.theasi" %% "plotly" % "0.1",
+  libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.3.3"
+)
+
+commands += Command.args("script", "") { (state: State, args: Seq[String]) =>
+  val versions = List("2.11.8", "2.12.0-M5")
+  val benches = List(
+    s"compilation/jmh:run ColdScalacBenchmark ${args.mkString(" ")} -p source=@/code/better-files/args.txt -rf csv -rff better-files-cold",
+    s"compilation/jmh:run HotScalacBenchmark ${args.mkString(" ")} -f1 -p source=@/code/better-files/args.txt -rf csv -rff better-files-hot"
+  )
+  val runUI = "ui/runMain scalajmhsuite.PlotData"
+  val extraCommands = versions.flatMap(v => s"""set scalaVersion in ThisBuild := "$v" """ +: benches.map(_ + s"-$v.csv")) :+ runUI
+  extraCommands ::: state
+}
