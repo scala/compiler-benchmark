@@ -62,10 +62,11 @@ class ColdScalacBenchmark extends ScalacBenchmark {
   override def compile(): Unit = super.compile()
 }
 
-@BenchmarkMode(Array(AverageTime))
+@BenchmarkMode(Array(SampleTime))
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
+@Warmup(iterations = 0)
 @Measurement(iterations = 1, time = 30, timeUnit = TimeUnit.SECONDS)
-@Fork(value = 20)
+@Fork(value = 3)
 class WarmScalacBenchmark extends ScalacBenchmark {
   @Benchmark
   override def compile(): Unit = super.compile()
@@ -77,17 +78,6 @@ class WarmScalacBenchmark extends ScalacBenchmark {
 @Measurement(iterations = 12, time = 10, timeUnit = TimeUnit.SECONDS)
 @Fork(value = 5)
 class HotScalacBenchmark extends ScalacBenchmark {
-  @Benchmark
-  override def compile(): Unit = super.compile()
-}
-
-@BenchmarkMode(Array(SampleTime))
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Warmup(iterations = 6, time = 10, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 12, time = 10, timeUnit = TimeUnit.SECONDS)
-@Threads(Threads.MAX)
-@Fork(value = 5)
-class HotConcurrentScalacBenchmark extends ScalacBenchmark {
   @Benchmark
   override def compile(): Unit = super.compile()
 }
