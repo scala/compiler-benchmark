@@ -20,7 +20,7 @@ Based on:
 ### Learning about JMH options
 
 ```
-compilation/jmh:run --help
+compilation/jmh:run -help
 ```
 
 ### Benchmarking compiler performance
