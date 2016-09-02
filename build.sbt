@@ -43,8 +43,8 @@ val ui = project.settings(
 commands += Command.args("script", "") { (state: State, args: Seq[String]) =>
   val versions = List("2.11.8", "2.12.0-M5")
   val benches = List(
-    s"compilation/jmh:run ColdScalacBenchmark ${args.mkString(" ")} -p source=@/code/better-files/args.txt -rf csv -rff better-files-cold",
-    s"compilation/jmh:run HotScalacBenchmark ${args.mkString(" ")} -f1 -p source=@/code/better-files/args.txt -rf csv -rff better-files-hot"
+    s"compilation/jmh:run ColdScalacBenchmark ${args.mkString(" ")} -p source=better-files -rf csv -rff better-files-cold",
+    s"compilation/jmh:run HotScalacBenchmark ${args.mkString(" ")} -f1 -p source=better-files -rf csv -rff better-files-hot"
   )
   val runUI = "ui/runMain scalajmhsuite.PlotData"
   val extraCommands = versions.flatMap(v => s"""set scalaVersion in ThisBuild := "$v" """ +: benches.map(_ + s"-$v.csv")) :+ runUI
