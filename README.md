@@ -4,8 +4,8 @@ Goal: define a set of JMH benchmarks for the compiler to help drive performance
 tuning and catch performance regressions.
 
 Based on:
- - [OpenJDK JMH](http://openjdk.java.net/projects/code-tools/jmh/) is "the definitive" Java benchmarking tool.
- - via sbt-jmh can be found on: [https://github.com/ktoso/sbt-jmh](https://github.com/ktoso/sbt-jmh).
+ - [OpenJDK JMH](http://openjdk.java.net/projects/code-tools/jmh/), the definitive Java benchmarking tool.
+ - via [sbt-jmh](https://github.com/ktoso/sbt-jmh).
 
 ## Structure
 
@@ -45,7 +45,7 @@ sbt> set scalaHome in compilation := "2.11.1" // if micro project isn't compatib
 [Install](http://www.oracle.com/technetwork/oracle-labs/program-languages/downloads/index.html) Graal VM and JDK8 with [JVMCI](http://openjdk.java.net/jeps/243).
 
 ```
-compilerMacroBench/jmh:run CompileSourcesBenchmark 
+compilation/jmh:run CompileSourcesBenchmark 
     -jvm      /path/to/labsjdk1.8.0_92-jvmci-0.20/bin/java
     -jvmArgs -XX:+UnlockExperimentalVMOptions
     -jvmArgs -XX:+EnableJVMCI
