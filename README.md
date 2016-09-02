@@ -24,7 +24,7 @@ compilation/jmh:run --help
 ```
 
 ### Benchmarking compiler performance
-  - Add new Scala sources (say `aardvark`) to a new directory in src/main/corpus
+  - (optional) add new Scala sources (say `aardvark`) to a new directory in src/main/corpus
 
 ```
 compilation/jmh:run (Cold|Warm|Hot)CompilationBenchmark 
