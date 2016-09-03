@@ -1,31 +1,37 @@
 package scalajmhsuite
 
-import java.io.File
+import java.io.{ByteArrayOutputStream, File}
+import java.nio.file.{Files, Path, Paths}
+import java.util.stream.{Collector, Collectors}
+
+import scala.collection.JavaConverters._
 import com.github.tototoshi.csv._
-import co.theasi.plotly._
 
 object PlotData {
   def main(args: Array[String]): Unit = {
-    // TODO unhardcode. (command line params? or trawl csv file names?)
-    val sources = List("better-files")
-    val versions = List("2.11.8", "2.12.0-M5")
-    val bench = List("hot", "cold")
-
-    def read(source: String, version: String, bench: String): List[Double] = {
-      val reader = CSVReader.open(new File(s"compilation/$source-$bench-$version.csv"))
+    def read(path: Path): (List[String], List[Map[String, String]]) = {
+      val reader = CSVReader.open(path.toFile)
       try {
-        reader.allWithHeaders().map(_.apply("Score").toDouble)
+        reader.allWithOrderedHeaders()
       } finally {
         reader.close()
       }
     }
-    val data = for (s <- sources; b <- bench; v <- versions) yield (s, b, v, read(s, v, b))
-    println(data.mkString("\n"))
-    // TODO plots
-    //    val xs = (0.0 to 2.0 by 0.1)
-    //    val ys = xs.map { x => x*x }
-    //    val draw1 = draw(plot, "my-first-plot", writer.FileOptions(overwrite=true))
-    //    println(s"https://plot.ly/~${draw1.fileId.replaceAll(":", "/")}")
-    //    println(s"https://plot.ly/~${draw1.fileId.replaceAll(":", "/")}.png")
+
+    val files = Files.list(Paths.get("target")).collect(Collectors.toList[Path]).asScala.filter(_.toString.endsWith(".csv"))
+    files.sorted.toList match {
+      case all @ (head :: tail) =>
+        val baos = new ByteArrayOutputStream()
+        val writer = CSVWriter.open(baos)
+        try {
+          val header: List[String] = read(head)._1
+          writer.writeRow(header)
+          writer.writeAll(all.flatMap(file => read(file)._2.map((row: Map[String, String]) => header.map(key => row(key)))))
+        } finally writer.close()
+        val combined = Paths.get("target/aggregrate.csv")
+        Files.write(combined, baos.toByteArray)
+        println(s"Combined results: $combined")
+      case Nil =>
+    }
   }
 }

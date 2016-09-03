@@ -40,6 +40,12 @@ sbt> set scalaHome in ThisBuild := Some(file("/code/scala/build/pack"))
 sbt> set scalaHome in compilation := "2.11.1" // if micro project isn't compatible with "2.11.1"
 ```
 
+### Collecting profiling data
+
+```
+sbt> .../jmh:run Benchmark -prof jmh.extras.JFR // Java Flight Recorder
+```
+
 ### Using Graal
 
 [Install](http://www.oracle.com/technetwork/oracle-labs/program-languages/downloads/index.html) Graal VM and JDK8 with [JVMCI](http://openjdk.java.net/jeps/243).

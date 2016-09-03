@@ -36,17 +36,29 @@ val jvm = project.enablePlugins(JmhPlugin).settings(
 
 val ui = project.settings(
   scalaVersion := "2.11.8",
-  libraryDependencies += "co.theasi" %% "plotly" % "0.1",
   libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.3.3"
 )
 
 commands += Command.args("script", "") { (state: State, args: Seq[String]) =>
+  val outDir = target.value
+  val outFile = outDir / "combined.csv"
+
   val versions = List("2.11.8", "2.12.0-M5")
   val benches = List(
-    s"compilation/jmh:run ColdScalacBenchmark ${args.mkString(" ")} -p source=better-files -rf csv -rff better-files-cold",
-    s"compilation/jmh:run HotScalacBenchmark ${args.mkString(" ")} -f1 -p source=better-files -rf csv -rff better-files-hot"
+    "ColdScalacBenchmark",
+    "HotScalacBenchmark"
   )
+  def params(bench: String) = List(("better-files", "-p source=better-files"))
+  val commands = for {
+    v <- versions
+    b <- benches
+    p <- params(b)
+    c <- List(s"""set version := "$v" """, s"compilation/jmh:run -p _scalaVersion=$v $b ${args.mkString(" ")} ${p._2} -rf csv -rff ${outDir}/${p._1}-$b-$v.csv")
+  } yield {
+    c
+  }
+
   val runUI = "ui/runMain scalajmhsuite.PlotData"
-  val extraCommands = versions.flatMap(v => s"""set scalaVersion in ThisBuild := "$v" """ +: benches.map(_ + s"-$v.csv")) :+ runUI
+  val extraCommands = commands :+ runUI
   extraCommands ::: state
 }
