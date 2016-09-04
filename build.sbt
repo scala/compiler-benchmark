@@ -43,17 +43,17 @@ commands += Command.args("script", "") { (state: State, args: Seq[String]) =>
   val outDir = target.value
   val outFile = outDir / "combined.csv"
 
-  val versions = List("2.11.8", "2.12.0-M5")
+  val versions = List("2.11.8", "2.12.0-M2", "2.12.0-M5", "2.12.0-c1bd0ea-SNAPSHOT")
   val benches = List(
     "ColdScalacBenchmark",
     "HotScalacBenchmark"
   )
-  def params(bench: String) = List(("better-files", "-p source=better-files"))
+  def params(bench: String) = List(("better-files", "-p source=better-files"), ("scalap", "-p source=scalap"))
   val commands = for {
     v <- versions
     b <- benches
     p <- params(b)
-    c <- List(s"""set version := "$v" """, s"compilation/jmh:run -p _scalaVersion=$v $b ${args.mkString(" ")} ${p._2} -rf csv -rff ${outDir}/${p._1}-$b-$v.csv")
+    c <- List(s"""set version in ThisBuild := "$v" """, s"compilation/jmh:run -p _scalaVersion=$v $b ${args.mkString(" ")} ${p._2} -rf csv -rff ${outDir}/${p._1}-$b-$v.csv")
   } yield {
     c
   }
