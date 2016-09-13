@@ -43,31 +43,58 @@ val ui = project.settings(
   libraryDependencies += "com.h2database" % "h2" % "1.4.192"
 )
 
-commands += Command.args("script", "") { (state: State, args: Seq[String]) =>
-  val outDir = target.value
-  val outFile = outDir / "combined.csv"
+val runBatch = taskKey[Unit]("Run a batch of benchmark suites")
+val runBatchVersions = settingKey[Seq[String]]("Scala versions")
+val runBatchBenches = settingKey[Seq[(sbt.Project, String)]]("Benchmarks")
+val runBatchSources = settingKey[Seq[String]]("Sources")
 
-  val versions = List("2.11.8", "2.12.0-M2", "2.12.0-M5", "2.12.0-c1bd0ea-SNAPSHOT")
-  val benches = List(
-    ("compilation", "ColdScalacBenchmark"), ("compilation", "HotScalacBenchmark")
-  )
-  def params(bench: String) = List(("better-files", "-p source=better-files"), ("scalap", "-p source=scalap"))
-  val commands = for {
-    v <- versions
-    (sub, b) <- benches
-    p <- params(b)
-    c <- List(
-      s"""set scalaVersion in $sub := "$v"""",
-      s"$sub/jmh:run -p _scalaVersion=$v $b ${args.mkString(" ")} ${p._2} -rf csv -rff ${outDir}/${p._1}-$b-$v.csv"
-    )
-  } yield {
-    c
-  }
+runBatchVersions := List(
+  "2.11.8",
+  "2.12.0-M5",
+  "2.12.0-RC1"
+)
 
-  val runUI = "ui/runMain scalajmhsuite.PlotData"
-  val extraCommands = commands :+ runUI
-  extraCommands ::: state
+runBatchBenches := List(
+  (compilation, "ColdScalacBenchmark"),
+  (compilation, "HotScalacBenchmark")
+)
+
+runBatchSources := List(
+  "scalap",
+  "better-files"
+)
+
+def setVersion(s: State, proj: sbt.Project, newVersion: String): State = {
+  val extracted = Project.extract(s)
+  import extracted._
+  val append = Load.transformSettings(Load.projectScope(currentRef), currentRef.build, rootProject, (version in proj := newVersion) :: Nil)
+  val newSession = session.appendSettings( append map (a => (a, Nil)))
+  BuiltinCommands.reapply(newSession, structure, s)
 }
+
+commands += Command.args("runBatch", ""){ (s: State, args: Seq[String]) =>
+  val targetDir = target.value
+  val outFile = targetDir / "combined.csv"
+
+  def filenameify(s: String) = s.replaceAll("""[@/:]""", "-")
+  val tasks: Seq[State => State] = for {
+    v <- runBatchVersions.value
+    (sub, b) <- runBatchBenches.value
+    p <- runBatchSources.value.map(x => (filenameify(x), s"-p source=$x"))
+  } yield {
+    val argLine = s" -p _scalaVersion=$v $b ${args.mkString(" ")} ${p._2} -rf csv -rff ${targetDir}/${p._1}-$b-$v.csv"
+    (s1: State) => {
+      val s2 = setVersion(s1, sub, v)
+      val extracted = Project.extract(s2)
+      val (s3, _) = extracted.runInputTask(run in sub in Jmh, argLine, s2)
+      s3
+    }
+  }
+  tasks.foldLeft(s)((state: State, fun: (State => State)) => fun(state))
+}
+
+
+runBatch := Def.sequential(runBatch, (runMain in ui).toTask("scalajmhsuite.PlotData"))
 
 def workaroundSbtJhmIssue76 = libraryDependencies := {
   libraryDependencies.value.map {
