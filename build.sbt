@@ -67,9 +67,12 @@ runBatchSources := List(
 def setVersion(s: State, proj: sbt.Project, newVersion: String): State = {
   val extracted = Project.extract(s)
   import extracted._
-  val append = Load.transformSettings(Load.projectScope(currentRef), currentRef.build, rootProject, (version in proj := newVersion) :: Nil)
-  val newSession = session.appendSettings( append map (a => (a, Nil)))
-  BuiltinCommands.reapply(newSession, structure, s)
+  if (get(version in proj) == newVersion) s
+  else {
+    val append = Load.transformSettings(Load.projectScope(currentRef), currentRef.build, rootProject, (version in proj := newVersion) :: Nil)
+    val newSession = session.appendSettings(append map (a => (a, Nil)))
+    BuiltinCommands.reapply(newSession, structure, s)
+  }
 }
 
 commands += Command.args("runBatch", ""){ (s: State, args: Seq[String]) =>
@@ -82,7 +85,7 @@ commands += Command.args("runBatch", ""){ (s: State, args: Seq[String]) =>
     (sub, b) <- runBatchBenches.value
     p <- runBatchSources.value.map(x => (filenameify(x), s"-p source=$x"))
   } yield {
-    val argLine = s" -p _scalaVersion=$v $b ${args.mkString(" ")} ${p._2} -rf csv -rff ${targetDir}/${p._1}-$b-$v.csv"
+    val argLine = s" -p _scalaVersion=$v $b ${args.mkString(" ")} ${p._2} -rf csv -rff $targetDir/${p._1}-$b-$v.csv"
     (s1: State) => {
       val s2 = setVersion(s1, sub, v)
       val extracted = Project.extract(s2)
