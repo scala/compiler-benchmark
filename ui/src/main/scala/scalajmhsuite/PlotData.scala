@@ -17,9 +17,9 @@ object PlotData {
         reader.close()
       }
     }
-
+    val combined = Paths.get("target/aggregrate.csv")
     val files = Files.list(Paths.get("target")).collect(Collectors.toList[Path]).asScala.filter(_.toString.endsWith(".csv"))
-    files.sorted.toList match {
+    files.filterNot(_.toAbsolutePath == combined.toAbsolutePath).filterNot(p => Files.size(p) == 0).sorted.toList match {
       case all @ (head :: tail) =>
         val baos = new ByteArrayOutputStream()
         val writer = CSVWriter.open(baos)
@@ -28,7 +28,6 @@ object PlotData {
           writer.writeRow(header)
           writer.writeAll(all.flatMap(file => read(file)._2.map((row: Map[String, String]) => header.map(key => row(key)))))
         } finally writer.close()
-        val combined = Paths.get("target/aggregrate.csv")
         Files.write(combined, baos.toByteArray)
         println(s"Combined results: $combined")
       case Nil =>

@@ -67,10 +67,11 @@ runBatchSources := List(
 def setVersion(s: State, proj: sbt.Project, newVersion: String): State = {
   val extracted = Project.extract(s)
   import extracted._
-  if (get(version in proj) == newVersion) s
+  if (get(scalaVersion in proj) == newVersion) s
   else {
-    val append = Load.transformSettings(Load.projectScope(currentRef), currentRef.build, rootProject, (version in proj := newVersion) :: Nil)
+    val append = Load.transformSettings(Load.projectScope(currentRef), currentRef.build, rootProject, (scalaVersion in proj := newVersion) :: Nil)
     val newSession = session.appendSettings(append map (a => (a, Nil)))
+    s.log.info(s"Switching to Scala version $newVersion")
     BuiltinCommands.reapply(newSession, structure, s)
   }
 }
@@ -81,11 +82,13 @@ commands += Command.args("runBatch", ""){ (s: State, args: Seq[String]) =>
 
   def filenameify(s: String) = s.replaceAll("""[@/:]""", "-")
   val tasks: Seq[State => State] = for {
-    v <- runBatchVersions.value
-    (sub, b) <- runBatchBenches.value
     p <- runBatchSources.value.map(x => (filenameify(x), s"-p source=$x"))
+    (sub, b) <- runBatchBenches.value
+    v <- runBatchVersions.value
   } yield {
     val argLine = s" -p _scalaVersion=$v $b ${args.mkString(" ")} ${p._2} -rf csv -rff $targetDir/${p._1}-$b-$v.csv"
+    println(argLine)
+
     (s1: State) => {
       val s2 = setVersion(s1, sub, v)
       val extracted = Project.extract(s2)
@@ -93,7 +96,10 @@ commands += Command.args("runBatch", ""){ (s: State, args: Seq[String]) =>
       s3
     }
   }
-  tasks.foldLeft(s)((state: State, fun: (State => State)) => fun(state))
+  tasks.foldLeft(s)((state: State, fun: (State => State)) => {
+    val newState = fun(state)
+    Project.extract(newState).runInputTask(runMain in ui, " scalajmhsuite.PlotData", newState)._1
+  })
 }
 
 
