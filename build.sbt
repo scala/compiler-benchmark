@@ -98,12 +98,10 @@ commands += Command.args("runBatch", ""){ (s: State, args: Seq[String]) =>
   }
   tasks.foldLeft(s)((state: State, fun: (State => State)) => {
     val newState = fun(state)
-    Project.extract(newState).runInputTask(runMain in ui, " scalajmhsuite.PlotData", newState)._1
+    Project.extract(newState).runInputTask(runMain in ui in Compile, " scalajmhsuite.PlotData", newState)._1
   })
 }
 
-
-runBatch := Def.sequential(runBatch, (runMain in ui).toTask("scalajmhsuite.PlotData"))
 
 def workaroundSbtJhmIssue76 = libraryDependencies := {
   libraryDependencies.value.map {
