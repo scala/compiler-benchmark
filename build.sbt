@@ -21,20 +21,17 @@ val compilation = project.enablePlugins(JmhPlugin).settings(
   // We should be able to switch this project to a broad range of Scala versions for comparative
   // benchmarking. As such, this project should only depend on the high level `MainClass` compiler API.
   description := "Black box benchmark of the compiler",
-  libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
-  workaroundSbtJhmIssue76
+  libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
 )
 
 val micro = project.enablePlugins(JmhPlugin).settings(
   description := "Finer grained benchmarks of compiler internals",
-  libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
-  workaroundSbtJhmIssue76
+  libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
 )
 
 val jvm = project.enablePlugins(JmhPlugin).settings(
   description := "Pure Java benchmarks for demonstrating performance anomalies independent from the Scala language/library",
-  autoScalaLibrary := false,
-  workaroundSbtJhmIssue76
+  autoScalaLibrary := false
 )
 
 val ui = project.settings(
@@ -100,13 +97,4 @@ commands += Command.args("runBatch", ""){ (s: State, args: Seq[String]) =>
     val newState = fun(state)
     Project.extract(newState).runInputTask(runMain in ui in Compile, " scalajmhsuite.PlotData", newState)._1
   })
-}
-
-
-def workaroundSbtJhmIssue76 = libraryDependencies := {
-  libraryDependencies.value.map {
-    case x if x.name == "sbt-jmh-extras" =>
-      x.cross(CrossVersion.binaryMapped(_ => "2.11"))
-    case x => x
-  }
 }
