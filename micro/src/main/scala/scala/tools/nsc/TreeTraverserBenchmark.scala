@@ -13,12 +13,11 @@ import scala.reflect.internal.util.BatchSourceFile
 @Measurement(iterations = 10, time = 1, timeUnit = TimeUnit.SECONDS)
 @Fork(value = 4)
 @State(Scope.Thread)
-class TreeTransformerBenchmark {
+class TreeTraverserBenchmark {
   var g: Global = _
   var tree: Global#Tree = _
   @Param(value = Array[String](""))
   var _scalaVersion: String = _
-
   @Param(Array("../corpus/vector/Vector.scala"))
   var file: String = _
 
@@ -36,7 +35,9 @@ class TreeTransformerBenchmark {
     assert(tree.children.nonEmpty)
   }
 
-  @Benchmark def measure(): Any = {
-    tree.duplicate
+  @Benchmark def measure(): Int = {
+    var accum = 0
+    tree.foreach(t => accum += System.identityHashCode(accum))
+    accum
   }
 }

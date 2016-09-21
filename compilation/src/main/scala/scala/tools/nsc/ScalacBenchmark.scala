@@ -26,14 +26,13 @@ class ScalacBenchmark {
         val allFiles = Files.walk(findSourceDir).collect(Collectors.toList[Path]).asScala.toList
         allFiles.filter(_.getFileName.toString.endsWith(".scala")).map(_.toAbsolutePath.toString).toArray
       }
-    compilerArgs ++= extraArgs.split("""\s+""")
     val driver = new scala.tools.nsc.MainClass {
       override protected def processSettingsHook(): Boolean = {
         settings.usejavacp.value = true
         settings.outdir.value = tempOutDir.getAbsolutePath
         settings.nowarn.value = true
         if (extraArgs != null && extraArgs != "")
-          settings.stopAfter.value = extraArgs :: Nil
+          settings.processArgumentString(extraArgs)
         true
       }
     }
