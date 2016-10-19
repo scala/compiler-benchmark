@@ -1,0 +1,12 @@
+language: scala
+
+env:
+  global:
+
+script: sbt test:compile "runBatch -wi1 -f1" "micro/jmh:run -wi1 -f1"
+
+jdk:
+  - oraclejdk8
+
+notifications:
+  email: jzaugg@gmail.com
