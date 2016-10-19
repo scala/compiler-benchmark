@@ -1,4 +1,4 @@
-name := """scala-jmh-suite"""
+name := """compiler-benchmark"""
 
 version := "1.0-SNAPSHOT"
 
@@ -95,6 +95,6 @@ commands += Command.args("runBatch", ""){ (s: State, args: Seq[String]) =>
   }
   tasks.foldLeft(s)((state: State, fun: (State => State)) => {
     val newState = fun(state)
-    Project.extract(newState).runInputTask(runMain in ui in Compile, " scalajmhsuite.PlotData", newState)._1
+    Project.extract(newState).runInputTask(runMain in ui in Compile, " compilerbenchmark.PlotData", newState)._1
   })
 }
