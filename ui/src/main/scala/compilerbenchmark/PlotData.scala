@@ -1,4 +1,4 @@
-package scalajmhsuite
+package compilerbenchmark
 
 import java.io.{ByteArrayOutputStream, File}
 import java.nio.file.{Files, Path, Paths}
