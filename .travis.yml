@@ -3,7 +3,7 @@ language: scala
 env:
   global:
 
-script: sbt test:compile "runBatch -wi1 -f1" "micro/jmh:run -wi1 -f1"
+script: sbt test:compile "runBatch -w1 -f1" "micro/jmh:run -w1 -f1"
 
 jdk:
   - oraclejdk8
