@@ -11,8 +11,6 @@ import org.openjdk.jmh.annotations.Mode._
 @State(Scope.Benchmark)
 class ScalacBenchmark {
   @Param(value = Array[String]())
-  var _scalaVersion: String = _
-  @Param(value = Array[String]())
   var source: String = _
   @Param(value = Array(""))
   var extraArgs: String = _

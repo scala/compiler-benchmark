@@ -83,7 +83,7 @@ commands += Command.args("runBatch", ""){ (s: State, args: Seq[String]) =>
     (sub, b) <- runBatchBenches.value
     v <- runBatchVersions.value
   } yield {
-    val argLine = s" -p _scalaVersion=$v $b ${args.mkString(" ")} ${p._2} -rf csv -rff $targetDir/${p._1}-$b-$v.csv"
+    val argLine = s" -p $b ${args.mkString(" ")} ${p._2} -rf csv -rff $targetDir/${p._1}-$b-$v.csv"
     println(argLine)
 
     (s1: State) => {
