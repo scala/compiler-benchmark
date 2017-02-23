@@ -16,8 +16,6 @@ import scala.reflect.internal.util.BatchSourceFile
 class TreeTransformerBenchmark {
   var g: Global = _
   var tree: Global#Tree = _
-  @Param(value = Array[String](""))
-  var _scalaVersion: String = _
 
   @Param(Array("../corpus/vector/Vector.scala"))
   var file: String = _
