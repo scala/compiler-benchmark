@@ -1,4 +1,4 @@
-name := """compiler-benchmark"""
+name := "compiler-benchmark"
 
 version := "1.0-SNAPSHOT"
 
@@ -18,18 +18,18 @@ resolvers ++= (
 )
 
 lazy val infrastructure = project.enablePlugins(JmhPlugin).settings(
-  description := "Infrastrucuture to persist benchmark results annoted with context from Git",
+  description := "Infrastrucuture to persist benchmark results annotated with metadata from Git",
   autoScalaLibrary := false,
   crossPaths := false,
   libraryDependencies ++= Seq(
-    "org.influxdb" % "influxdb-java" % "2.5",
+    "org.influxdb" % "influxdb-java" % "2.5", // TODO update to 2.6 when released for fix for https://github.com/influxdata/influxdb-java/issues/269
     "org.eclipse.jgit" % "org.eclipse.jgit" % "4.6.0.201612231935-r",
-    "com.google.guava" % "guava" % "20.0",
+    "com.google.guava" % "guava" % "21.0",
     "org.apache.commons" % "commons-lang3" % "3.5",
     "com.typesafe" % "config" % "1.3.1",
-    "org.slf4j" % "slf4j-api" % "1.7.1",
-    "org.slf4j" % "log4j-over-slf4j" % "1.7.1",  // for any java classes looking for this
-    "ch.qos.logback" % "logback-classic" % "1.0.3"
+    "org.slf4j" % "slf4j-api" % "1.7.24",
+    "org.slf4j" % "log4j-over-slf4j" % "1.7.24",  // for any java classes looking for this
+    "ch.qos.logback" % "logback-classic" % "1.2.1"
   )
 )
 
@@ -45,7 +45,6 @@ lazy val micro = project.enablePlugins(JmhPlugin).settings(
   description := "Finer grained benchmarks of compiler internals",
   libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
 ).settings(addJavaOptions).dependsOn(infrastructure)
-
 lazy val jvm = project.enablePlugins(JmhPlugin).settings(
   description := "Pure Java benchmarks for demonstrating performance anomalies independent from the Scala language/library",
   autoScalaLibrary := false
