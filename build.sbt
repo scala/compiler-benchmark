@@ -17,7 +17,7 @@ resolvers ++= (
     Nil
 )
 
-lazy val infrastructure = project.enablePlugins(JmhPlugin).settings(
+lazy val infrastructure = addJmh(project).settings(
   description := "Infrastrucuture to persist benchmark results annotated with metadata from Git",
   autoScalaLibrary := false,
   crossPaths := false,
@@ -33,7 +33,7 @@ lazy val infrastructure = project.enablePlugins(JmhPlugin).settings(
   )
 )
 
-lazy val compilation = project.enablePlugins(JmhPlugin).settings(
+lazy val compilation = addJmh(project).settings(
   // We should be able to switch this project to a broad range of Scala versions for comparative
   // benchmarking. As such, this project should only depend on the high level `MainClass` compiler API.
   description := "Black box benchmark of the compiler",
@@ -41,13 +41,15 @@ lazy val compilation = project.enablePlugins(JmhPlugin).settings(
 ).settings(addJavaOptions).dependsOn(infrastructure)
 
 
-lazy val micro = project.enablePlugins(JmhPlugin).settings(
+lazy val micro = addJmh(project).settings(
   description := "Finer grained benchmarks of compiler internals",
   libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
 ).settings(addJavaOptions).dependsOn(infrastructure)
-lazy val jvm = project.enablePlugins(JmhPlugin).settings(
+
+lazy val jvm = addJmh(project).settings(
   description := "Pure Java benchmarks for demonstrating performance anomalies independent from the Scala language/library",
-  autoScalaLibrary := false
+  autoScalaLibrary := false,
+  crossPaths := false
 ).settings(addJavaOptions).dependsOn(infrastructure)
 
 lazy val addJavaOptions = javaOptions ++= {
@@ -67,3 +69,10 @@ lazy val addJavaOptions = javaOptions ++= {
 addCommandAlias("hot", "compilation/jmh:run HotScalacBenchmark -psource=")
 
 addCommandAlias("cold", "compilation/jmh:run ColdScalacBenchmark -psource=")
+
+def addJmh(project: Project): Project = {
+  // IntelliJ SBT project import doesn't like sbt-jmh's default setup, which results the prod and test
+  // output paths overlapping. This is because sbt-jmh declares the `jmh` config as extending `test`, but
+  // configures `classDirectory in Jmh := classDirectory in Compile`.
+  project.enablePlugins(JmhPlugin).overrideConfigs(config("jmh").extend(Compile))
+}
