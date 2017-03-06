@@ -63,3 +63,7 @@ lazy val addJavaOptions = javaOptions ++= {
     "-DscalaRef=" + refOf(scalaVersion.value)
   )
 }
+
+addCommandAlias("hot", "compilation/jmh:run HotScalacBenchmark -psource=")
+
+addCommandAlias("cold", "compilation/jmh:run ColdScalacBenchmark -psource=")

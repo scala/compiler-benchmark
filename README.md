@@ -9,13 +9,15 @@ Based on:
 
 ## Structure
 
-| Project | Bencmark of|
+| Project | Benchmark of|
 | ------------- | ------------- |
 | compilation  | The equivalent of `scalac ...`  |
 | micro  | Finer grained parts of the compiler  |
 | jvm | Pure Java benchmarks to demonstrate JVM quirks |
+| infrastructure | Code to persist benchmark results and metadata |
 
 ## Recipes
+
 
 ### Learning about JMH options
 
@@ -32,6 +34,16 @@ compilation/jmh:run (Cold|Warm|Hot)CompilationBenchmark
    -p extraArgs=-nowarn
 ```
 
+
+### Using aliases
+
+Avoid the tedium of typing all that out with:
+
+```
+sbt> hot scalap 
+sbt> cold better-files 
+```
+
 ### Changing Scala Version
 
 ```
@@ -39,6 +51,18 @@ sbt> set scalaVersion in ThisBuild := "2.12.0-ab61fed-SNAPSHOT"
 sbt> set scalaHome in ThisBuild := Some(file("/code/scala/build/pack"))
 sbt> set scalaHome in compilation := "2.11.1" // if micro project isn't compatible with "2.11.1"
 ```
+
+### Persisting results
+
+ - Provide `INFLUX_PASSWORD` as an environment variable
+ - Replace `jmh/run` with `jmh:runMain scala.bench.UploadingRunner`
+
+Results will be uploading into an [InfluxDB]() instance at `https://scala-ci.typesafe.com/influx/`
+ 
+These results will be plotted in our [Grafana dashboard](https://scala-ci.typesafe.com/grafana/dashboard/db/scala-benchmark) 
+
+Note that the [https://github.com/scala/compiler-benchq](scala/compiler-benchq) project, which will trigger benchmarks
+for merges and sets of commits that we're backtesting.
 
 ### Collecting profiling data
 
@@ -63,30 +87,11 @@ compilation/jmh:run CompileSourcesBenchmark
 
 ### Exporting an args file from SBT
 
-```
-// ~/.sbt/0.13/plugins/SbtArgsFilePlugin.scala
-package io.github.retronym
-
-import sbt._
-import Keys._
-
-object SbtArgsFilePlugin extends AutoPlugin {
-  override def trigger = allRequirements
-  override def requires = sbt.plugins.JvmPlugin
-  val argsFileContents = taskKey[String]("Contents file suitable for `scalac @args.txt`")
-  val argsFilePrint = taskKey[Unit]("Show contents file suitable for `scalac @args.txt`")
-  override lazy val projectSettings = List(Compile, Test).flatMap(c => inConfig(c)(Seq(
-    argsFileContents := {
-      (scalacOptions.value ++ sources.value).mkString("\n")
-    },
-    argsFilePrint := println(argsFileContents.value)
-  )))
-}
 
 ```
-
-```
-% sbt core/compile:argsFilePrint
+$ curl https://gist.githubusercontent.com/retronym/78d016a3f10c62da2fd47cacac867f25/raw/65d9a1e8458d5984784ecf411d6c4d257bfdf0c1/ArgsFile.scala >  ~/.sbt/0.13/plugins/ArgsFile.scala
+$ cd /code/someProject
+$ sbt core/compile:argsFilePrint
 [info] Set current project to root (in build file:/Users/jason/code/better-files/)
 -deprecation
 -encoding
@@ -109,3 +114,6 @@ UTF-8
 /Users/jason/code/better-files/core/src/main/scala/better/files/ThreadBackedFileMonitor.scala
 [success] Total time: 0 s, completed 02/09/2016 11:51:58 AM
 ```
+
+Place this output into a file. The full path to that file can be passed to the `-source=` option to run the benchmark
+on that project: `-p@/path/to/args/file`
