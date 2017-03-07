@@ -137,15 +137,17 @@ public class UploadingOutputFormat extends DelegatingOutputFormat {
     }
 
     private static String getHardwareAddress() throws Exception {
-        InetAddress ip = InetAddress.getLocalHost();
-        NetworkInterface ni = NetworkInterface.getByInetAddress(ip);
-        if (!ni.isVirtual() && !ni.isLoopback() && !ni.isPointToPoint() && ni.isUp()) {
-            final byte[] bb = ni.getHardwareAddress();
-            StringBuilder builder = new StringBuilder();
-            for (byte b : bb) {
-                builder.append(String.format("%02X", b));
+        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+        while (networkInterfaces.hasMoreElements()) {
+            NetworkInterface ni = networkInterfaces.nextElement();
+            if (!ni.isVirtual() && !ni.isLoopback() && !ni.isPointToPoint() && ni.isUp() && !ni.getName().startsWith("docker")) {
+                final byte[] bb = ni.getHardwareAddress();
+                StringBuilder builder = new StringBuilder();
+                for (byte b : bb) {
+                    builder.append(String.format("%02X", b));
+                }
+                return builder.toString();
             }
-            return builder.toString();
         }
         return null;
     }
