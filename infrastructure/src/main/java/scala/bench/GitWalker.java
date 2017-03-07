@@ -97,7 +97,12 @@ public class GitWalker {
         try {
             ObjectId id = repo.resolve("origin/" + branch);
             if (id == null) {
-                return walk.parseCommit(repo.resolve(branch));
+                id = repo.resolve("scala/" + branch); // name of the remote on jenkins, TODO add to config
+                if (id == null) {
+                    return walk.parseCommit(repo.resolve(branch));
+                } else {
+                    return id;
+                }
             } else {
                 return id;
             }
