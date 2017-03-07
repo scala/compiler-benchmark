@@ -99,7 +99,11 @@ public class GitWalker {
             if (id == null) {
                 id = repo.resolve("scala/" + branch); // name of the remote on jenkins, TODO add to config
                 if (id == null) {
-                    return walk.parseCommit(repo.resolve(branch));
+                    ObjectId resolve = repo.resolve(branch);
+                    if (resolve == null) {
+                        throw new IllegalArgumentException("Cannot resolve: " + branch + " from " + repo);
+                    }
+                    return walk.parseCommit(resolve);
                 } else {
                     return id;
                 }
