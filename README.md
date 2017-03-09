@@ -40,8 +40,8 @@ compilation/jmh:run (Cold|Warm|Hot)CompilationBenchmark
 Avoid the tedium of typing all that out with:
 
 ```
-sbt> hot scalap 
-sbt> cold better-files 
+sbt> hot -psource=scalap 
+sbt> cold -psource=better-files 
 ```
 
 ### Changing Scala Version

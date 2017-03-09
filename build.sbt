@@ -66,9 +66,9 @@ lazy val addJavaOptions = javaOptions ++= {
   )
 }
 
-addCommandAlias("hot", "compilation/jmh:run HotScalacBenchmark -psource=")
+addCommandAlias("hot", "compilation/jmh:run HotScalacBenchmark")
 
-addCommandAlias("cold", "compilation/jmh:run ColdScalacBenchmark -psource=")
+addCommandAlias("cold", "compilation/jmh:run ColdScalacBenchmark")
 
 def addJmh(project: Project): Project = {
   // IntelliJ SBT project import doesn't like sbt-jmh's default setup, which results the prod and test
