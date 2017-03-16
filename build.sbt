@@ -54,7 +54,7 @@ lazy val jvm = addJmh(project).settings(
 
 lazy val addJavaOptions = javaOptions ++= {
   def refOf(version: String) = {
-    val HasSha = """.*-([0-9a-f]{7,})-.*""".r
+    val HasSha = """.*(?:bin|pre)-([0-9a-f]{7,})(?:-.*)?""".r
     version match {
       case HasSha(sha) => sha
       case _ => "v" + version
