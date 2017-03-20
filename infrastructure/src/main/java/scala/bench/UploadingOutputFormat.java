@@ -95,8 +95,12 @@ public class UploadingOutputFormat extends DelegatingOutputFormat {
             if (scalaRef == null) {
                 throw new RuntimeException("Please provide -DscalaRef=...");
             }
-            String branch = gitResult.branchOfRef(scalaRef);
-            pointBuilder.tag("branch", branch);
+            try {
+                String branch = gitResult.branchOfRef(scalaRef);
+                pointBuilder.tag("branch", branch);
+            } catch (IllegalArgumentException iea ){
+                pointBuilder.tag("branch", "<none>");
+            }
             pointBuilder.tag("hostId", getHostId());
             pointBuilder.addField("javaVersion", System.getProperty("java.runtime.version"));
             pointBuilder.addField("inputArguments", inputArguments.stream().collect(Collectors.joining(" ")));
