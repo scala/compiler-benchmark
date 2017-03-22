@@ -38,6 +38,21 @@ public class GitWalker {
         return new GitWalkerResult(batchPoints, branchesMap, repo);
     }
 
+    private static int countParentsWithSameCommitTime(RevCommit revCommit) {
+        RevCommit parent = revCommit.getParent(0);
+        int numParentsWithSameCommitTime = 0;
+        while (parent.getCommitTime() == revCommit.getCommitTime()) {
+            numParentsWithSameCommitTime += 1;
+            parent = revCommit.getParent(0);
+        }
+        return numParentsWithSameCommitTime;
+    }
+
+    static int adjustCommitTime(RevCommit revCommit) {
+        int numParentsWithSameCommitTime = countParentsWithSameCommitTime(revCommit);
+        return revCommit.getCommitTime() * 1000 + numParentsWithSameCommitTime * 10;
+    }
+
     public void upload(BatchPoints batchPoints) {
 
     }
@@ -54,8 +69,8 @@ public class GitWalker {
                 Escaper escaper = HtmlEscapers.htmlEscaper();
                 String commiterName = revCommit.getCommitterIdent().getName();
 
-                // workaround (?) https://github.com/influxdata/influxdb-java/issues/269
-                String sanitizedMessage = revCommit.getFullMessage().replace("\\", "\\\\");
+                String sanitizedMessage = sanitize(revCommit.getFullMessage());
+
                 String annotationHtml = String.format(
                         "<a href='https://github.com/scala/scala/commit/%s'>%s</a><p>%s<p><pre>%s</pre>",
                         revCommit.name(),
@@ -64,11 +79,12 @@ public class GitWalker {
                         escaper.escape(StringUtils.abbreviate(sanitizedMessage, 2048))
                 );
                 Point.Builder pointBuilder = Point.measurement("commit")
-                        .time(revCommit.getCommitTime(), TimeUnit.SECONDS)
+                        .time(adjustCommitTime(revCommit), TimeUnit.SECONDS)
                         .tag("branch", branch)
                         .addField("sha", revCommit.name())
                         .addField("shortsha", revCommit.name().substring(0, 10))
                         .addField("user", commiterName)
+                        .addField("shortMessage", sanitizedMessage)
                         .addField("message", sanitizedMessage)
                         .addField("annotationHtml", annotationHtml);
                 List<String> tags = tagsOfCommit(walk, revCommit, repo);
@@ -90,6 +106,11 @@ public class GitWalker {
             throw new RuntimeException(t);
         }
         return batchPoints;
+    }
+
+    public static String sanitize(String fullMessage) {
+        // workaround (?) https://github.com/influxdata/influxdb-java/issues/269
+        return fullMessage.replace("\\", "\\\\");
     }
 
     public static ObjectId resolve(String branch, Repository repo)  {
