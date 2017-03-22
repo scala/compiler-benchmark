@@ -28,6 +28,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static scala.bench.GitWalker.sanitize;
+
 public class UploadingOutputFormat extends DelegatingOutputFormat {
 
     private final GitWalkerResult gitResult;
@@ -104,13 +106,16 @@ public class UploadingOutputFormat extends DelegatingOutputFormat {
             pointBuilder.tag("hostId", getHostId());
             pointBuilder.addField("javaVersion", System.getProperty("java.runtime.version"));
             pointBuilder.addField("inputArguments", inputArguments.stream().collect(Collectors.joining(" ")));
-            pointBuilder.addField("scalaVersion", scalaVersion);
+            pointBuilder.tag("scalaVersion", scalaVersion);
 
 
             try (RevWalk walk = new RevWalk(repo)) {
                 RevCommit revCommit = walk.parseCommit(repo.resolve(scalaRef));
+                pointBuilder.tag("scalaSha", revCommit.getName());
+                pointBuilder.tag("commitShortMessage", sanitize(revCommit.getShortMessage()));
                 logJSON(result, benchmarkName, scalaRef, revCommit);
-                pointBuilder.time(revCommit.getCommitTime(), TimeUnit.SECONDS);
+                int adjustedCommitTime = GitWalker.adjustCommitTime(revCommit);
+                pointBuilder.time(adjustedCommitTime, TimeUnit.MILLISECONDS);
                 batchPoints.point(pointBuilder.build());
                 influxDB.write(batchPoints);
             }
