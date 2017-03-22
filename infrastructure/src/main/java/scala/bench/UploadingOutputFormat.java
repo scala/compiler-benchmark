@@ -112,7 +112,7 @@ public class UploadingOutputFormat extends DelegatingOutputFormat {
             try (RevWalk walk = new RevWalk(repo)) {
                 RevCommit revCommit = walk.parseCommit(repo.resolve(scalaRef));
                 pointBuilder.tag("scalaSha", revCommit.getName());
-                pointBuilder.tag("commitShortMessage", sanitize(revCommit.getShortMessage()));
+                pointBuilder.addField("commitShortMessage", sanitize(revCommit.getShortMessage()));
                 logJSON(result, benchmarkName, scalaRef, revCommit);
                 int adjustedCommitTime = GitWalker.adjustCommitTime(revCommit);
                 pointBuilder.time(adjustedCommitTime, TimeUnit.MILLISECONDS);
