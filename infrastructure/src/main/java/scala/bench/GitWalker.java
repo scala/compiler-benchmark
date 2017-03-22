@@ -48,9 +48,9 @@ public class GitWalker {
         return numParentsWithSameCommitTime;
     }
 
-    static int adjustCommitTime(RevCommit revCommit) {
+    static long adjustCommitTime(RevCommit revCommit) {
         int numParentsWithSameCommitTime = countParentsWithSameCommitTime(revCommit);
-        return revCommit.getCommitTime() * 1000 + numParentsWithSameCommitTime * 10;
+        return (long) revCommit.getCommitTime() * 1000L + numParentsWithSameCommitTime * 10;
     }
 
     public void upload(BatchPoints batchPoints) {
@@ -79,7 +79,7 @@ public class GitWalker {
                         escaper.escape(StringUtils.abbreviate(sanitizedMessage, 2048))
                 );
                 Point.Builder pointBuilder = Point.measurement("commit")
-                        .time(adjustCommitTime(revCommit), TimeUnit.SECONDS)
+                        .time(adjustCommitTime(revCommit), TimeUnit.MILLISECONDS)
                         .tag("branch", branch)
                         .addField("sha", revCommit.name())
                         .addField("shortsha", revCommit.name().substring(0, 10))

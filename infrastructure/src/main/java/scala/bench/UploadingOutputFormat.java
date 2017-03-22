@@ -114,8 +114,7 @@ public class UploadingOutputFormat extends DelegatingOutputFormat {
                 pointBuilder.tag("scalaSha", revCommit.getName());
                 pointBuilder.addField("commitShortMessage", sanitize(revCommit.getShortMessage()));
                 logJSON(result, benchmarkName, scalaRef, revCommit);
-                int adjustedCommitTime = GitWalker.adjustCommitTime(revCommit);
-                pointBuilder.time(adjustedCommitTime, TimeUnit.MILLISECONDS);
+                pointBuilder.time(GitWalker.adjustCommitTime(revCommit), TimeUnit.MILLISECONDS);
                 batchPoints.point(pointBuilder.build());
                 influxDB.write(batchPoints);
             }
