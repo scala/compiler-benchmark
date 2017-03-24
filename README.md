@@ -116,4 +116,4 @@ UTF-8
 ```
 
 Place this output into a file. The full path to that file can be passed to the `-source=` option to run the benchmark
-on that project: `-p@/path/to/args/file`
+on that project: `-psource=@/path/to/args/file`
