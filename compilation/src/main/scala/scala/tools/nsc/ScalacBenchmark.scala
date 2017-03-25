@@ -1,7 +1,8 @@
 package scala.tools.nsc
 
-import java.io.File
-import java.nio.file.{Files, Path, Paths}
+import java.io.{File, IOException}
+import java.nio.file._
+import java.nio.file.attribute.BasicFileAttributes
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
@@ -37,7 +38,7 @@ class ScalacBenchmark {
 
       override protected def processSettingsHook(): Boolean = {
         settings.usejavacp.value = true
-        settings.outdir.value = tempOutDir.getAbsolutePath
+        settings.outdir.value = tempDir.getAbsolutePath
         settings.nowarn.value = true
         if (extraArgs != null && extraArgs != "")
           settings.processArgumentString(extraArgs)
@@ -50,12 +51,28 @@ class ScalacBenchmark {
     assert(!driver.reporter.hasErrors)
   }
 
-  private def tempOutDir: File = {
+  private var tempDir: File = null
+
+  @Setup(Level.Trial) def initTemp(): Unit = {
     val tempFile = java.io.File.createTempFile("output", "")
     tempFile.delete()
     tempFile.mkdir()
-    tempFile
+    tempDir = tempFile
   }
+  @TearDown(Level.Trial) def clearTemp(): Unit = {
+    val directory = tempDir.toPath
+    Files.walkFileTree(directory, new SimpleFileVisitor1[Path]() {
+      override def visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult = {
+        Files.delete(file)
+        FileVisitResult.CONTINUE
+      }
+      override def postVisitDirectory(dir: Path, exc: IOException): FileVisitResult = {
+        Files.delete(dir)
+        FileVisitResult.CONTINUE
+      }
+    })
+  }
+
   private def findSourceDir: Path = {
     val path = Paths.get("../corpus/" + source)
     if (Files.exists(path)) path
