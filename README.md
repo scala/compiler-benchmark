@@ -57,12 +57,12 @@ sbt> set scalaHome in compilation := "2.11.1" // if micro project isn't compatib
  - Provide `INFLUX_PASSWORD` as an environment variable
  - Replace `jmh/run` with `jmh:runMain scala.bench.UploadingRunner`
 
-Results will be uploading into an [InfluxDB]() instance at `https://scala-ci.typesafe.com/influx/`
+Results will be uploading into an [InfluxDB]() instance at `https://scala-ci.typesafe.com/influx/`. An quick introduction to InfluxDB is [here](https://github.com/scala/compiler-benchmark/wiki/InfluxDB-101).
  
 These results will be plotted in our [Grafana dashboard](https://scala-ci.typesafe.com/grafana/dashboard/db/scala-benchmark) 
 
-Note that the [https://github.com/scala/compiler-benchq](scala/compiler-benchq) project, which will trigger benchmarks
-for merges and sets of commits that we're backtesting.
+The [https://github.com/scala/compiler-benchq](scala/compiler-benchq) project triggers benchmarks
+for merges and sets of commits that we're backtesting (UI on https://scala-ci.typesafe.com/benchq).
 
 ### Collecting profiling data
 
