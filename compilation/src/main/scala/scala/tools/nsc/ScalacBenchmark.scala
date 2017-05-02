@@ -6,15 +6,22 @@ import java.nio.file.attribute.BasicFileAttributes
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
-import org.openjdk.jmh.annotations._
 import org.openjdk.jmh.annotations.Mode._
+import org.openjdk.jmh.annotations._
 
 @State(Scope.Benchmark)
 class ScalacBenchmark {
-  @Param(value = Array[String]())
+  @Param(value = Array())
   var source: String = _
+
   @Param(value = Array(""))
   var extraArgs: String = _
+
+  // This parameter is set by ScalacBenchmarkRunner / UploadingRunner based on the Scala version.
+  // When running the benchmark directly the "latest" symlink is used.
+  @Param(value = Array("latest"))
+  var corpusVersion: String = _
+
   var driver: Driver = _
 
   def compileImpl(): Unit = {
@@ -22,7 +29,7 @@ class ScalacBenchmark {
       if (source.startsWith("@")) Array(source)
       else {
         import scala.collection.JavaConverters._
-        val allFiles = Files.walk(findSourceDir).collect(Collectors.toList[Path]).asScala.toList
+        val allFiles = Files.walk(findSourceDir, FileVisitOption.FOLLOW_LINKS).collect(Collectors.toList[Path]).asScala.toList
         allFiles.filter(_.getFileName.toString.endsWith(".scala")).map(_.toAbsolutePath.toString).toArray
       }
 
@@ -53,6 +60,7 @@ class ScalacBenchmark {
 
   private var tempDir: File = null
 
+  // Executed once per fork
   @Setup(Level.Trial) def initTemp(): Unit = {
     val tempFile = java.io.File.createTempFile("output", "")
     tempFile.delete()
@@ -74,7 +82,7 @@ class ScalacBenchmark {
   }
 
   private def findSourceDir: Path = {
-    val path = Paths.get("../corpus/" + source)
+    val path = Paths.get(s"../corpus/$source/$corpusVersion")
     if (Files.exists(path)) path
     else Paths.get(source)
   }

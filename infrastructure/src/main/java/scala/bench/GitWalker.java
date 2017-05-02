@@ -114,7 +114,6 @@ public class GitWalker {
     }
 
     public static ObjectId resolve(String branch, Repository repo)  {
-        RevWalk walk = new RevWalk(repo);
         try {
             ObjectId id = repo.resolve("origin/" + branch);
             if (id == null) {
@@ -124,7 +123,7 @@ public class GitWalker {
                     if (resolve == null) {
                         throw new IllegalArgumentException("Cannot resolve: " + branch + " from " + repo);
                     }
-                    return walk.parseCommit(resolve);
+                    return resolve;
                 } else {
                     return id;
                 }
@@ -133,8 +132,6 @@ public class GitWalker {
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            walk.dispose();
         }
     }
 
@@ -157,5 +154,17 @@ public class GitWalker {
             }
         }
         return tags;
+    }
+
+    public static boolean isAncestor(String rev, String scalaRef) throws IOException {
+        Repository repo = GitFactory.openGit();
+        RevWalk walk = new RevWalk(repo);
+        try {
+            RevCommit revCommit = walk.parseCommit(GitWalker.resolve(rev, repo));
+            RevCommit scalaRefCommit = walk.parseCommit(GitWalker.resolve(scalaRef, repo));
+            return walk.isMergedInto(revCommit, scalaRefCommit);
+        } finally {
+            walk.dispose();
+        }
     }
 }
