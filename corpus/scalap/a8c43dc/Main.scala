@@ -9,7 +9,16 @@ package scala
 package tools.scalap
 
 import java.io.{ PrintStream, OutputStreamWriter, ByteArrayOutputStream }
+import scala.reflect.NameTransformer
+import scala.tools.nsc.Settings
+import scala.tools.nsc.classpath.AggregateFlatClassPath
+import scala.tools.nsc.classpath.FlatClassPathFactory
 import scala.tools.nsc.io.AbstractFile
+import scala.tools.nsc.settings.ClassPathRepresentationType
+import scala.tools.nsc.util.ClassFileLookup
+import scala.tools.nsc.util.ClassPath.DefaultJavaContext
+import scala.tools.nsc.util.JavaClassPath
+import scala.tools.util.PathResolverFactory
 import scalax.rules.scalasig._
 
 /**The main object used to execute scalap on the command-line.
@@ -88,6 +97,41 @@ class Main {
     }
   }
 
+  /** Executes scalap with the given arguments and classpath for the
+   *  class denoted by `classname`.
+   */
+  def process(args: Arguments, path: ClassFileLookup[AbstractFile])(classname: String): Unit = {
+    // find the classfile
+    val encName = classname match {
+      case "scala.AnyRef" => "java.lang.Object"
+      case _ =>
+        // we have to encode every fragment of a name separately, otherwise the NameTransformer
+        // will encode using unicode escaping dot separators as well
+        // we can afford allocations because this is not a performance critical code
+        classname.split('.').map(NameTransformer.encode).mkString(".")
+    }
+
+    path.findClassFile(encName) match {
+      case Some(classFile) =>
+        if (verbose) {
+          Console.println(Console.BOLD + "FILENAME" + Console.RESET + " = " + classFile.path)
+        }
+        val bytes = classFile.toByteArray
+        if (isScalaFile(bytes)) {
+          Console.println(decompileScala(bytes, isPackageObjectFile(encName)))
+        } else {
+          // construct a reader for the classfile content
+          val reader = new ByteArrayReader(classFile.toByteArray)
+          // parse the classfile
+          val clazz = new Classfile(reader)
+          processJavaClassFile(clazz)
+        }
+        // if the class corresponds to the artificial class scala.Any.
+        // (see member list in class scala.tool.nsc.symtab.Definitions)
+      case _ =>
+        Console.println(s"class/object $classname not found.")
+    }
+  }
 }
 
 object Main extends Main {
@@ -120,7 +164,37 @@ object Main extends Main {
     """.stripMargin.trim
   }
 
-  def main(args: Array[String]): Unit = ()
+  def main(args: Array[String]): Unit =
+  // print usage information if there is no command-line argument
+    if (args.isEmpty) usage()
+    else {
+      val arguments = parseArguments(args)
+
+      if (arguments contains opts.version)
+        Console.println(versionMsg)
+      if (arguments contains opts.help)
+        usage()
+
+      verbose = arguments contains opts.verbose
+      printPrivates = arguments contains opts.showPrivateDefs
+      // construct a custom class path
+      val cpArg = List(opts.classpath, opts.cp) map arguments.getArgument reduceLeft (_ orElse _)
+
+      val settings = new Settings()
+
+      arguments getArgument opts.classPathImplType foreach settings.YclasspathImpl.tryToSetFromPropertyValue
+      settings.YdisableFlatCpCaching.value = arguments contains opts.disableFlatClassPathCaching
+      settings.Ylogcp.value = arguments contains opts.logClassPath
+
+      val path = createClassPath(cpArg, settings)
+
+      // print the classpath if output is verbose
+      if (verbose)
+        Console.println(Console.BOLD + "CLASSPATH" + Console.RESET + " = " + path.asClassPathString)
+
+      // process all given classes
+      arguments.getOthers foreach process(arguments, path)
+    }
 
   private def parseArguments(args: Array[String]) =
     Arguments.Parser('-')
@@ -135,4 +209,16 @@ object Main extends Main {
       .withOption(opts.disableFlatClassPathCaching)
       .withOption(opts.logClassPath)
       .parse(args)
+
+  private def createClassPath(cpArg: Option[String], settings: Settings) = cpArg match {
+    case Some(cp) => settings.YclasspathImpl.value match {
+      case ClassPathRepresentationType.Flat =>
+        AggregateFlatClassPath(new FlatClassPathFactory(settings).classesInExpandedPath(cp))
+      case ClassPathRepresentationType.Recursive =>
+        new JavaClassPath(DefaultJavaContext.classesInExpandedPath(cp), DefaultJavaContext)
+    }
+    case _ =>
+      settings.classpath.value = "." // include '.' in the default classpath SI-6669
+      PathResolverFactory.create(settings).result
+  }
 }
