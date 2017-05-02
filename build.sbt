@@ -4,15 +4,14 @@ version := "1.0-SNAPSHOT"
 
 scalaVersion in ThisBuild := "2.11.8"
 
+resolvers += "scala-integration" at "https://scala-ci.typesafe.com/artifactory/scala-integration/"
+
 // Convenient access to builds from PR validation
 resolvers ++= (
   if (scalaVersion.value.endsWith("-SNAPSHOT"))
     List(
-      "pr-scala snapshots old" at "http://private-repo.typesafe.com/typesafe/scala-pr-validation-snapshots/",
       "pr-scala snapshots" at "https://scala-ci.typesafe.com/artifactory/scala-pr-validation-snapshots/",
-      Resolver.mavenLocal,
-      Resolver.sonatypeRepo("snapshots")
-    )
+      Resolver.mavenLocal)
   else
     Nil
 )

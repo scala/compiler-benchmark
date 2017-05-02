@@ -61,7 +61,7 @@ class ScalacBenchmark {
   }
   @TearDown(Level.Trial) def clearTemp(): Unit = {
     val directory = tempDir.toPath
-    Files.walkFileTree(directory, new SimpleFileVisitor1[Path]() {
+    Files.walkFileTree(directory, new SimpleFileVisitor[Path]() {
       override def visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult = {
         Files.delete(file)
         FileVisitResult.CONTINUE
