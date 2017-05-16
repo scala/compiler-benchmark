@@ -84,7 +84,7 @@ class ScalacBenchmark {
 @BenchmarkMode(Array(SingleShotTime))
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 // TODO -Xbatch reduces fork-to-fork variance, but incurs 5s -> 30s slowdown
-@Fork(value = 16, jvmArgs = Array("-XX:CICompilerCount=2"))
+@Fork(value = 16, jvmArgs = Array("-XX:CICompilerCount=2", "-Xms2G", "-Xmx2G"))
 class ColdScalacBenchmark extends ScalacBenchmark {
   @Benchmark
   override def compile(): Unit = super.compile()
@@ -94,7 +94,7 @@ class ColdScalacBenchmark extends ScalacBenchmark {
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @Warmup(iterations = 0)
 @Measurement(iterations = 1, time = 30, timeUnit = TimeUnit.SECONDS)
-@Fork(value = 3)
+@Fork(value = 3, jvmArgs = Array("-Xms2G", "-Xmx2G"))
 class WarmScalacBenchmark extends ScalacBenchmark {
   @Benchmark
   override def compile(): Unit = super.compile()
@@ -102,9 +102,9 @@ class WarmScalacBenchmark extends ScalacBenchmark {
 
 @BenchmarkMode(Array(SampleTime))
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Warmup(iterations = 8, time = 10, timeUnit = TimeUnit.SECONDS)
+@Warmup(iterations = 10, time = 10, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 10, time = 10, timeUnit = TimeUnit.SECONDS)
-@Fork(value = 3)
+@Fork(value = 3, jvmArgs = Array("-Xms2G", "-Xmx2G"))
 class HotScalacBenchmark extends ScalacBenchmark {
   @Benchmark
   override def compile(): Unit = super.compile()
