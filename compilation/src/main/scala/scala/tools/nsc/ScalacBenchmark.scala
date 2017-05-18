@@ -86,7 +86,7 @@ object ScalacBenchmarkStandalone {
   def main(args: Array[String]): Unit = {
     val bench = new ScalacBenchmark
     bench.source = args(0)
-    val iterations = args(0).toInt
+    val iterations = args(1).toInt
     bench.initTemp()
     var i = 0
     while (i < iterations) {
