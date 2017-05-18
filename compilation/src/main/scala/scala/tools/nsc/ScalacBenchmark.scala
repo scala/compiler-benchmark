@@ -17,7 +17,7 @@ class ScalacBenchmark {
   var extraArgs: String = _
   var driver: Driver = _
 
-  protected def compile(): Unit = {
+  def compileImpl(): Unit = {
     val compilerArgs =
       if (source.startsWith("@")) Array(source)
       else {
@@ -80,6 +80,23 @@ class ScalacBenchmark {
   }
 }
 
+// JMH-independent entry point to run the code in the benchmark, for debugging or
+// using external profilers.
+object ScalacBenchmarkStandalone {
+  def main(args: Array[String]): Unit = {
+    val bench = new ScalacBenchmark
+    bench.source = args(0)
+    val iterations = args(0).toInt
+    bench.initTemp()
+    var i = 0
+    while (i < iterations) {
+      bench.compileImpl()
+      i += 1
+    }
+    bench.clearTemp()
+  }
+}
+
 @State(Scope.Benchmark)
 @BenchmarkMode(Array(SingleShotTime))
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
@@ -87,7 +104,7 @@ class ScalacBenchmark {
 @Fork(value = 16, jvmArgs = Array("-XX:CICompilerCount=2", "-Xms2G", "-Xmx2G"))
 class ColdScalacBenchmark extends ScalacBenchmark {
   @Benchmark
-  override def compile(): Unit = super.compile()
+  def compile(): Unit = compileImpl()
 }
 
 @BenchmarkMode(Array(SampleTime))
@@ -97,7 +114,7 @@ class ColdScalacBenchmark extends ScalacBenchmark {
 @Fork(value = 3, jvmArgs = Array("-Xms2G", "-Xmx2G"))
 class WarmScalacBenchmark extends ScalacBenchmark {
   @Benchmark
-  override def compile(): Unit = super.compile()
+  def compile(): Unit = compileImpl()
 }
 
 @BenchmarkMode(Array(SampleTime))
@@ -107,5 +124,5 @@ class WarmScalacBenchmark extends ScalacBenchmark {
 @Fork(value = 3, jvmArgs = Array("-Xms2G", "-Xmx2G"))
 class HotScalacBenchmark extends ScalacBenchmark {
   @Benchmark
-  override def compile(): Unit = super.compile()
+  def compile(): Unit = compileImpl()
 }
