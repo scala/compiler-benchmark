@@ -2,3 +2,4 @@ target/
 *.jfr
 *.csv
 /.idea/
+/scripts/savedIrqAffinity

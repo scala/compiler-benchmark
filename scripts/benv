@@ -20,17 +20,29 @@ kernelRelease="4.9.0-0.bpo.2-amd64"
 irqAffinitySkip=( /proc/irq/0/smp_affinity /proc/irq/2/smp_affinity )
 irqAffinityFile="savedIrqAffinity"
 
+set -eo pipefail
+
 scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $scriptDir
 
 # Utils
 
+function logOk() {
+  echo " - [ok] $1"
+}
+
+function err() {
+  echo "[error] $1"
+  shift
+  while [[ $# -gt 0 ]]; do
+    echo "$1"
+    shift
+  done
+  exit 42
+}
+
 function checkFail() {
-  [[ $1 -eq 0 ]] || {
-    echo "Failed to $2"
-    echo "$3"
-    exit 42
-  }
+  [[ $1 -eq 0 ]] || err "failed to $2" $3
 }
 
 function sudoWrite() {
@@ -40,54 +52,44 @@ function sudoWrite() {
 # Systm Config Checks
 
 function checkKernelRelease() {
-  [[ $(uname -r) == $kernelRelease ]] || {
-    echo "Expected kernel release $kernelRelease, found $(uname -r)"
-    exit 42
-  }
-  echo " - [ok] Found expected kernel release"
+  [[ $(uname -r) == $kernelRelease ]] ||
+    err "expected kernel release $kernelRelease, found $(uname -r)"
+  logOk "found expected kernel release"
 }
 
 function checkNoHyperThreading() {
   local perCore=$(lscpu | sed 's/ *: */:/' | awk -F ":" '$1 == "Thread(s) per core" { print $2 }')
-  [[ "$perCore" == "1" ]] || {
-    echo "Hyper-Threading seems to be enabled, lscpu reports $perCore threads per core"    
-    exit 42
-  }
-  echo " - [ok] Hyper-Threading is disabled"
+  [[ "$perCore" == "1" ]] ||
+    err "hyper-threading seems to be enabled, lscpu reports $perCore threads per core"
+  logOk "hyper-threading is disabled"
 }
 
 function checkNoTurboBoost() {
   local tb=$(cpupower frequency-info | awk '/.*boost\ state\ support.*/{y=1;next}/.*Active.*/{y=0}y')
-  [[ "$tb" =~ ^.*Supported:\ no$ ]] || {
-    echo "Expected turbo boost to be disabled, 'cpupower frequency-info' reports $tb"
-    exit 42
-  }
-  echo " - [ok] Turbo boost is disabled"
+  [[ "$tb" =~ ^.*Supported:\ no$ ]] ||
+    err "expected turbo boost to be disabled, 'cpupower frequency-info' reports $tb"
+  logOk "turbo boost is disabled"
 }
 
 function checkNoNuma() {
   local numaNodes=$(numactl --hardware | sed 's/ *: */:/' | awk -F ":" '$1 == "available" { print $2 }' | awk '{ print $1 }')
-  [[ "$numaNodes" == "1" ]] || {
-    echo "Expected 1 numa node, numactl returned $numaNodes"
-    exit 42
-  }
-  echo " - [ok] The system has 1 numa node"
+  [[ "$numaNodes" == "1" ]] ||
+    err "expected 1 numa node, numactl returned $numaNodes"
+  logOk "the system has 1 numa node"
 }
 
 function checkNoPstate() {
   local freqDriver=$(cpupower frequency-info | grep "driver:")
-  [[ "$freqDriver" =~ ^.*driver:\ acpi-cpufreq$ ]] || {
-    echo "Expected acpi-cpufreq CPU frequency driver, 'cpupower frequency-info' reports $freqDriver"
-    exit 42
-  }
-  echo " - [ok] The CPU frequency driver is acpi-cpufreq"
+  [[ "$freqDriver" =~ ^.*driver:\ acpi-cpufreq$ ]] ||
+    err "expected acpi-cpufreq CPU frequency driver, 'cpupower frequency-info' reports $freqDriver"
+  logOk "the CPU frequency driver is acpi-cpufreq"
 }
 
 function checkRunningProcesses() {
   local pss=$(ps -e -o comm,args --no-headers)
   pss=$(echo "$pss" | sed 's/ \+/_/g' | sort)
-  local ok=0
-  prefixes=$(cat ./processWhitelist | awk '{ print $1 }')
+  local ok
+  local prefixes=$(cat ./processWhitelist | awk '{ print $1 }')
   for p in $pss; do
     ok=0
     for pre in $prefixes; do
@@ -96,27 +98,26 @@ function checkRunningProcesses() {
         break
       }
     done
-    [[ $ok == 1 ]] || {
-      echo "Process $p is not listed in $scriptDir/processWhitelist"
-      exit 42
-    }
-    ok=0
+    [[ $ok == 1 ]] ||
+      err "process $p is not listed in $scriptDir/processWhitelist"
   done
-  echo " - [ok] All running processes are listed in $scriptDir/processWhitelist"
+  logOk "all running processes are listed in $scriptDir/processWhitelist"
 }
 
 # Services
 
 function stopServices() {
+  local pid
   for s in $servicesToStop; do
     echo $s |  tr : " " | {
       read process services
-      sudo systemctl stop $services
-      if pgrep -x "$process" > /dev/null; then
-        echo "Failed to stop service $services, $process still running with PID $(pgrep -x $process)"
-        exit 42
-      fi
-      echo " - [ok] Stopped service $services"
+      # In case there's a running job, the command prints "Job for rsyslog.service canceled" and
+      # exits non-zero. The services are still stopped (we check that after), so we continue.
+      sudo systemctl stop $services > /dev/null || true
+      pid=$(pgrep -x "$process" || true)
+      [[ $pid == "" ]] ||
+        err "failed to stop service $services, $process still running with PID $pid"
+      logOk "stopped service $services"
     }
   done
 }
@@ -125,8 +126,8 @@ function startServices() {
   for s in $servicesToStop; do
     echo $s |  tr : " " | {
       read process services
-      sudo systemctl start $services
-      echo " - [ok] Started service $services"
+      sudo systemctl start $services > /dev/null
+      logOk "started service $services"
     }
   done
 }
@@ -138,21 +139,15 @@ function setFrequency() {
 
   local freqs=$(cat /proc/cpuinfo | grep MHz)
   local c=$(echo "$freqs" | grep $cpuFrequency.000 | wc -l)
-  [[ "$c" == "4" ]] || {
-    echo "Expected /proc/cpuinfo to show $cpuFrequency.000 MHz for all processors"
-    echo "$freqs"
-    exit 42
-  }
+  [[ "$c" == "4" ]] ||
+    err "expected /proc/cpuinfo to show $cpuFrequency.000 MHz for all processors" $freqs
 
   local govs=$(cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor)
   local c=$(echo "$govs" | grep userspace | wc -l)
-  [[ "$c" == "4" ]] || {
-    echo "Expected 'cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor' to show userspace for all processors"
-    echo "$govs"
-    exit 42
-  }
+  [[ "$c" == "4" ]] ||
+    err "expected 'cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor' to show userspace for all processors" $govs
 
-  echo " - [ok] CPU frequency set to $cpuFrequency MHz"
+  logOk "CPU frequency set to $cpuFrequency MHz"
 }
 
 function resetFrequency() {
@@ -160,41 +155,31 @@ function resetFrequency() {
 
   local govs=$(cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor)
   local c=$(echo "$govs" | grep ondemand | wc -l)
-  [[ "$c" == "4" ]] || {
-    echo "Expected 'cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor' to show ondemand for all processors"
-    echo "$govs"
-    exit 42
-  }
+  [[ "$c" == "4" ]] ||
+    err "expected 'cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor' to show ondemand for all processors" $govs
 
-  echo " - [ok] CPU frequency scaling governor set to 'ondemand'"
+  logOk "CPU frequency scaling governor set to 'ondemand'"
 }
 
 # CPU Shield
 
 function checkNoShield() {
   local shield=$(sudo cset shield)
-  [[ "$shield" =~ ^.*shielding\ not\ active\ on\ system$ ]] || {
-    echo "Expected no shielding"
-    echo "$shield"
-    exit 42
-  }
-  echo " - [ok] Shielding is disabled"
+  [[ "$shield" =~ ^.*shielding\ not\ active\ on\ system$ ]] ||
+    err "expected no shielding" $shield
+  logOk "shielding is disabled"
 }
 
 function checkShield() {
   local userSet=$(sudo cset shield -s | grep '"user"')
-  [[ "$userSet" =~ ^.*CPUSPEC\($cpuShield\)\ with\ 0\ tasks.*$ ]] || {
-    echo "Expected empty user CPU set: $userSet"
-    exit 42
-  }
-  echo " - [ok] CPU set 'user' is empty"
+  [[ "$userSet" =~ ^.*CPUSPEC\($cpuShield\)\ with\ 0\ tasks.*$ ]] ||
+    err "expected empty user CPU set: $userSet"
+  logOk "CPU set 'user' is empty"
 
   local sysSet=$(sudo cset shield -u | grep '"system"')
-  [[ "$sysSet" =~ ^.*CPUSPEC\(0\)\ with\ [0-9]+\ tasks.*$ ]] || {
-    echo "Expected system CPU set: $sysSet"
-    exit 42
-  }
-  echo " - [ok] CPU set 'system' exists"
+  [[ "$sysSet" =~ ^.*CPUSPEC\(0\)\ with\ [0-9]+\ tasks.*$ ]] ||
+    err "expected system CPU set: $sysSet"
+  logOk "CPU set 'system' exists"
 }
 
 function setupShield() {
@@ -203,19 +188,19 @@ function setupShield() {
   local log
   log=$(sudo cset shield -c $cpuShield)
   checkFail $? "create shield" "$log"
-  echo " - [ok] Created CPU shield $cpuShield"
+  logOk "created CPU shield $cpuShield"
 
   log=$(sudo cset shield -k on)
   checkFail $? "shield kernel processes" "$log"
-  echo " - [ok] Moved kernel processes to 'system' CPU set"
+  logOk "moved kernel processes to 'system' CPU set"
 
   checkShield
 }
 
 function resetShield() {
   local log
-  sudo cset shield -r > /dev/null
-  echo " - [ok] Removed CPU shield"
+  sudo cset shield -r > /dev/null || true
+  logOk "removed CPU shield"
   checkNoShield
 }
 
@@ -232,30 +217,28 @@ function noIrqAffinitySkip() {
   return $noSkip
 }
 
+function writeIrqAffinity() {
+  local f=$1
+  local save=$2
+  [[ $save == 1 ]] && echo "$f:$(cat $f)" > $irqAffinityFile
+  sudoWrite 1 $f
+  [[ $(cat $f) == 1 ]] ||
+    err "failed to set interrupt affinity of $f to 1"
+}
+
 function setupIrqAffinity() {
   local save=0
   [[ -e $irqAffinityFile ]] || save=1
-  
-  local f="/proc/irq/default_smp_affinity"
-  [[ $save == 1 ]] && echo "$f:$(cat $f)" > $irqAffinityFile
-  sudoWrite 1 $f
-  [[ $(cat $f) == 1 ]] || {
-    echo "Failed to set interrupt affinity of $f to 1"
-    exit 42
-  }
+
+  writeIrqAffinity "/proc/irq/default_smp_affinity" $save
 
   for f in $(ls /proc/irq/*/smp_affinity); do
     if noIrqAffinitySkip $f; then
-      [[ $save == 1 ]] && echo "$f:$(cat $f)" >> $irqAffinityFile
-      sudoWrite 1 $f
-      [[ $(cat $f) == 1 ]] || {
-        echo "Failed to set interrupt affinity of $f to 1"
-        exit 42
-      }
+      writeIrqAffinity $f $save
     fi
   done
 
-  echo " - [ok] Set interrupt affinity files to 1"
+  logOk "set interrupt affinity files to 1"
 }
 
 function resetIrqAffinity() {
@@ -268,22 +251,24 @@ function resetIrqAffinity() {
     done
     rm $irqAffinityFile
   }
-  echo " - [ok] Restored interrupt affinity files"
+  logOk "restored interrupt affinity files"
 }
 
 # Script infra
 
 function usage() {
-  echo "Usage: $0 [set|reset] -ns -nf -nl -ni"
-  echo "  -ns: don't stop services"
-  echo "  -nf: don't set a fixed CPU frequency ($cpuFrequency)"
-  echo "  -nl: don't set up a shielded CPU set ($cpuShield)"
-  echo "  -ni: don't set the affinity for intetrupt handlers to CPU 1"
+cat << EOM
+Usage: $1 [set|reset] [opts]
+  -ns: don't stop services
+  -nf: don't set a fixed CPU frequency ($cpuFrequency)
+  -nl: don't set up a shielded CPU set ($cpuShield)
+  -ni: don't set the affinity for intetrupt handlers to CPU 1
+EOM
   exit 42
 }
 
 function parseArgs() {
-  [[ $# -gt 0 ]] || usage
+  [[ $# -gt 0 ]] || usage $0
   mode="$1"
   shift
 
@@ -308,7 +293,7 @@ function parseArgs() {
         ;;
       *)
         echo "Unknown option: $1"
-        usage
+        usage $0
         ;;
     esac
     shift
@@ -344,6 +329,6 @@ case $mode in
   
   *)
     echo "Unknown mode: $mode"
-    usage "$@"
+    usage $0
     ;;
 esac
