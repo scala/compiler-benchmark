@@ -113,7 +113,7 @@ function stopServices() {
       read process services
       # In case there's a running job, the command prints "Job for rsyslog.service canceled" and
       # exits non-zero. The services are still stopped (we check that after), so we continue.
-      sudo systemctl stop $services > /dev/null || true
+      sudo systemctl stop $services > /dev/null 2>&1 || true
       pid=$(pgrep -x "$process" || true)
       [[ $pid == "" ]] ||
         err "failed to stop service $services, $process still running with PID $pid"
@@ -126,7 +126,7 @@ function startServices() {
   for s in $servicesToStop; do
     echo $s |  tr : " " | {
       read process services
-      sudo systemctl start $services > /dev/null
+      sudo systemctl start $services
       logOk "started service $services"
     }
   done
