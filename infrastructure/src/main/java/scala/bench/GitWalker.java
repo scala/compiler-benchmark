@@ -156,8 +156,7 @@ public class GitWalker {
         return tags;
     }
 
-    public static boolean isAncestor(String rev, String scalaRef) throws IOException {
-        Repository repo = GitFactory.openGit();
+    public static boolean isAncestor(String rev, String scalaRef, Repository repo) throws IOException {
         RevWalk walk = new RevWalk(repo);
         try {
             RevCommit revCommit = walk.parseCommit(GitWalker.resolve(rev, repo));
