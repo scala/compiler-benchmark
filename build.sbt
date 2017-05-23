@@ -36,9 +36,9 @@ lazy val compilation = addJmh(project).settings(
   // We should be able to switch this project to a broad range of Scala versions for comparative
   // benchmarking. As such, this project should only depend on the high level `MainClass` compiler API.
   description := "Black box benchmark of the compiler",
-  libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
+  libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
+  mainClass in (Jmh, run) := Some("scala.bench.ScalacBenchmarkRunner")
 ).settings(addJavaOptions).dependsOn(infrastructure)
-
 
 lazy val micro = addJmh(project).settings(
   description := "Finer grained benchmarks of compiler internals",
@@ -65,9 +65,9 @@ lazy val addJavaOptions = javaOptions ++= {
   )
 }
 
-addCommandAlias("hot", "compilation/jmh:runMain scala.bench.ScalacBenchmarkRunner HotScalacBenchmark")
+addCommandAlias("hot", "compilation/jmh:run HotScalacBenchmark")
 
-addCommandAlias("cold", "compilation/jmh:runMain scala.bench.ScalacBenchmarkRunner ColdScalacBenchmark")
+addCommandAlias("cold", "compilation/jmh:run ColdScalacBenchmark")
 
 def addJmh(project: Project): Project = {
   // IntelliJ SBT project import doesn't like sbt-jmh's default setup, which results the prod and test
