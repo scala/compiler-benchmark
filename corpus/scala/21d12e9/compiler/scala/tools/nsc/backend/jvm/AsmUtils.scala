@@ -78,8 +78,12 @@ object AsmUtils {
 //  def main(args: Array[String]): Unit = println(textify(sortedClassRead(classBytes(args.head))))
 
   def sortClassMembers(node: ClassNode): node.type = {
-    node.fields.sort(_.name compareTo _.name)
-    node.methods.sort(_.name compareTo _.name)
+    node.fields.sort(new java.util.Comparator[FieldNode] {
+      def compare(o1: FieldNode, o2: FieldNode): Int = o1.name compareTo o2.name
+    })
+    node.methods.sort(new java.util.Comparator[MethodNode] {
+      def compare(o1: MethodNode, o2: MethodNode): Int = o1.name compareTo o2.name
+    })
     node
   }
 
