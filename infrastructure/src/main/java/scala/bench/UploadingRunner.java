@@ -15,8 +15,8 @@ import java.io.UnsupportedEncodingException;
 
 public class UploadingRunner {
     public static void main(String[] args) throws Exception {
-        CommandLineOptions commandLineOptions = new CommandLineOptions(args);
-        Runner runner = new Runner(commandLineOptions, new UploadingOutputFormat(createOutputFormat(commandLineOptions)));
+        Options opts = ScalacBenchmarkRunner.setCorpusVersion(new CommandLineOptions(args));
+        Runner runner = new Runner(opts, new UploadingOutputFormat(createOutputFormat(opts)));
         runner.run();
     }
 

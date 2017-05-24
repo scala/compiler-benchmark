@@ -4,15 +4,14 @@ version := "1.0-SNAPSHOT"
 
 scalaVersion in ThisBuild := "2.11.8"
 
+resolvers += "scala-integration" at "https://scala-ci.typesafe.com/artifactory/scala-integration/"
+
 // Convenient access to builds from PR validation
 resolvers ++= (
   if (scalaVersion.value.endsWith("-SNAPSHOT"))
     List(
-      "pr-scala snapshots old" at "http://private-repo.typesafe.com/typesafe/scala-pr-validation-snapshots/",
       "pr-scala snapshots" at "https://scala-ci.typesafe.com/artifactory/scala-pr-validation-snapshots/",
-      Resolver.mavenLocal,
-      Resolver.sonatypeRepo("snapshots")
-    )
+      Resolver.mavenLocal)
   else
     Nil
 )
@@ -37,9 +36,9 @@ lazy val compilation = addJmh(project).settings(
   // We should be able to switch this project to a broad range of Scala versions for comparative
   // benchmarking. As such, this project should only depend on the high level `MainClass` compiler API.
   description := "Black box benchmark of the compiler",
-  libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
+  libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
+  mainClass in (Jmh, run) := Some("scala.bench.ScalacBenchmarkRunner")
 ).settings(addJavaOptions).dependsOn(infrastructure)
-
 
 lazy val micro = addJmh(project).settings(
   description := "Finer grained benchmarks of compiler internals",

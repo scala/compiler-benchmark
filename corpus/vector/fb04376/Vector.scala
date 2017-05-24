@@ -37,7 +37,7 @@ object Vector extends IndexedSeqFactory[Vector] {
  *  in effectively constant time, as well as very fast append and prepend.  Because vectors strike
  *  a good balance between fast random selections and fast random functional updates, they are
  *  currently the default implementation of immutable indexed sequences.  It is backed by a little
- *  endian bit-mapped vector trie with a Abranching factor of 32.  Locality is very good, but not
+ *  endian bit-mapped vector trie with a branching factor of 32.  Locality is very good, but not
  *  contiguous, which is good for very large sequences.
  *
  *  @see [[http://docs.scala-lang.org/overviews/collections/concrete-immutable-collection-classes.html#vectors "Scala's Collection Library overview"]]
@@ -1233,5 +1233,4 @@ private[immutable] trait VectorPointer[T] {
 
 
 }
-
 
