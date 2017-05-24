@@ -35,6 +35,11 @@ public class ScalacBenchmarkRunner {
                 if (GitWalker.isAncestor("v2.10.2", scalaRef, repo))
                     return "a45f905"; // compiles with 2.10.2, but not with 2.10.1
                 break;
+
+            case "scala":
+                if (GitWalker.isAncestor("v2.11.5", scalaRef, repo))
+                    return "21d12e9";
+                break;
         }
 
         return null;
@@ -44,18 +49,23 @@ public class ScalacBenchmarkRunner {
         Collection<String> sources = clOpts.getParameter("source").orElse(Collections.emptyList());
         String source = null;
         if (sources.size() == 1) source = sources.iterator().next();
+        if (source == null) return clOpts;
 
         String corpusVer = corpusVersion(source);
         if (corpusVer == null) return clOpts;
-        else {
-            return new OptionsBuilder()
-                    .parent(clOpts)
-                    .param("corpusVersion", corpusVersion(source))
-                    .build();
-        }
+        else return new OptionsBuilder()
+                .parent(clOpts)
+                .param("corpusVersion", corpusVersion(source))
+                .build();
     }
 
     public static void main(String[] args) throws Exception {
-        new Runner(setCorpusVersion(new CommandLineOptions(args))).run();
+        CommandLineOptions opts = new CommandLineOptions(args);
+        // Support `-h`, copied from org.openjdk.jmh.Main. Could also add -l/lp/lprof/lrf.
+        if (opts.shouldHelp()) {
+            opts.showHelp();
+            return;
+        }
+        new Runner(setCorpusVersion(opts)).run();
     }
 }
