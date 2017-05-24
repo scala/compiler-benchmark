@@ -43,6 +43,7 @@ scsi_eh                   # scsi error handler
 scsi_tmf                  #
 sftp-server               # used for remote file access (editing scripts)
 sshd                      # jenkins
+sudo_sudo_./scripts/benv  # myself
 systemd                   #
 systemd-journal           # Journal Service
 systemd-logind            # login service
