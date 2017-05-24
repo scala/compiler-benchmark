@@ -20,6 +20,8 @@ public class ScalacBenchmarkRunner {
         if (scalaRef == null)
             throw new RuntimeException("Please provide -DscalaRef=...");
 
+        // TODO: git fetch --tags
+
         switch(source) {
             case "vector":
                 if (GitWalker.isAncestor("v2.11.0", scalaRef, repo))
