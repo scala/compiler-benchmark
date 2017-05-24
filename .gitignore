@@ -3,3 +3,4 @@ target/
 *.csv
 /.idea/
 /scripts/savedIrqAffinity
+/infrastructure/src/main/resources/application.conf
