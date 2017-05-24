@@ -1,13 +1,17 @@
 package scala.tools.nsc
 
 import java.io.{File, IOException}
+import java.net.URL
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
+import com.typesafe.config.ConfigFactory
 import org.openjdk.jmh.annotations.Mode._
 import org.openjdk.jmh.annotations._
+
+import scala.collection.JavaConverters._
 
 @State(Scope.Benchmark)
 class ScalacBenchmark {
@@ -24,13 +28,18 @@ class ScalacBenchmark {
 
   var driver: Driver = _
 
+  var depsClasspath: String = _
+
   def compileImpl(): Unit = {
     val compilerArgs =
       if (source.startsWith("@")) Array(source)
       else {
         import scala.collection.JavaConverters._
         val allFiles = Files.walk(findSourceDir, FileVisitOption.FOLLOW_LINKS).collect(Collectors.toList[Path]).asScala.toList
-        allFiles.filter(_.getFileName.toString.endsWith(".scala")).map(_.toAbsolutePath.toString).toArray
+        allFiles.filter(f => {
+          val name = f.getFileName.toString
+          name.endsWith(".scala") || name.endsWith(".java")
+        }).map(_.toAbsolutePath.normalize.toString).toArray
       }
 
     // MainClass is copy-pasted from compiler for source compatibility with 2.10.x - 2.13.x
@@ -44,9 +53,14 @@ class ScalacBenchmark {
       override def newCompiler(): Global = Global(settings, reporter)
 
       override protected def processSettingsHook(): Boolean = {
-        settings.usejavacp.value = true
+        if (source == "scala")
+          settings.sourcepath.value = Paths.get(s"../corpus/$source/$corpusVersion/library").toAbsolutePath.normalize.toString
+        else
+          settings.usejavacp.value = true
         settings.outdir.value = tempDir.getAbsolutePath
         settings.nowarn.value = true
+        if (depsClasspath != null)
+          settings.processArgumentString(s"-cp $depsClasspath")
         if (extraArgs != null && extraArgs != "")
           settings.processArgumentString(extraArgs)
         true
@@ -81,8 +95,33 @@ class ScalacBenchmark {
     })
   }
 
+  private def corpusSourcePath = Paths.get(s"../corpus/$source/$corpusVersion")
+
+  @Setup(Level.Trial) def initDepsClasspath(): Unit = {
+    val depsDir = Paths.get(ConfigFactory.load.getString("deps.localdir"))
+    val depsFile = corpusSourcePath.resolve("deps.txt")
+    if (Files.exists(depsFile)) {
+      val res = new StringBuilder()
+      for (depUrlString <- Files.lines(depsFile).iterator().asScala) {
+        val depUrl = new URL(depUrlString)
+        val filename = Paths.get(depUrl.getPath).getFileName.toString
+        val depFile = depsDir.resolve(filename)
+        // TODO: check hash if file exists, or after downloading
+        if (!Files.exists(depFile)) {
+          if (!Files.exists(depsDir)) Files.createDirectories(depsDir)
+          val in = depUrl.openStream
+          Files.copy(in, depFile, StandardCopyOption.REPLACE_EXISTING)
+          in.close()
+        }
+        if (res.nonEmpty) res.append(File.pathSeparator)
+        res.append(depFile.toAbsolutePath.normalize.toString)
+      }
+      depsClasspath = res.toString
+    }
+  }
+
   private def findSourceDir: Path = {
-    val path = Paths.get(s"../corpus/$source/$corpusVersion")
+    val path = corpusSourcePath
     if (Files.exists(path)) path
     else Paths.get(source)
   }
