@@ -118,17 +118,16 @@ public class GitWalker {
             ObjectId id = repo.resolve("origin/" + branch);
             if (id == null) {
                 id = repo.resolve("scala/" + branch); // name of the remote on jenkins, TODO add to config
-                if (id == null) {
-                    ObjectId resolve = repo.resolve(branch);
-                    if (resolve == null) {
-                        throw new IllegalArgumentException("Cannot resolve: " + branch + " from " + repo);
-                    }
-                    return resolve;
-                } else {
-                    return id;
-                }
-            } else {
-                return id;
+                if (id == null)
+                    id = repo.resolve(branch);
+            }
+
+            if (id == null)
+                throw new IllegalArgumentException("Cannot resolve: " + branch + " from " + repo);
+
+            // if `id` is a tag, `peel` goes from the tag object to the referenced commit object
+            try (RevWalk w = new RevWalk(repo)) {
+                return w.peel(w.parseAny(id)).getId();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
