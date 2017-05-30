@@ -1,0 +1,1152 @@
+{
+  "id": 5,
+  "title": "PR Validation",
+  "tags": [],
+  "style": "dark",
+  "timezone": "browser",
+  "editable": true,
+  "sharedCrosshair": false,
+  "hideControls": false,
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "56daf3a|14132b4",
+          "value": "56daf3a|14132b4"
+        },
+        "hide": 0,
+        "label": null,
+        "name": "scalaSha",
+        "options": [
+          {
+            "selected": false,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "constant"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "scala_benchmark",
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "source",
+        "options": [],
+        "query": "show tag values from result with key = \"source\"",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": null,
+        "tagsQuery": null,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "HotScalacBenchmark.compile",
+          "value": "HotScalacBenchmark.compile"
+        },
+        "datasource": "scala_benchmark",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "bench",
+        "options": [],
+        "query": "show tag values from result with key = \"benchmark\"",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": null,
+        "tagsQuery": null,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "scalabench@scalabench@",
+          "value": "scalabench@scalabench@"
+        },
+        "datasource": "scala_benchmark",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "host",
+        "options": [],
+        "query": "show tag values from result with key = \"hostId\"",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": null,
+        "tagsQuery": null,
+        "type": "query"
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "datasource": "scala_benchmark",
+        "enable": true,
+        "iconColor": "rgb(49, 49, 49)",
+        "limit": 100,
+        "name": "tag",
+        "query": "select \"tag\" from commit where $timeFilter and \"tag\" <> '' and branch =~ /$branch$/",
+        "titleColumn": "tag",
+        "type": "alert"
+      },
+      {
+        "datasource": "scala_benchmark",
+        "enable": false,
+        "iconColor": "rgb(111, 88, 88)",
+        "limit": 100,
+        "name": "SHA",
+        "query": "select sample(shortsha, 256) ,annotationHtml from commit where $timeFilter and branch =~ /$branch$/",
+        "tagsColumn": "",
+        "textColumn": "annotationHtml",
+        "titleColumn": "shortsha",
+        "type": "alert"
+      }
+    ]
+  },
+  "refresh": false,
+  "schemaVersion": 13,
+  "version": 9,
+  "links": [],
+  "gnetId": null,
+  "rows": [
+    {
+      "title": "Dashboard Row",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 0,
+          "height": "400px",
+          "id": 4,
+          "interval": ">1s",
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 2,
+          "points": true,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "2.10.x",
+              "color": "#967302"
+            },
+            {
+              "alias": "2.11.x",
+              "color": "#3F6833"
+            },
+            {
+              "alias": "2.12.x",
+              "color": "#BF1B00"
+            },
+            {
+              "alias": "v2.12.0",
+              "color": "#962D82",
+              "points": true
+            },
+            {
+              "alias": "2.13.x",
+              "color": "#EA6460"
+            }
+          ],
+          "span": 9,
+          "stack": false,
+          "steppedLine": true,
+          "targets": [
+            {
+              "alias": "$tag_source",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "benchmark"
+                  ],
+                  "type": "tag"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "hide": false,
+              "measurement": "result",
+              "policy": "autogen",
+              "query": "SELECT last(\"score\") as score FROM \"result\" where $timeFilter and benchmark =~ /^($bench)$/ and hostId::tag =~ /^($host)$/ and source::tag =~ /^($source)$/ and scalaSha =~ /^($scalaSha).*/ group by time($interval), benchmark, hostId, source",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "$source",
+          "tooltip": {
+            "msResolution": false,
+            "shared": false,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+              "min"
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "none",
+              "label": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "scopedVars": {
+            "source": {
+              "text": "better-files",
+              "value": "better-files",
+              "selected": false
+            }
+          }
+        },
+        {
+          "columns": [],
+          "editable": true,
+          "error": false,
+          "fontSize": "80%",
+          "id": 5,
+          "links": [],
+          "pageSize": null,
+          "scroll": true,
+          "showHeader": true,
+          "sort": {
+            "col": 3,
+            "desc": true
+          },
+          "span": 3,
+          "styles": [
+            {
+              "dateFormat": "YYYY-MM-DD",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "none"
+            }
+          ],
+          "targets": [
+            {
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "hide": false,
+              "policy": "default",
+              "query": "SELECT  scalaVersion as version, score, scoreError as error, commitShortMessage as message FROM \"result\" WHERE $timeFilter and benchmark =~ /^($bench)$/ and scalaSha =~ /^($scalaSha).*/ and hostId =~ /^($host)$/ and source =~ /^($source)$/ order by time",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "table",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "title": "",
+          "transform": "table",
+          "type": "table",
+          "scopedVars": {
+            "source": {
+              "text": "better-files",
+              "value": "better-files",
+              "selected": false
+            }
+          }
+        }
+      ],
+      "showTitle": false,
+      "titleSize": "h6",
+      "height": 401,
+      "repeat": "source",
+      "repeatRowId": null,
+      "repeatIteration": null,
+      "collapse": false
+    },
+    {
+      "title": "Dashboard Row",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 0,
+          "height": "400px",
+          "id": 6,
+          "interval": ">1s",
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 2,
+          "points": true,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "2.10.x",
+              "color": "#967302"
+            },
+            {
+              "alias": "2.11.x",
+              "color": "#3F6833"
+            },
+            {
+              "alias": "2.12.x",
+              "color": "#BF1B00"
+            },
+            {
+              "alias": "v2.12.0",
+              "color": "#962D82",
+              "points": true
+            },
+            {
+              "alias": "2.13.x",
+              "color": "#EA6460"
+            }
+          ],
+          "span": 9,
+          "stack": false,
+          "steppedLine": true,
+          "targets": [
+            {
+              "alias": "$tag_source",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "benchmark"
+                  ],
+                  "type": "tag"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "hide": false,
+              "measurement": "result",
+              "policy": "autogen",
+              "query": "SELECT last(\"score\") as score FROM \"result\" where $timeFilter and benchmark =~ /^($bench)$/ and hostId::tag =~ /^($host)$/ and source::tag =~ /^($source)$/ and scalaSha =~ /^($scalaSha).*/ group by time($interval), benchmark, hostId, source",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "$source",
+          "tooltip": {
+            "msResolution": false,
+            "shared": false,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+              "min"
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "none",
+              "label": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "scopedVars": {
+            "source": {
+              "text": "scala",
+              "value": "scala",
+              "selected": false
+            }
+          }
+        },
+        {
+          "columns": [],
+          "editable": true,
+          "error": false,
+          "fontSize": "80%",
+          "id": 7,
+          "links": [],
+          "pageSize": null,
+          "scroll": true,
+          "showHeader": true,
+          "sort": {
+            "col": 3,
+            "desc": true
+          },
+          "span": 3,
+          "styles": [
+            {
+              "dateFormat": "YYYY-MM-DD",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "none"
+            }
+          ],
+          "targets": [
+            {
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "hide": false,
+              "policy": "default",
+              "query": "SELECT  scalaVersion as version, score, scoreError as error, commitShortMessage as message FROM \"result\" WHERE $timeFilter and benchmark =~ /^($bench)$/ and scalaSha =~ /^($scalaSha).*/ and hostId =~ /^($host)$/ and source =~ /^($source)$/ order by time",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "table",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "title": "",
+          "transform": "table",
+          "type": "table",
+          "scopedVars": {
+            "source": {
+              "text": "scala",
+              "value": "scala",
+              "selected": false
+            }
+          }
+        }
+      ],
+      "showTitle": false,
+      "titleSize": "h6",
+      "height": 401,
+      "repeat": null,
+      "repeatRowId": 1,
+      "repeatIteration": 1496115804858,
+      "collapse": false
+    },
+    {
+      "title": "Dashboard Row",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 0,
+          "height": "400px",
+          "id": 8,
+          "interval": ">1s",
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 2,
+          "points": true,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "2.10.x",
+              "color": "#967302"
+            },
+            {
+              "alias": "2.11.x",
+              "color": "#3F6833"
+            },
+            {
+              "alias": "2.12.x",
+              "color": "#BF1B00"
+            },
+            {
+              "alias": "v2.12.0",
+              "color": "#962D82",
+              "points": true
+            },
+            {
+              "alias": "2.13.x",
+              "color": "#EA6460"
+            }
+          ],
+          "span": 9,
+          "stack": false,
+          "steppedLine": true,
+          "targets": [
+            {
+              "alias": "$tag_source",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "benchmark"
+                  ],
+                  "type": "tag"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "hide": false,
+              "measurement": "result",
+              "policy": "autogen",
+              "query": "SELECT last(\"score\") as score FROM \"result\" where $timeFilter and benchmark =~ /^($bench)$/ and hostId::tag =~ /^($host)$/ and source::tag =~ /^($source)$/ and scalaSha =~ /^($scalaSha).*/ group by time($interval), benchmark, hostId, source",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "$source",
+          "tooltip": {
+            "msResolution": false,
+            "shared": false,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+              "min"
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "none",
+              "label": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "scopedVars": {
+            "source": {
+              "text": "scalap",
+              "value": "scalap",
+              "selected": false
+            }
+          }
+        },
+        {
+          "columns": [],
+          "editable": true,
+          "error": false,
+          "fontSize": "80%",
+          "id": 9,
+          "links": [],
+          "pageSize": null,
+          "scroll": true,
+          "showHeader": true,
+          "sort": {
+            "col": 3,
+            "desc": true
+          },
+          "span": 3,
+          "styles": [
+            {
+              "dateFormat": "YYYY-MM-DD",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "none"
+            }
+          ],
+          "targets": [
+            {
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "hide": false,
+              "policy": "default",
+              "query": "SELECT  scalaVersion as version, score, scoreError as error, commitShortMessage as message FROM \"result\" WHERE $timeFilter and benchmark =~ /^($bench)$/ and scalaSha =~ /^($scalaSha).*/ and hostId =~ /^($host)$/ and source =~ /^($source)$/ order by time",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "table",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "title": "",
+          "transform": "table",
+          "type": "table",
+          "scopedVars": {
+            "source": {
+              "text": "scalap",
+              "value": "scalap",
+              "selected": false
+            }
+          }
+        }
+      ],
+      "showTitle": false,
+      "titleSize": "h6",
+      "height": 401,
+      "repeat": null,
+      "repeatRowId": 1,
+      "repeatIteration": 1496115804858,
+      "collapse": false
+    },
+    {
+      "title": "Dashboard Row",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 0,
+          "height": "400px",
+          "id": 10,
+          "interval": ">1s",
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 2,
+          "points": true,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "2.10.x",
+              "color": "#967302"
+            },
+            {
+              "alias": "2.11.x",
+              "color": "#3F6833"
+            },
+            {
+              "alias": "2.12.x",
+              "color": "#BF1B00"
+            },
+            {
+              "alias": "v2.12.0",
+              "color": "#962D82",
+              "points": true
+            },
+            {
+              "alias": "2.13.x",
+              "color": "#EA6460"
+            }
+          ],
+          "span": 9,
+          "stack": false,
+          "steppedLine": true,
+          "targets": [
+            {
+              "alias": "$tag_source",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "benchmark"
+                  ],
+                  "type": "tag"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "hide": false,
+              "measurement": "result",
+              "policy": "autogen",
+              "query": "SELECT last(\"score\") as score FROM \"result\" where $timeFilter and benchmark =~ /^($bench)$/ and hostId::tag =~ /^($host)$/ and source::tag =~ /^($source)$/ and scalaSha =~ /^($scalaSha).*/ group by time($interval), benchmark, hostId, source",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "$source",
+          "tooltip": {
+            "msResolution": false,
+            "shared": false,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+              "min"
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "none",
+              "label": "ms",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "scopedVars": {
+            "source": {
+              "text": "vector",
+              "value": "vector",
+              "selected": false
+            }
+          }
+        },
+        {
+          "columns": [],
+          "editable": true,
+          "error": false,
+          "fontSize": "80%",
+          "id": 11,
+          "links": [],
+          "pageSize": null,
+          "scroll": true,
+          "showHeader": true,
+          "sort": {
+            "col": 3,
+            "desc": true
+          },
+          "span": 3,
+          "styles": [
+            {
+              "dateFormat": "YYYY-MM-DD",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "none"
+            }
+          ],
+          "targets": [
+            {
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "hide": false,
+              "policy": "default",
+              "query": "SELECT  scalaVersion as version, score, scoreError as error, commitShortMessage as message FROM \"result\" WHERE $timeFilter and benchmark =~ /^($bench)$/ and scalaSha =~ /^($scalaSha).*/ and hostId =~ /^($host)$/ and source =~ /^($source)$/ order by time",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "table",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "title": "",
+          "transform": "table",
+          "type": "table",
+          "scopedVars": {
+            "source": {
+              "text": "vector",
+              "value": "vector",
+              "selected": false
+            }
+          }
+        }
+      ],
+      "showTitle": false,
+      "titleSize": "h6",
+      "height": 401,
+      "repeat": null,
+      "repeatRowId": 1,
+      "repeatIteration": 1496115804858,
+      "collapse": false
+    },
+    {
+      "title": "Dashboard Row",
+      "panels": [],
+      "showTitle": false,
+      "titleSize": "h6",
+      "height": 250,
+      "repeat": null,
+      "repeatRowId": null,
+      "repeatIteration": null,
+      "collapse": false
+    }
+  ]
+}
