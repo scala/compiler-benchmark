@@ -36,8 +36,17 @@ lazy val compilation = addJmh(project).settings(
   // We should be able to switch this project to a broad range of Scala versions for comparative
   // benchmarking. As such, this project should only depend on the high level `MainClass` compiler API.
   description := "Black box benchmark of the compiler",
-  libraryDependencies += scalaOrganization.value % "scala-compiler" % scalaVersion.value,
-  mainClass in (Jmh, run) := Some("scala.bench.ScalacBenchmarkRunner")
+  libraryDependencies += {
+    if (isDotty.value) "ch.epfl.lamp" %% "dotty-compiler" % scalaVersion.value
+    else scalaOrganization.value % "scala-compiler" % scalaVersion.value
+  },
+  unmanagedSourceDirectories.in(Compile) +=
+    sourceDirectory.in(Compile).value / (if (isDotty.value) "dotc" else "scalac"),
+  mainClass in (Jmh, run) := Some("scala.bench.ScalacBenchmarkRunner"),
+  libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
+  testOptions in Test += Tests.Argument(TestFrameworks.JUnit),
+  fork in (Test, test) := true,
+  fork in run := true
 ).settings(addJavaOptions).dependsOn(infrastructure)
 
 lazy val micro = addJmh(project).settings(

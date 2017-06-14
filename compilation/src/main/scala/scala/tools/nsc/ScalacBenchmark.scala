@@ -12,9 +12,20 @@ import org.openjdk.jmh.annotations.Mode._
 import org.openjdk.jmh.annotations._
 
 import scala.collection.JavaConverters._
+import scala.tools.benchmark.BenchmarkDriver
+
+trait BaseBenchmarkDriver {
+  def source: String
+  def extraArgs: String
+  def corpusVersion: String
+  def depsClasspath: String
+  def tempDir: File
+  def corpusSourcePath: Path
+  def compilerArgs: Array[String]
+}
 
 @State(Scope.Benchmark)
-class ScalacBenchmark {
+class ScalacBenchmark extends BenchmarkDriver {
   @Param(value = Array())
   var source: String = _
 
@@ -26,22 +37,9 @@ class ScalacBenchmark {
   @Param(value = Array("latest"))
   var corpusVersion: String = _
 
-  var driver: Driver = _
-
   var depsClasspath: String = _
 
   def compileImpl(): Unit = {
-    val (compilerArgs, sourceFiles) =
-      if (source.startsWith("@")) (List(source), List[String]())
-      else {
-        import scala.collection.JavaConverters._
-        val allFiles = Files.walk(findSourceDir, FileVisitOption.FOLLOW_LINKS).collect(Collectors.toList[Path]).asScala.toList
-        val files = allFiles.filter(f => {
-          val name = f.getFileName.toString
-          name.endsWith(".scala") || name.endsWith(".java")
-        }).map(_.toAbsolutePath.normalize.toString).toList
-        (List[String](), files)
-      }
 
     // MainClass is copy-pasted from compiler for source compatibility with 2.10.x - 2.13.x
     class MainClass extends Driver with EvalLoop {
@@ -73,7 +71,21 @@ class ScalacBenchmark {
     assert(!driver.reporter.hasErrors)
   }
 
-  private var tempDir: File = null
+  def compilerArgs: List[String] = if (source.startsWith("@")) List(source) else Nil
+
+  def sourceFiles: List[String] =
+    if (source.startsWith("@")) Nil
+    else {
+      import scala.collection.JavaConverters._
+      val allFiles = Files.walk(findSourceDir, FileVisitOption.FOLLOW_LINKS).collect(Collectors.toList[Path]).asScala.toList
+      val files = allFiles.filter(f => {
+        val name = f.getFileName.toString
+        name.endsWith(".scala") || name.endsWith(".java")
+      }).map(_.toAbsolutePath.normalize.toString).toList
+      files
+    }
+
+  var tempDir: File = null
 
   // Executed once per fork
   @Setup(Level.Trial) def initTemp(): Unit = {
@@ -86,7 +98,7 @@ class ScalacBenchmark {
     BenchmarkUtils.deleteRecursive(tempDir.toPath)
   }
 
-  private def corpusSourcePath = Paths.get(s"../corpus/$source/$corpusVersion")
+  def corpusSourcePath: Path = Paths.get(s"../corpus/$source/$corpusVersion")
 
   @Setup(Level.Trial) def initDepsClasspath(): Unit = {
     val classPath = BenchmarkUtils.initDeps(corpusSourcePath)
@@ -138,6 +150,8 @@ class ColdScalacBenchmark extends ScalacBenchmark {
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @Warmup(iterations = 0)
 @Measurement(iterations = 1, time = 30, timeUnit = TimeUnit.SECONDS)
+// @Fork triggers match error in dotty, see https://github.com/lampepfl/dotty/issues/2704
+// Comment out `@Fork` to run compilation/test with Dotty or wait for that issue to be fixed.
 @Fork(value = 3, jvmArgs = Array("-Xms2G", "-Xmx2G"))
 class WarmScalacBenchmark extends ScalacBenchmark {
   @Benchmark
