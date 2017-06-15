@@ -140,7 +140,7 @@ object ScalacBenchmarkStandalone {
 @BenchmarkMode(Array(SingleShotTime))
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 // TODO -Xbatch reduces fork-to-fork variance, but incurs 5s -> 30s slowdown
-//@Fork(value = 16, jvmArgs = Array("-XX:CICompilerCount=2", "-Xms2G", "-Xmx2G"))
+@Fork(value = 16, jvmArgs = Array("-XX:CICompilerCount=2", "-Xms2G", "-Xmx2G"))
 class ColdScalacBenchmark extends ScalacBenchmark {
   @Benchmark
   def compile(): Unit = compileImpl()
@@ -152,7 +152,7 @@ class ColdScalacBenchmark extends ScalacBenchmark {
 @Measurement(iterations = 1, time = 30, timeUnit = TimeUnit.SECONDS)
 // @Fork triggers match error in dotty, see https://github.com/lampepfl/dotty/issues/2704
 // Comment out `@Fork` to run compilation/test with Dotty or wait for that issue to be fixed.
-//@Fork(value = 3, jvmArgs = Array("-Xms2G", "-Xmx2G"))
+@Fork(value = 3, jvmArgs = Array("-Xms2G", "-Xmx2G"))
 class WarmScalacBenchmark extends ScalacBenchmark {
   @Benchmark
   def compile(): Unit = compileImpl()
@@ -162,7 +162,7 @@ class WarmScalacBenchmark extends ScalacBenchmark {
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @Warmup(iterations = 10, time = 10, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 10, time = 10, timeUnit = TimeUnit.SECONDS)
-//@Fork(value = 3, jvmArgs = Array("-Xms2G", "-Xmx2G"))
+@Fork(value = 3, jvmArgs = Array("-Xms2G", "-Xmx2G"))
 class HotScalacBenchmark extends ScalacBenchmark {
   @Benchmark
   def compile(): Unit = compileImpl()
