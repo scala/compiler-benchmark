@@ -45,8 +45,7 @@ lazy val compilation = addJmh(project).settings(
   mainClass in (Jmh, run) := Some("scala.bench.ScalacBenchmarkRunner"),
   libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
   testOptions in Test += Tests.Argument(TestFrameworks.JUnit),
-  fork in (Test, test) := true,
-  fork in run := true
+  fork in (Test, test) := true // jmh scoped tasks run with fork := true.
 ).settings(addJavaOptions).dependsOn(infrastructure)
 
 lazy val micro = addJmh(project).settings(
