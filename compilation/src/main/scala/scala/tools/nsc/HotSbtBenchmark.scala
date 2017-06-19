@@ -95,7 +95,7 @@ class HotSbtBenchmark {
     var read : Int = -1
     while (true) {
       read = processOutputReader.read(buffer)
-      if (read == -1) sys.error("EOF")
+      if (read == -1) sys.error("EOF: " + output.toString)
       else {
         output.append(buffer, 0, read)
         if (output.toString.contains("\n> ")) {
