@@ -25,6 +25,9 @@ class HotSbtBenchmark {
   @Param(value = Array(""))
   var extraArgs: String = _
 
+  @Param(value = Array("0.13.15"))
+  var sbtVersion: String = _
+
   // This parameter is set by ScalacBenchmarkRunner / UploadingRunner based on the Scala version.
   // When running the benchmark directly the "latest" symlink is used.
   @Param(value = Array("latest"))
@@ -60,7 +63,7 @@ class HotSbtBenchmark {
     scalaHome = Files.createTempDirectory("scalaHome-")
     initDepsClasspath()
     Files.createDirectory(tempDir.resolve("project"))
-    Files.write(tempDir.resolve("project/build.properties"), java.util.Arrays.asList("sbt.version=0.13.15"))
+    Files.write(tempDir.resolve("project/build.properties"), java.util.Arrays.asList("sbt.version=" + sbtVersion))
     Files.write(tempDir.resolve("build.sbt"), buildDef.getBytes("UTF-8"))
     val sbtLaucherPath = System.getProperty("sbt.launcher")
     if (sbtLaucherPath == null) sys.error("System property -Dsbt.launcher absent")
