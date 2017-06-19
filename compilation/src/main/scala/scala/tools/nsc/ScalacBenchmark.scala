@@ -31,15 +31,16 @@ class ScalacBenchmark {
   var depsClasspath: String = _
 
   def compileImpl(): Unit = {
-    val compilerArgs =
-      if (source.startsWith("@")) Array(source)
+    val (compilerArgs, sourceFiles) =
+      if (source.startsWith("@")) (List(source), List[String]())
       else {
         import scala.collection.JavaConverters._
         val allFiles = Files.walk(findSourceDir, FileVisitOption.FOLLOW_LINKS).collect(Collectors.toList[Path]).asScala.toList
-        allFiles.filter(f => {
+        val files = allFiles.filter(f => {
           val name = f.getFileName.toString
           name.endsWith(".scala") || name.endsWith(".java")
-        }).map(_.toAbsolutePath.normalize.toString).toArray
+        }).map(_.toAbsolutePath.normalize.toString).toList
+        (List[String](), files)
       }
 
     // MainClass is copy-pasted from compiler for source compatibility with 2.10.x - 2.13.x
@@ -61,14 +62,14 @@ class ScalacBenchmark {
         settings.nowarn.value = true
         if (depsClasspath != null)
           settings.processArgumentString(s"-cp $depsClasspath")
-        if (extraArgs != null && extraArgs != "")
-          settings.processArgumentString(extraArgs)
         true
       }
     }
     val driver = new MainClass
 
-    driver.process(compilerArgs)
+    val extras = if (extraArgs != null && extraArgs != "") extraArgs.split('|').toList else Nil
+    val allArgs = compilerArgs ++ extras ++ sourceFiles
+    driver.process(allArgs.toArray)
     assert(!driver.reporter.hasErrors)
   }
 
