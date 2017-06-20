@@ -28,6 +28,12 @@ class HotSbtBenchmark {
   @Param(value = Array("0.13.15"))
   var sbtVersion: String = _
 
+  @Param(value = Array(""))
+  var extraBuild: String = _
+
+  @Param(value= Array("compile"))
+  var compileCmd: String = _
+
   // This parameter is set by ScalacBenchmarkRunner / UploadingRunner based on the Scala version.
   // When running the benchmark directly the "latest" symlink is used.
   @Param(value = Array("latest"))
@@ -42,6 +48,19 @@ class HotSbtBenchmark {
   var processInputReader: BufferedWriter = _
   var output= new java.lang.StringBuilder()
 
+  def compileRawSetting = if (sbtVersion.startsWith("1.")) "" else
+    """
+      |val compileRaw = taskKey[Unit]("Compile directly, bypassing the incremental compiler")
+      |
+      |def addCompileRaw = compileRaw := {
+      |    val compiler = new sbt.compiler.RawCompiler(scalaInstance.value, sbt.ClasspathOptions.auto, streams.value.log)
+      |    classDirectory.value.mkdirs()
+      |    compiler.apply(sources.value, classDirectory.value +: dependencyClasspath.value.map(_.data), classDirectory.value, scalacOptions.value)
+      |  }
+      |
+      |inConfig(Compile)(List(addCompileRaw))
+    """.stripMargin
+
   def buildDef =
     s"""
        |scalaHome := Some(file("${scalaHome.toAbsolutePath.toString}"))
@@ -55,6 +74,12 @@ class HotSbtBenchmark {
        |libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
        |libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
        |
+       |traceLevel := Int.MaxValue
+       |traceLevel in runMain := Int.MaxValue
+       |
+       |$compileRawSetting
+       |
+       |$extraBuild
        |// TODO support .java sources
     """.stripMargin
 
@@ -79,7 +104,7 @@ class HotSbtBenchmark {
 
   @Benchmark
   def compile(): Unit = {
-    issue(";cleanClasses;compile")
+    issue(s";cleanClasses;$compileCmd")
     awaitPrompt()
   }
 
