@@ -61,7 +61,8 @@ lazy val addJavaOptions = javaOptions ++= {
   }
   List(
     "-DscalaVersion=" + scalaVersion.value,
-    "-DscalaRef=" + refOf(scalaVersion.value)
+    "-DscalaRef=" + refOf(scalaVersion.value),
+    "-Dsbt.launcher=" + (sys.props("java.class.path").split(java.io.File.pathSeparatorChar).find(_.contains("sbt-launch")).getOrElse(""))
   )
 }
 

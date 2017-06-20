@@ -83,37 +83,16 @@ class ScalacBenchmark {
     tempDir = tempFile
   }
   @TearDown(Level.Trial) def clearTemp(): Unit = {
-    val directory = tempDir.toPath
-    Files.walkFileTree(directory, new SimpleFileVisitor[Path]() {
-      override def visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult = {
-        Files.delete(file)
-        FileVisitResult.CONTINUE
-      }
-      override def postVisitDirectory(dir: Path, exc: IOException): FileVisitResult = {
-        Files.delete(dir)
-        FileVisitResult.CONTINUE
-      }
-    })
+    BenchmarkUtils.deleteRecursive(tempDir.toPath)
   }
 
   private def corpusSourcePath = Paths.get(s"../corpus/$source/$corpusVersion")
 
   @Setup(Level.Trial) def initDepsClasspath(): Unit = {
-    val depsDir = Paths.get(ConfigFactory.load.getString("deps.localdir"))
-    val depsFile = corpusSourcePath.resolve("deps.txt")
-    if (Files.exists(depsFile)) {
+    val classPath = BenchmarkUtils.initDeps(corpusSourcePath)
+    if (classPath.nonEmpty) {
       val res = new StringBuilder()
-      for (depUrlString <- Files.lines(depsFile).iterator().asScala) {
-        val depUrl = new URL(depUrlString)
-        val filename = Paths.get(depUrl.getPath).getFileName.toString
-        val depFile = depsDir.resolve(filename)
-        // TODO: check hash if file exists, or after downloading
-        if (!Files.exists(depFile)) {
-          if (!Files.exists(depsDir)) Files.createDirectories(depsDir)
-          val in = depUrl.openStream
-          Files.copy(in, depFile, StandardCopyOption.REPLACE_EXISTING)
-          in.close()
-        }
+      for (depFile <- classPath) {
         if (res.nonEmpty) res.append(File.pathSeparator)
         res.append(depFile.toAbsolutePath.normalize.toString)
       }
