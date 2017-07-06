@@ -36,13 +36,13 @@ lazy val compilation = addJmh(project).settings(
   // We should be able to switch this project to a broad range of Scala versions for comparative
   // benchmarking. As such, this project should only depend on the high level `MainClass` compiler API.
   description := "Black box benchmark of the compiler",
-  libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value,
+  libraryDependencies += scalaOrganization.value % "scala-compiler" % scalaVersion.value,
   mainClass in (Jmh, run) := Some("scala.bench.ScalacBenchmarkRunner")
 ).settings(addJavaOptions).dependsOn(infrastructure)
 
 lazy val micro = addJmh(project).settings(
   description := "Finer grained benchmarks of compiler internals",
-  libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
+  libraryDependencies += scalaOrganization.value % "scala-compiler" % scalaVersion.value
 ).settings(addJavaOptions).dependsOn(infrastructure)
 
 lazy val jvm = addJmh(project).settings(
