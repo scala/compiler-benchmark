@@ -21,7 +21,8 @@ trait BaseBenchmarkDriver {
   def depsClasspath: String
   def tempDir: File
   def corpusSourcePath: Path
-  def compilerArgs: Array[String]
+  def compilerArgs: List[String]
+  def sourceFiles: List[String]
 }
 
 @State(Scope.Benchmark)
@@ -39,39 +40,7 @@ class ScalacBenchmark extends BenchmarkDriver {
 
   var depsClasspath: String = _
 
-  def compileImpl(): Unit = {
-
-    // MainClass is copy-pasted from compiler for source compatibility with 2.10.x - 2.13.x
-    class MainClass extends Driver with EvalLoop {
-      def resident(compiler: Global): Unit = loop { line =>
-        val command = new CompilerCommand(line split "\\s+" toList, new Settings(scalacError))
-        compiler.reporter.reset()
-        new compiler.Run() compile command.files
-      }
-
-      override def newCompiler(): Global = Global(settings, reporter)
-
-      override protected def processSettingsHook(): Boolean = {
-        if (source == "scala")
-          settings.sourcepath.value = Paths.get(s"../corpus/$source/$corpusVersion/library").toAbsolutePath.normalize.toString
-        else
-          settings.usejavacp.value = true
-        settings.outdir.value = tempDir.getAbsolutePath
-        settings.nowarn.value = true
-        if (depsClasspath != null)
-          settings.processArgumentString(s"-cp $depsClasspath")
-        true
-      }
-    }
-    val driver = new MainClass
-
-    val extras = if (extraArgs != null && extraArgs != "") extraArgs.split('|').toList else Nil
-    val allArgs = compilerArgs ++ extras ++ sourceFiles
-    driver.process(allArgs.toArray)
-    assert(!driver.reporter.hasErrors)
-  }
-
-  def compilerArgs: List[String] = if (source.startsWith("@")) List(source) else Nil
+  def compilerArgs: List[String] = if (source.startsWith("@")) source :: Nil else Nil
 
   def sourceFiles: List[String] =
     if (source.startsWith("@")) Nil
@@ -81,7 +50,7 @@ class ScalacBenchmark extends BenchmarkDriver {
       val files = allFiles.filter(f => {
         val name = f.getFileName.toString
         name.endsWith(".scala") || name.endsWith(".java")
-      }).map(_.toAbsolutePath.normalize.toString).toList
+      }).map(_.toAbsolutePath.normalize.toString)
       files
     }
 

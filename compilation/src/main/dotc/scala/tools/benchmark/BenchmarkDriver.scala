@@ -6,7 +6,7 @@ import dotty.tools.dotc.core.Contexts.ContextBase
 
 trait BenchmarkDriver extends BaseBenchmarkDriver {
   def compileImpl(): Unit = {
-    implicit val ctx = (new ContextBase).initialCtx.fresh
+    implicit val ctx = new ContextBase().initialCtx.fresh
     ctx.setSetting(ctx.settings.usejavacp, true)
     if (depsClasspath != null) {
       ctx.setSetting(ctx.settings.classpath,
@@ -15,8 +15,8 @@ trait BenchmarkDriver extends BaseBenchmarkDriver {
     ctx.setSetting(ctx.settings.d, tempDir.getAbsolutePath)
     ctx.setSetting(ctx.settings.language, List("Scala2"))
     val compiler = new dotty.tools.dotc.Compiler
-    val reporter =
-      dotty.tools.dotc.Bench.doCompile(compiler, compilerArgs.toList)
+    val args = compilerArgs ++ sourceFiles
+    val reporter = dotty.tools.dotc.Bench.doCompile(compiler, args)
     assert(!reporter.hasErrors)
   }
 }

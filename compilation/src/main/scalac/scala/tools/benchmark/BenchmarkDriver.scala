@@ -24,13 +24,15 @@ trait BenchmarkDriver extends BaseBenchmarkDriver {
         settings.nowarn.value = true
         if (depsClasspath != null)
           settings.processArgumentString(s"-cp $depsClasspath")
-        if (extraArgs != null && extraArgs != "")
-          settings.processArgumentString(extraArgs)
         true
       }
     }
     val driver = new MainClass
-    driver.process(compilerArgs)
+
+    val extras = if (extraArgs != null && extraArgs != "") extraArgs.split('|').toList else Nil
+    val allArgs = compilerArgs ++ extras ++ sourceFiles
+    driver.process(allArgs.toArray)
     assert(!driver.reporter.hasErrors)
   }
+
 }
