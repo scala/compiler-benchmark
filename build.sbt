@@ -2,7 +2,9 @@ name := "compiler-benchmark"
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion in ThisBuild := "2.11.8"
+def scala211 = "2.11.11"
+def dottyLatest = "0.2.0-RC1"
+scalaVersion in ThisBuild := scala211
 
 resolvers += "scala-integration" at "https://scala-ci.typesafe.com/artifactory/scala-integration/"
 
@@ -40,6 +42,7 @@ lazy val compilation = addJmh(project).settings(
     if (isDotty.value) "ch.epfl.lamp" %% "dotty-compiler" % scalaVersion.value
     else scalaOrganization.value % "scala-compiler" % scalaVersion.value
   },
+  crossScalaVersions := List(scala211, dottyLatest),
   unmanagedSourceDirectories.in(Compile) +=
     sourceDirectory.in(Compile).value / (if (isDotty.value) "dotc" else "scalac"),
   mainClass in (Jmh, run) := Some("scala.bench.ScalacBenchmarkRunner"),
