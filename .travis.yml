@@ -3,7 +3,7 @@ language: scala
 env:
   global:
 
-script: sbt test:compile "hot -psource=scalap -w1 -f1" "micro/jmh:run -w1 -f1" "; project compilation ; +test"
+script: sbt test:compile "hot -psource=scalap -w1 -f1" "; project compilation ; +test" "micro/jmh:run -w1 -f1"
 
 jdk:
   - oraclejdk8
