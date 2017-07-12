@@ -12,6 +12,7 @@ trait BenchmarkDriver extends BaseBenchmarkDriver {
       ctx.setSetting(ctx.settings.classpath,
                      depsClasspath.mkString(File.pathSeparator))
     }
+    ctx.setSetting(ctx.settings.migration, true)
     ctx.setSetting(ctx.settings.d, tempDir.getAbsolutePath)
     ctx.setSetting(ctx.settings.language, List("Scala2"))
     val compiler = new dotty.tools.dotc.Compiler
