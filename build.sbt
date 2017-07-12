@@ -10,10 +10,10 @@ commands += Command.command("testAll") { s =>
   "test:compile" ::
     "compilation/test" ::
     "hot -psource=scalap -wi 1 -i 1 -f1" ::
-    "++0.2.0-RC1" ::
+    s"++$dottyLatest" ::
     "compilation/test" ::
     "hot -psource=vector -wi 1 -i 1 -f1" ::
-    "++2.11.8" ::
+    s"++$scala211" ::
     "micro/jmh:run -w1 -f1" ::
     s
 }
