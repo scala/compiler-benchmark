@@ -17,6 +17,8 @@ import scala.tools.benchmark.BenchmarkDriver
 trait BaseBenchmarkDriver {
   def source: String
   def extraArgs: String
+  def extras: List[String] = if (extraArgs != null && extraArgs != "") extraArgs.split('|').toList else Nil
+  def allArgs: List[String] = compilerArgs ++ extras ++ sourceFiles
   def corpusVersion: String
   def depsClasspath: String
   def tempDir: File

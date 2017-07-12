@@ -28,9 +28,6 @@ trait BenchmarkDriver extends BaseBenchmarkDriver {
       }
     }
     val driver = new MainClass
-
-    val extras = if (extraArgs != null && extraArgs != "") extraArgs.split('|').toList else Nil
-    val allArgs = compilerArgs ++ extras ++ sourceFiles
     driver.process(allArgs.toArray)
     assert(!driver.reporter.hasErrors)
   }
