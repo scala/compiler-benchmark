@@ -121,8 +121,6 @@ class ColdScalacBenchmark extends ScalacBenchmark {
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @Warmup(iterations = 0)
 @Measurement(iterations = 1, time = 30, timeUnit = TimeUnit.SECONDS)
-// @Fork triggers match error in dotty, see https://github.com/lampepfl/dotty/issues/2704
-// Comment out `@Fork` to run compilation/test with Dotty or wait for that issue to be fixed.
 @Fork(value = 3, jvmArgs = Array("-Xms2G", "-Xmx2G"))
 class WarmScalacBenchmark extends ScalacBenchmark {
   @Benchmark
