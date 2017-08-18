@@ -1,5 +1,7 @@
 # JMH benchmarks for the Scala Compiler
 
+[![Join the chat at https://gitter.im/scala/compiler-benchmark](https://badges.gitter.im/scala/compiler-benchmark.svg)](https://gitter.im/scala/compiler-benchmark?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Goal: define a set of JMH benchmarks for the compiler to help drive performance
 tuning and catch performance regressions.
 
