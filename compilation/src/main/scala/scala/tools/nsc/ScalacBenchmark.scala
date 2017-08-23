@@ -12,9 +12,23 @@ import org.openjdk.jmh.annotations.Mode._
 import org.openjdk.jmh.annotations._
 
 import scala.collection.JavaConverters._
+import scala.tools.benchmark.BenchmarkDriver
+
+trait BaseBenchmarkDriver {
+  def source: String
+  def extraArgs: String
+  def extras: List[String] = if (extraArgs != null && extraArgs != "") extraArgs.split('|').toList else Nil
+  def allArgs: List[String] = compilerArgs ++ extras ++ sourceFiles
+  def corpusVersion: String
+  def depsClasspath: String
+  def tempDir: File
+  def corpusSourcePath: Path
+  def compilerArgs: List[String]
+  def sourceFiles: List[String]
+}
 
 @State(Scope.Benchmark)
-class ScalacBenchmark {
+class ScalacBenchmark extends BenchmarkDriver {
   @Param(value = Array())
   var source: String = _
 
@@ -26,54 +40,23 @@ class ScalacBenchmark {
   @Param(value = Array("latest"))
   var corpusVersion: String = _
 
-  var driver: Driver = _
-
   var depsClasspath: String = _
 
-  def compileImpl(): Unit = {
-    val (compilerArgs, sourceFiles) =
-      if (source.startsWith("@")) (List(source), List[String]())
-      else {
-        import scala.collection.JavaConverters._
-        val allFiles = Files.walk(findSourceDir, FileVisitOption.FOLLOW_LINKS).collect(Collectors.toList[Path]).asScala.toList
-        val files = allFiles.filter(f => {
-          val name = f.getFileName.toString
-          name.endsWith(".scala") || name.endsWith(".java")
-        }).map(_.toAbsolutePath.normalize.toString).toList
-        (List[String](), files)
-      }
+  def compilerArgs: List[String] = if (source.startsWith("@")) source :: Nil else Nil
 
-    // MainClass is copy-pasted from compiler for source compatibility with 2.10.x - 2.13.x
-    class MainClass extends Driver with EvalLoop {
-      def resident(compiler: Global): Unit = loop { line =>
-        val command = new CompilerCommand(line split "\\s+" toList, new Settings(scalacError))
-        compiler.reporter.reset()
-        new compiler.Run() compile command.files
-      }
-
-      override def newCompiler(): Global = Global(settings, reporter)
-
-      override protected def processSettingsHook(): Boolean = {
-        if (source == "scala")
-          settings.sourcepath.value = Paths.get(s"../corpus/$source/$corpusVersion/library").toAbsolutePath.normalize.toString
-        else
-          settings.usejavacp.value = true
-        settings.outdir.value = tempDir.getAbsolutePath
-        settings.nowarn.value = true
-        if (depsClasspath != null)
-          settings.processArgumentString(s"-cp $depsClasspath")
-        true
-      }
+  def sourceFiles: List[String] =
+    if (source.startsWith("@")) Nil
+    else {
+      import scala.collection.JavaConverters._
+      val allFiles = Files.walk(findSourceDir, FileVisitOption.FOLLOW_LINKS).collect(Collectors.toList[Path]).asScala.toList
+      val files = allFiles.filter(f => {
+        val name = f.getFileName.toString
+        name.endsWith(".scala") || name.endsWith(".java")
+      }).map(_.toAbsolutePath.normalize.toString)
+      files
     }
-    val driver = new MainClass
 
-    val extras = if (extraArgs != null && extraArgs != "") extraArgs.split('|').toList else Nil
-    val allArgs = compilerArgs ++ extras ++ sourceFiles
-    driver.process(allArgs.toArray)
-    assert(!driver.reporter.hasErrors)
-  }
-
-  private var tempDir: File = null
+  var tempDir: File = null
 
   // Executed once per fork
   @Setup(Level.Trial) def initTemp(): Unit = {
@@ -86,7 +69,7 @@ class ScalacBenchmark {
     BenchmarkUtils.deleteRecursive(tempDir.toPath)
   }
 
-  private def corpusSourcePath = Paths.get(s"../corpus/$source/$corpusVersion")
+  def corpusSourcePath: Path = Paths.get(s"../corpus/$source/$corpusVersion")
 
   @Setup(Level.Trial) def initDepsClasspath(): Unit = {
     val classPath = BenchmarkUtils.initDeps(corpusSourcePath)

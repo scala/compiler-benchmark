@@ -2,7 +2,21 @@ name := "compiler-benchmark"
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion in ThisBuild := "2.11.8"
+def scala211 = "2.11.11"
+def dottyLatest = "0.2.0-RC1"
+scalaVersion in ThisBuild := scala211
+
+commands += Command.command("testAll") { s =>
+  "test:compile" ::
+    "compilation/test" ::
+    "hot -psource=scalap -wi 1 -i 1 -f1" ::
+    s"++$dottyLatest" ::
+    "compilation/test" ::
+    "hot -psource=vector -wi 1 -i 1 -f1" ::
+    s"++$scala211" ::
+    "micro/jmh:run -w1 -f1" ::
+    s
+}
 
 resolvers += "scala-integration" at "https://scala-ci.typesafe.com/artifactory/scala-integration/"
 
@@ -36,8 +50,17 @@ lazy val compilation = addJmh(project).settings(
   // We should be able to switch this project to a broad range of Scala versions for comparative
   // benchmarking. As such, this project should only depend on the high level `MainClass` compiler API.
   description := "Black box benchmark of the compiler",
-  libraryDependencies += scalaOrganization.value % "scala-compiler" % scalaVersion.value,
-  mainClass in (Jmh, run) := Some("scala.bench.ScalacBenchmarkRunner")
+  libraryDependencies += {
+    if (isDotty.value) "ch.epfl.lamp" %% "dotty-compiler" % scalaVersion.value
+    else scalaOrganization.value % "scala-compiler" % scalaVersion.value
+  },
+  crossScalaVersions := List(scala211, dottyLatest),
+  unmanagedSourceDirectories.in(Compile) +=
+    sourceDirectory.in(Compile).value / (if (isDotty.value) "dotc" else "scalac"),
+  mainClass in (Jmh, run) := Some("scala.bench.ScalacBenchmarkRunner"),
+  libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
+  testOptions in Test += Tests.Argument(TestFrameworks.JUnit),
+  fork in (Test, test) := true // jmh scoped tasks run with fork := true.
 ).settings(addJavaOptions).dependsOn(infrastructure)
 
 lazy val micro = addJmh(project).settings(
