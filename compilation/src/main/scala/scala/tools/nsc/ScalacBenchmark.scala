@@ -25,6 +25,7 @@ trait BaseBenchmarkDriver {
   def corpusSourcePath: Path
   def compilerArgs: List[String]
   def sourceFiles: List[String]
+  def isResident: Boolean = false
 }
 
 @State(Scope.Benchmark)
@@ -39,6 +40,11 @@ class ScalacBenchmark extends BenchmarkDriver {
   // When running the benchmark directly the "latest" symlink is used.
   @Param(value = Array("latest"))
   var corpusVersion: String = _
+
+  @Param(value = Array("false"))
+  var resident: Boolean = false
+
+  override def isResident = resident
 
   var depsClasspath: String = _
 
