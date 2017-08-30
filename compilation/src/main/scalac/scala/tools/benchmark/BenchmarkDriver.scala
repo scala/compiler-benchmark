@@ -9,11 +9,6 @@ trait BenchmarkDriver extends BaseBenchmarkDriver {
 
   // MainClass is copy-pasted from compiler for source compatibility with 2.10.x - 2.13.x
   private class MainClass extends Driver with EvalLoop {
-    def resident(compiler: Global): Unit = loop { line =>
-      val command = new CompilerCommand(line split "\\s+" toList, new Settings(scalacError))
-      compiler.reporter.reset()
-      new compiler.Run() compile command.files
-    }
     var compiler: Global = _
     override def newCompiler(): Global = {
       compiler = Global(settings, reporter)
