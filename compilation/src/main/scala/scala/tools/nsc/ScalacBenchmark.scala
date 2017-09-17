@@ -1,17 +1,13 @@
 package scala.tools.nsc
 
-import java.io.{File, IOException}
-import java.net.URL
+import java.io.File
 import java.nio.file._
-import java.nio.file.attribute.BasicFileAttributes
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
-import com.typesafe.config.ConfigFactory
 import org.openjdk.jmh.annotations.Mode._
 import org.openjdk.jmh.annotations._
 
-import scala.collection.JavaConverters._
 import scala.tools.benchmark.BenchmarkDriver
 
 trait BaseBenchmarkDriver {
