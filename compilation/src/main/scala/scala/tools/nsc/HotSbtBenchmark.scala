@@ -1,16 +1,11 @@
 package scala.tools.nsc
 
 import java.io._
-import java.net.URL
 import java.nio.file._
-import java.nio.file.attribute.BasicFileAttributes
 import java.util.concurrent.TimeUnit
 
-import com.typesafe.config.ConfigFactory
 import org.openjdk.jmh.annotations.Mode.SampleTime
 import org.openjdk.jmh.annotations._
-
-import scala.collection.JavaConverters._
 
 @State(Scope.Benchmark)
 @BenchmarkMode(Array(SampleTime))

@@ -16,7 +16,7 @@ import scala.reflect.internal.util.BatchSourceFile
 class TreeTraverserBenchmark {
   var g: Global = _
   var tree: Global#Tree = _
-  @Param(Array("../corpus/vector/Vector.scala"))
+  @Param(Array("../corpus/vector/latest/Vector.scala"))
   var file: String = _
 
   @Setup def setup(): Unit = {
