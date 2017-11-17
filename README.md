@@ -34,8 +34,8 @@ sbt> compilation/jmh:run -help
 compilation/jmh:run (Cold|Warm|Hot)CompilationBenchmark 
    -p source=(<subdir of corpus>|/path/to/src/dir|@/path/to/argsfile)
    -p extraArgs=-nowarn
+      # Note: `extraArgs` accepts multiple `|`-separated compiler arguments
 ```
-
 
 ### Using aliases
 
