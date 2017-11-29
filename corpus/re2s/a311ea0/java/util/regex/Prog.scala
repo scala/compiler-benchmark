@@ -15,7 +15,7 @@ import java.util.regex.Inst.{Op => IOP}
  */
 class Prog() {
 
-  private val inst: ArrayList[Inst] = new ArrayList[Inst]()
+  private[this] val inst: ArrayList[Inst] = new ArrayList[Inst]()
   var start: Int        = 0 // index of start instruction
   var numCap: Int       = 2 // number of CAPTURE insts in re
   // 2 => implicit ( and ) for whole match $0

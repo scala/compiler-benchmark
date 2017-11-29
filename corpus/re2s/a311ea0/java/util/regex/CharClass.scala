@@ -20,7 +20,7 @@ import java.util.regex.CharClass._
 // inclusive ranges, pairs of [lo,hi].  r.length is even.
 class CharClass(private var r: Array[Int]) {
   // prefix of |r| that is defined.  Even.
-  private var len: Int = r.length
+  private[this] var len: Int = r.length
 
   // After a call to ensureCapacity(), |r.length| is at least |newLen|.
   private def ensureCapacity(_newLen: Int): Unit = {

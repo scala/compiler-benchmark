@@ -37,26 +37,26 @@ final class Matcher(private val _pattern: Pattern, private var _inputSequence: C
   }
 
   // The number of submatches (groups) in the pattern.
-  private val _groupCount: Int = _pattern.re2.numberOfCapturingGroups()
+  private[this] val _groupCount: Int = _pattern.re2.numberOfCapturingGroups()
 
   // The group indexes, in [start, end) pairs.  Zeroth pair is overall match.
-  private val _groups: Array[Int] = new Array[Int](2 + 2 * _groupCount)
+  private[this] val _groups: Array[Int] = new Array[Int](2 + 2 * _groupCount)
 
   // The input length in UTF16 codes.
-  private var _inputLength: Int = _inputSequence.length()
+  private[this] var _inputLength: Int = _inputSequence.length()
 
   // The append position: where the next append should start.
-  private var _appendPos: Int = 0
+  private[this] var _appendPos: Int = 0
 
   // Is there a current match?
-  private var _hasMatch: Boolean = false
+  private[this] var _hasMatch: Boolean = false
 
   // Have we found the submatches (groups) of the current match?
   // group[0], group[1] are set regardless.
-  private var _hasGroups: Boolean = false
+  private[this] var _hasGroups: Boolean = false
 
   // The anchor flag to use when repeating the match to find subgroups.
-  private var _anchorFlag: Int = 0
+  private[this] var _anchorFlag: Int = 0
 
   /** Returns the {@code Pattern} associated with this {@code Matcher}. */
   def pattern(): Pattern = _pattern

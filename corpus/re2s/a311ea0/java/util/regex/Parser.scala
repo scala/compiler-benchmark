@@ -23,12 +23,12 @@ import java.util.regex.Regexp.{Op => ROP}
 class Parser(wholeRegexp: String, _flags: Int) {
   // Flags control the behavior of the parser and record information about
   // regexp context.
-  private var flags: Int = _flags // parse mode flags
+  private[this] var flags: Int = _flags // parse mode flags
 
   // Stack of parsed expressions.
-  private val stack: Parser.Stack        = new Stack()
-  private var free: Regexp = null
-  private var numCap: Int       = 0 // number of capturing groups seen
+  private[this] val stack: Parser.Stack        = new Stack()
+  private[this] var free: Regexp = null
+  private[this] var numCap: Int       = 0 // number of capturing groups seen
 
   // Allocate a Regexp, from the free list if possible.
   private def newRegexp(op: ROP): Regexp = {
@@ -1343,7 +1343,7 @@ object Parser {
   //   lookingAt().
   // Only use pop() to advance over possibly non-ASCII runes.
   private class StringIterator(private val str: String) {
-    private var _pos: Int = 0 // current position in UTF-16 string
+    private[this] var _pos: Int = 0 // current position in UTF-16 string
 
     // Returns the cursor position.  Do not interpret the result!
     def pos(): Int = _pos
@@ -1691,7 +1691,7 @@ object Parser {
 
   // RangeTables are represented as int[][], a list of triples (start, end,
   // stride).
-  private val ANY_TABLE: Array[Array[Int]] = Array[Array[Int]](
+  private[this] val ANY_TABLE: Array[Array[Int]] = Array[Array[Int]](
     Array[Int](0, Unicode.MAX_RUNE, 1)
   )
 

@@ -53,7 +53,7 @@ class RE2() {
 
   // Cache of machines for running regexp.
   // Accesses must be serialized using |this| monitor.
-  private val machine: ArrayList[Machine] = new ArrayList[Machine]()
+  private[this] val machine: ArrayList[Machine] = new ArrayList[Machine]()
 
   /**
    * Returns the number of parenthesized subexpressions in this regular

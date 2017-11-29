@@ -19,21 +19,21 @@ import java.util.regex.Machine._
 // Called by RE2.doExecute.
 class Machine(re2: RE2) {
   // Compiled program.
-  private val prog: Prog = re2.prog
+  private[this] val prog: Prog = re2.prog
 
   // Two queues for runq, nextq.
-  private val q0: Machine.Queue = new Queue(prog.numInst())
-  private val q1: Machine.Queue = new Queue(prog.numInst())
+  private[this] val q0: Machine.Queue = new Queue(prog.numInst())
+  private[this] val q1: Machine.Queue = new Queue(prog.numInst())
 
   // pool of available threads
   // Really a stack:
-  private val pool: ArrayList[Machine.Thread] = new ArrayList[Thread]()
+  private[this] val pool: ArrayList[Machine.Thread] = new ArrayList[Thread]()
 
   // Whether a match was found.
-  private var matched: Boolean = false
+  private[this] var matched: Boolean = false
 
   // Capture information for the match.
-  private var matchcap: Array[Int] =
+  private[this] var matchcap: Array[Int] =
     new Array[Int](if (prog.numCap < 2) 2 else prog.numCap)
 
   // init() reinitializes an existing Machine for re-use on a new input.
