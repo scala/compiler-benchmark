@@ -9,7 +9,7 @@
 // - Eliminate allocations (new int[], new Regexp[], new ArrayList) by
 //   recycling old arrays on a freelist.
 
-package com.google.re2j;
+package java.util.regex;
 
 import java.util.ArrayList;
 import java.util.Arrays;

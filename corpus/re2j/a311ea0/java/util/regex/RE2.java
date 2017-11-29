@@ -16,7 +16,7 @@
 // the primary input datatype, and the method names have been changed to
 // reflect this.
 
-package com.google.re2j;
+package java.util.regex;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;

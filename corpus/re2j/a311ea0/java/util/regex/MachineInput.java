@@ -5,7 +5,7 @@
 // Original Go source here:
 // http://code.google.com/p/go/source/browse/src/pkg/regexp/regexp.go
 
-package com.google.re2j;
+package java.util.regex;
 
 /**
  * MachineInput abstracts different representations of the input text

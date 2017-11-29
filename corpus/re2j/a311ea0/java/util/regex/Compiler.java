@@ -5,7 +5,7 @@
 // Original Go source here:
 // http://code.google.com/p/go/source/browse/src/pkg/regexp/syntax/compile.go
 
-package com.google.re2j;
+package java.util.regex;
 
 /**
  * Compiler from {@code Regexp} (RE2 abstract syntax) to {@code RE2}

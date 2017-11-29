@@ -1,6 +1,6 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 
-package com.google.re2j;
+package java.util.regex;
 
 import java.io.Serializable;
 

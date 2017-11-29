@@ -5,7 +5,7 @@
 // Original Go source here:
 // http://code.google.com/p/go/source/browse/src/pkg/regexp/syntax/prog.go
 
-package com.google.re2j;
+package java.util.regex;
 
 /**
  * A single instruction in the regular expression virtual machine.

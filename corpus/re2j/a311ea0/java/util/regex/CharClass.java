@@ -5,7 +5,7 @@
 // Original Go source here:
 // http://code.google.com/p/go/source/browse/src/pkg/regexp/syntax/parse.go
 
-package com.google.re2j;
+package java.util.regex;
 
 /**
  * A "builder"-style helper class for manipulating character classes

@@ -5,7 +5,7 @@
 // Original Go source here:
 // http://code.google.com/p/go/source/browse/src/pkg/regexp/exec.go
 
-package com.google.re2j;
+package java.util.regex;
 
 import java.util.ArrayList;
 import java.util.Arrays;

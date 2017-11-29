@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package com.google.re2j;
+package java.util.regex;
 
 /**
  * An exception thrown by the parser if the pattern was invalid.

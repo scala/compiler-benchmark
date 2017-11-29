@@ -1,6 +1,6 @@
 // Copyright 2010 Google Inc. All Rights Reserved.
 
-package com.google.re2j;
+package java.util.regex;
 
 /**
  * A stateful iterator that interprets a regex {@code Pattern} on a
