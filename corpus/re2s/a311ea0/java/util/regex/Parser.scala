@@ -1254,31 +1254,31 @@ class Parser(wholeRegexp: String, _flags: Int) {
 object Parser {
 
   // Unexpected error
-  private final val ERR_INTERNAL_ERROR: String =
+  private final val ERR_INTERNAL_ERROR =
     "regexp/syntax: internal error"
 
   // Parse errors
-  private final val ERR_INVALID_CHAR_CLASS: String =
+  private final val ERR_INVALID_CHAR_CLASS =
     "invalid character class"
-  private final val ERR_INVALID_CHAR_RANGE: String =
+  private final val ERR_INVALID_CHAR_RANGE =
     "invalid character class range"
-  private final val ERR_INVALID_ESCAPE: String =
+  private final val ERR_INVALID_ESCAPE =
     "invalid escape sequence"
-  private final val ERR_INVALID_NAMED_CAPTURE: String =
+  private final val ERR_INVALID_NAMED_CAPTURE =
     "invalid named capture"
-  private final val ERR_INVALID_PERL_OP: String =
+  private final val ERR_INVALID_PERL_OP =
     "invalid or unsupported Perl syntax"
-  private final val ERR_INVALID_REPEAT_OP: String =
+  private final val ERR_INVALID_REPEAT_OP =
     "invalid nested repetition operator"
-  private final val ERR_INVALID_REPEAT_SIZE: String =
+  private final val ERR_INVALID_REPEAT_SIZE =
     "invalid repeat count"
-  private final val ERR_MISSING_BRACKET: String =
+  private final val ERR_MISSING_BRACKET =
     "missing closing ]"
-  private final val ERR_MISSING_PAREN: String =
+  private final val ERR_MISSING_PAREN =
     "missing closing )"
-  private final val ERR_MISSING_REPEAT_ARGUMENT: String =
+  private final val ERR_MISSING_REPEAT_ARGUMENT =
     "missing argument to repetition operator"
-  private final val ERR_TRAILING_BACKSLASH: String =
+  private final val ERR_TRAILING_BACKSLASH =
     "trailing backslash at end of expression"
 
   // Hack to expose ArrayList.removeRange().

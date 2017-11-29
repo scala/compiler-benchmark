@@ -665,23 +665,23 @@ object RE2 {
   //// Parser flags.
 
   // Fold case during matching (case-insensitive).
-  final val FOLD_CASE: Int = 0x01
+  final val FOLD_CASE = 0x01
 
   // Treat pattern as a literal string instead of a regexp.
-  final val LITERAL: Int = 0x02
+  final val LITERAL = 0x02
 
   // Allow character classes like [^a-z] and [[:space:]] to match newline.
-  final val CLASS_NL: Int = 0x04
+  final val CLASS_NL = 0x04
 
   // Allow '.' to match newline.
-  final val DOT_NL: Int = 0x08
+  final val DOT_NL = 0x08
 
   // Treat ^ and $ as only matching at beginning and end of text, not
   // around embedded newlines.  (Perl's default).
-  final val ONE_LINE: Int = 0x10
+  final val ONE_LINE = 0x10
 
   // Make repetition operators default to non-greedy.
-  final val NON_GREEDY: Int = 0x20
+  final val NON_GREEDY = 0x20
 
   // allow Perl extensions:
   //   non-capturing parens - (?: )
@@ -695,26 +695,26 @@ object RE2 {
   //   \Q and \E to disable/enable metacharacters
   //   (?P<name>expr) for named captures
   // \C (any byte) is not supported.
-  final val PERL_X: Int = 0x40
+  final val PERL_X = 0x40
 
   // Allow \p{Han}, \P{Han} for Unicode group and negation.
-  final val UNICODE_GROUPS: Int = 0x80
+  final val UNICODE_GROUPS = 0x80
 
   // Regexp END_TEXT was $, not \z.  Internal use only.
-  final val WAS_DOLLAR: Int = 0x100
+  final val WAS_DOLLAR = 0x100
 
-  final val MATCH_NL: Int = CLASS_NL | DOT_NL
+  final val MATCH_NL = CLASS_NL | DOT_NL
 
   // As close to Perl as possible.
-  final val PERL: Int = CLASS_NL | ONE_LINE | PERL_X | UNICODE_GROUPS
+  final val PERL = CLASS_NL | ONE_LINE | PERL_X | UNICODE_GROUPS
 
   // POSIX syntax.
-  final val POSIX: Int = 0
+  final val POSIX= 0
 
   //// Anchors
-  final val UNANCHORED: Int   = 0
-  final val ANCHOR_START: Int = 1
-  final val ANCHOR_BOTH: Int  = 2
+  final val UNANCHORED  = 0
+  final val ANCHOR_START= 1
+  final val ANCHOR_BOTH = 2
 
   /**
    * Parses a regular expression and returns, if successful, an

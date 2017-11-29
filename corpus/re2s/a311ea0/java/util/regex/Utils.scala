@@ -170,13 +170,13 @@ object Utils {
 
   //// EMPTY_* flags
 
-  final val EMPTY_BEGIN_LINE: Int       = 0x01
-  final val EMPTY_END_LINE: Int         = 0x02
-  final val EMPTY_BEGIN_TEXT: Int       = 0x04
-  final val EMPTY_END_TEXT: Int         = 0x08
-  final val EMPTY_WORD_BOUNDARY: Int    = 0x10
-  final val EMPTY_NO_WORD_BOUNDARY: Int = 0x20
-  final val EMPTY_ALL: Int              = -1 // (impossible)
+  final val EMPTY_BEGIN_LINE       = 0x01
+  final val EMPTY_END_LINE         = 0x02
+  final val EMPTY_BEGIN_TEXT       = 0x04
+  final val EMPTY_END_TEXT         = 0x08
+  final val EMPTY_WORD_BOUNDARY    = 0x10
+  final val EMPTY_NO_WORD_BOUNDARY = 0x20
+  final val EMPTY_ALL              = -1 // (impossible)
 
   // emptyOpContext returns the zero-width assertions satisfied at the position
   // between the runes r1 and r2, a bitmask of EMPTY_* flags.

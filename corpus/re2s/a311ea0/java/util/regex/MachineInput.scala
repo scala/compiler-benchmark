@@ -37,7 +37,7 @@ abstract class MachineInput() {
 
 object MachineInput {
 
-  final val EOF: Int = (-1 << 3) | 0
+  final val EOF = (-1 << 3) | 0
 
   def fromUTF8(b: Array[Byte], start: Int, end: Int): MachineInput =
     new UTF8Input(b, start, end)

@@ -125,21 +125,21 @@ final class Pattern(val pattern: String, val flags: Int, val re2: RE2)
 object Pattern {
 
   /** Flag: case insensitive matching. */
-  final val CASE_INSENSITIVE: Int = 1
+  final val CASE_INSENSITIVE = 1
 
   /** Flag: dot ({@code .}) matches all characters, including newline. */
-  final val DOTALL: Int = 2
+  final val DOTALL = 2
 
   /**
    * Flag: multiline matching: {@code ^} and {@code $} match at
    * beginning and end of line, not just beginning and end of input.
    */
-  final val MULTILINE: Int = 4
+  final val MULTILINE = 4
 
   /**
    * Flag: Unicode groups (e.g. {@code \p\{Greek\}}) will be syntax errors.
    */
-  final val DISABLE_UNICODE_GROUPS: Int = 8
+  final val DISABLE_UNICODE_GROUPS = 8
 
   /**
    * Creates and returns a new {@code Pattern} corresponding to

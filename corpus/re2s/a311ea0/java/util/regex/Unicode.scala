@@ -15,23 +15,23 @@ package java.util.regex
 object Unicode {
 
   // The highest legal rune value.
-  final val MAX_RUNE: Int = 0x10FFFF
+  final val MAX_RUNE = 0x10FFFF
 
   // The highest legal ASCII value.
-  final val MAX_ASCII: Int = 0x7f
+  final val MAX_ASCII = 0x7f
 
   // The highest legal Latin-1 value.
-  final val MAX_LATIN1: Int = 0xFF
+  final val MAX_LATIN1 = 0xFF
 
-  private final val MAX_CASE: Int = 3
+  private final val MAX_CASE = 3
 
   // Represents invalid code points.
-  private final val REPLACEMENT_CHAR: Int = 0xFFFD
+  private final val REPLACEMENT_CHAR = 0xFFFD
 
   // Minimum and maximum runes involved in folding.
   // Checked during test.
-  final val MIN_FOLD: Int = 0x0041
-  final val MAX_FOLD: Int = 0x1044f
+  final val MIN_FOLD = 0x0041
+  final val MAX_FOLD = 0x1044f
 
   // is32 uses binary search to test whether rune is in the specified
   // slice of 32-bit ranges.

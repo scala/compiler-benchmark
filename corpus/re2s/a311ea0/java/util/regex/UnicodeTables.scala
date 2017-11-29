@@ -4,16 +4,16 @@
 
 package java.util.regex
 
-import java.util.HashMap
-import java.util.Map
+import java.util.{HashMap, Map}
 
 object UnicodeTables {
-  final lazy val UpperCase: Int  = 0
-  final lazy val LowerCase: Int  = 1
-  final lazy val TitleCase: Int  = 2
-  final lazy val UpperLower: Int = 0x110000
+  final val UpperCase: Int = 0
+  final val LowerCase: Int = 1
+  final val TitleCase: Int = 2
+  final val UpperLower = mkUpperLower()
+  private def mkUpperLower() = 0x110000
 
-  private lazy val _Lm: Array[Array[Int]] =
+  private[this] val _Lm: Array[Array[Int]] =
     Array[Array[Int]](
       Array[Int](0x02b0, 0x02c1, 1),
       Array[Int](0x02c6, 0x02d1, 1),
@@ -50,7 +50,8 @@ object UnicodeTables {
       Array[Int](0xaadd, 0xff70, 21651),
       Array[Int](0xff9e, 0xff9f, 1)
     )
-  private final lazy val _Ll: Array[Array[Int]] =
+  private[this] final val _Ll = make_Ll()
+  private def make_Ll() =
     Array[Array[Int]](
       Array[Int](0x0061, 0x007a, 1),
       Array[Int](0x00aa, 0x00b5, 11),
@@ -192,7 +193,8 @@ object UnicodeTables {
       Array[Int](0x1d7c4, 0x1d7c9, 1),
       Array[Int](0x1d7cb, 0x1d7cb, 1)
     )
-  private final lazy val _C: Array[Array[Int]] =
+  private[this] final val _C = make_C()
+  private def make_C() =
     Array[Array[Int]](
       Array[Int](0x0001, 0x001f, 1),
       Array[Int](0x007f, 0x009f, 1),
@@ -214,7 +216,8 @@ object UnicodeTables {
       Array[Int](0xf0000, 0xffffd, 1),
       Array[Int](0x100000, 0x10fffd, 1)
     )
-  private final lazy val _M: Array[Array[Int]] =
+  private[this] final val _M = make_M()
+  private def make_M() =
     Array[Array[Int]](
       Array[Int](0x0300, 0x036f, 1),
       Array[Int](0x0483, 0x0489, 1),
@@ -402,7 +405,8 @@ object UnicodeTables {
       Array[Int](0x1d242, 0x1d244, 1),
       Array[Int](0xe0100, 0xe01ef, 1)
     )
-  private final lazy val _L: Array[Array[Int]] =
+  private[this] final val _L = make_L()
+  private def make_L() =
     Array[Array[Int]](
       Array[Int](0x0041, 0x005a, 1),
       Array[Int](0x0061, 0x007a, 1),
@@ -819,7 +823,8 @@ object UnicodeTables {
       Array[Int](0x2b740, 0x2b81d, 1),
       Array[Int](0x2f800, 0x2fa1d, 1)
     )
-  private final lazy val _N: Array[Array[Int]] =
+  private[this] final val _N = make_N()
+  private def make_N() =
     Array[Array[Int]](
       Array[Int](0x0030, 0x0039, 1),
       Array[Int](0x00b2, 0x00b3, 1),
@@ -903,7 +908,8 @@ object UnicodeTables {
       Array[Int](0x1d7ce, 0x1d7ff, 1),
       Array[Int](0x1f100, 0x1f10a, 1)
     )
-  private final lazy val _P: Array[Array[Int]] =
+  private[this] final val _P = make_P()
+  private def make_P() =
     Array[Array[Int]](
       Array[Int](0x0021, 0x0023, 1),
       Array[Int](0x0025, 0x002a, 1),
@@ -1023,7 +1029,8 @@ object UnicodeTables {
       Array[Int](0x110be, 0x110c1, 1),
       Array[Int](0x12470, 0x12473, 1)
     )
-  private final lazy val _S: Array[Array[Int]] =
+  private[this] final val _S = make_S()
+  private def make_S() =
     Array[Array[Int]](
       Array[Int](0x0024, 0x002b, 7),
       Array[Int](0x003c, 0x003e, 1),
@@ -1206,19 +1213,22 @@ object UnicodeTables {
       Array[Int](0x1f680, 0x1f6c5, 1),
       Array[Int](0x1f700, 0x1f773, 1)
     )
-  private final lazy val _Z: Array[Array[Int]] =
+  private[this] final val _Z = make_Z()
+  private def make_Z() =
     Array[Array[Int]](Array[Int](0x0020, 0x00a0, 128),
-          Array[Int](0x1680, 0x180e, 398),
-          Array[Int](0x2000, 0x200a, 1),
-          Array[Int](0x2028, 0x2029, 1),
-          Array[Int](0x202f, 0x205f, 48),
-          Array[Int](0x3000, 0x3000, 1))
-  private final lazy val _Me: Array[Array[Int]] =
+      Array[Int](0x1680, 0x180e, 398),
+      Array[Int](0x2000, 0x200a, 1),
+      Array[Int](0x2028, 0x2029, 1),
+      Array[Int](0x202f, 0x205f, 48),
+      Array[Int](0x3000, 0x3000, 1))
+  private[this] final val _Me = make_Me()
+  private def make_Me() =
     Array[Array[Int]](Array[Int](0x0488, 0x0489, 1),
-          Array[Int](0x20dd, 0x20e0, 1),
-          Array[Int](0x20e2, 0x20e4, 1),
-          Array[Int](0xa670, 0xa672, 1))
-  private final lazy val _Mc: Array[Array[Int]] =
+      Array[Int](0x20dd, 0x20e0, 1),
+      Array[Int](0x20e2, 0x20e4, 1),
+      Array[Int](0xa670, 0xa672, 1))
+  private[this] final val _Mc = make_Mc()
+  private def make_Mc() =
     Array[Array[Int]](
       Array[Int](0x0903, 0x093b, 56),
       Array[Int](0x093e, 0x0940, 1),
@@ -1322,7 +1332,8 @@ object UnicodeTables {
       Array[Int](0x1d165, 0x1d166, 1),
       Array[Int](0x1d16d, 0x1d172, 1)
     )
-  private final lazy val _Mn: Array[Array[Int]] =
+  private[this] final val _Mn = make_Mn()
+  private def make_Mn() =
     Array[Array[Int]](
       Array[Int](0x0300, 0x036f, 1),
       Array[Int](0x0483, 0x0487, 1),
@@ -1504,23 +1515,29 @@ object UnicodeTables {
       Array[Int](0x1d242, 0x1d244, 1),
       Array[Int](0xe0100, 0xe01ef, 1)
     )
-  private final lazy val _Zl: Array[Array[Int]] =
+  private[this] final val _Zl = make_Zl()
+  private def make_Zl() =
     Array[Array[Int]](Array[Int](0x2028, 0x2028, 1))
-  private final lazy val _Zp: Array[Array[Int]] =
+  private[this] final val _Zp = make_Zp()
+  private def make_Zp() =
     Array[Array[Int]](Array[Int](0x2029, 0x2029, 1))
-  private final lazy val _Zs: Array[Array[Int]] =
+  private[this] final val _Zs = make_Zs()
+  private def make_Zs() =
     Array[Array[Int]](Array[Int](0x0020, 0x00a0, 128),
-          Array[Int](0x1680, 0x180e, 398),
-          Array[Int](0x2000, 0x200a, 1),
-          Array[Int](0x202f, 0x205f, 48),
-          Array[Int](0x3000, 0x3000, 1))
-  private final lazy val _Cs: Array[Array[Int]] =
+      Array[Int](0x1680, 0x180e, 398),
+      Array[Int](0x2000, 0x200a, 1),
+      Array[Int](0x202f, 0x205f, 48),
+      Array[Int](0x3000, 0x3000, 1))
+  private[this] final val _Cs = make_Cs()
+  private def make_Cs() =
     Array[Array[Int]](Array[Int](0xd800, 0xdfff, 1))
-  private final lazy val _Co: Array[Array[Int]] =
+  private[this] final val _Co = make_Co()
+  private def make_Co() =
     Array[Array[Int]](Array[Int](0xe000, 0xf8ff, 1),
-          Array[Int](0xf0000, 0xffffd, 1),
-          Array[Int](0x100000, 0x10fffd, 1))
-  private final lazy val _Cf: Array[Array[Int]] =
+      Array[Int](0xf0000, 0xffffd, 1),
+      Array[Int](0x100000, 0x10fffd, 1))
+  private[this] final val _Cf = make_Cf()
+  private def make_Cf() =
     Array[Array[Int]](
       Array[Int](0x00ad, 0x0600, 1363),
       Array[Int](0x0601, 0x0603, 1),
@@ -1537,9 +1554,11 @@ object UnicodeTables {
       Array[Int](0xe0001, 0xe0020, 31),
       Array[Int](0xe0021, 0xe007f, 1)
     )
-  private final lazy val _Cc: Array[Array[Int]] =
+  private[this] final val _Cc = make_Cc()
+  private def make_Cc() =
     Array[Array[Int]](Array[Int](0x0001, 0x001f, 1), Array[Int](0x007f, 0x009f, 1))
-  private final lazy val _Po: Array[Array[Int]] =
+  private[this] final val _Po = make_Po()
+  private def make_Po() =
     Array[Array[Int]](
       Array[Int](0x0021, 0x0023, 1),
       Array[Int](0x0025, 0x0027, 1),
@@ -1655,20 +1674,23 @@ object UnicodeTables {
       Array[Int](0x110be, 0x110c1, 1),
       Array[Int](0x12470, 0x12473, 1)
     )
-  private final lazy val _Pi: Array[Array[Int]] =
+  private[this] final val _Pi = make_Pi()
+  private def make_Pi() =
     Array[Array[Int]](Array[Int](0x00ab, 0x2018, 8045),
-          Array[Int](0x201b, 0x201c, 1),
-          Array[Int](0x201f, 0x2039, 26),
-          Array[Int](0x2e02, 0x2e04, 2),
-          Array[Int](0x2e09, 0x2e0c, 3),
-          Array[Int](0x2e1c, 0x2e20, 4))
-  private final lazy val _Pf: Array[Array[Int]] =
+      Array[Int](0x201b, 0x201c, 1),
+      Array[Int](0x201f, 0x2039, 26),
+      Array[Int](0x2e02, 0x2e04, 2),
+      Array[Int](0x2e09, 0x2e0c, 3),
+      Array[Int](0x2e1c, 0x2e20, 4))
+  private[this] final val _Pf = make_Pf()
+  private def make_Pf() =
     Array[Array[Int]](Array[Int](0x00bb, 0x2019, 8030),
-          Array[Int](0x201d, 0x203a, 29),
-          Array[Int](0x2e03, 0x2e05, 2),
-          Array[Int](0x2e0a, 0x2e0d, 3),
-          Array[Int](0x2e1d, 0x2e21, 4))
-  private final lazy val _Pe: Array[Array[Int]] =
+      Array[Int](0x201d, 0x203a, 29),
+      Array[Int](0x2e03, 0x2e05, 2),
+      Array[Int](0x2e0a, 0x2e0d, 3),
+      Array[Int](0x2e1d, 0x2e21, 4))
+  private[this] final val _Pe = make_Pe()
+  private def make_Pe() =
     Array[Array[Int]](
       Array[Int](0x0029, 0x005d, 52),
       Array[Int](0x007d, 0x0f3b, 3774),
@@ -1692,7 +1714,8 @@ object UnicodeTables {
       Array[Int](0xff09, 0xff3d, 52),
       Array[Int](0xff5d, 0xff63, 3)
     )
-  private final lazy val _Pd: Array[Array[Int]] =
+  private[this] final val _Pd = make_Pd()
+  private def make_Pd() =
     Array[Array[Int]](
       Array[Int](0x002d, 0x058a, 1373),
       Array[Int](0x05be, 0x1400, 3650),
@@ -1704,13 +1727,15 @@ object UnicodeTables {
       Array[Int](0xfe32, 0xfe58, 38),
       Array[Int](0xfe63, 0xff0d, 170)
     )
-  private final lazy val _Pc: Array[Array[Int]] =
+  private[this] final val _Pc = make_Pc()
+  private def make_Pc() =
     Array[Array[Int]](Array[Int](0x005f, 0x203f, 8160),
-          Array[Int](0x2040, 0x2054, 20),
-          Array[Int](0xfe33, 0xfe34, 1),
-          Array[Int](0xfe4d, 0xfe4f, 1),
-          Array[Int](0xff3f, 0xff3f, 1))
-  private final lazy val _Ps: Array[Array[Int]] =
+      Array[Int](0x2040, 0x2054, 20),
+      Array[Int](0xfe33, 0xfe34, 1),
+      Array[Int](0xfe4d, 0xfe4f, 1),
+      Array[Int](0xff3f, 0xff3f, 1))
+  private[this] final val _Ps = make_Ps()
+  private def make_Ps() =
     Array[Array[Int]](
       Array[Int](0x0028, 0x005b, 51),
       Array[Int](0x007b, 0x0f3a, 3775),
@@ -1736,7 +1761,8 @@ object UnicodeTables {
       Array[Int](0xff5b, 0xff5f, 4),
       Array[Int](0xff62, 0xff62, 1)
     )
-  private final lazy val _Nd: Array[Array[Int]] =
+  private[this] final val _Nd = make_Nd()
+  private def make_Nd() =
     Array[Array[Int]](
       Array[Int](0x0030, 0x0039, 1),
       Array[Int](0x0660, 0x0669, 1),
@@ -1777,7 +1803,8 @@ object UnicodeTables {
       Array[Int](0x11066, 0x1106f, 1),
       Array[Int](0x1d7ce, 0x1d7ff, 1)
     )
-  private final lazy val _Nl: Array[Array[Int]] =
+  private[this] final val _Nl = make_Nl()
+  private def make_Nl() =
     Array[Array[Int]](
       Array[Int](0x16ee, 0x16f0, 1),
       Array[Int](0x2160, 0x2182, 1),
@@ -1791,7 +1818,8 @@ object UnicodeTables {
       Array[Int](0x103d1, 0x103d5, 1),
       Array[Int](0x12400, 0x12462, 1)
     )
-  private final lazy val _No: Array[Array[Int]] =
+  private[this] final val _No = make_No()
+  private def make_No() =
     Array[Array[Int]](
       Array[Int](0x00b2, 0x00b3, 1),
       Array[Int](0x00b9, 0x00bc, 3),
@@ -1834,7 +1862,8 @@ object UnicodeTables {
       Array[Int](0x1d360, 0x1d371, 1),
       Array[Int](0x1f100, 0x1f10a, 1)
     )
-  private final lazy val _So: Array[Array[Int]] =
+  private[this] final val _So = make_So()
+  private def make_So() =
     Array[Array[Int]](
       Array[Int](0x00a6, 0x00a7, 1),
       Array[Int](0x00a9, 0x00ae, 5),
@@ -1986,7 +2015,8 @@ object UnicodeTables {
       Array[Int](0x1f680, 0x1f6c5, 1),
       Array[Int](0x1f700, 0x1f773, 1)
     )
-  private final lazy val _Sm: Array[Array[Int]] =
+  private[this] final val _Sm = make_Sm()
+  private def make_Sm() =
     Array[Array[Int]](
       Array[Int](0x002b, 0x003c, 17),
       Array[Int](0x003d, 0x003e, 1),
@@ -2040,7 +2070,8 @@ object UnicodeTables {
       Array[Int](0x1d76f, 0x1d789, 26),
       Array[Int](0x1d7a9, 0x1d7c3, 26)
     )
-  private final lazy val _Sk: Array[Array[Int]] =
+  private[this] final val _Sk = make_Sk()
+  private def make_Sk() =
     Array[Array[Int]](
       Array[Int](0x005e, 0x0060, 2),
       Array[Int](0x00a8, 0x00af, 7),
@@ -2065,7 +2096,8 @@ object UnicodeTables {
       Array[Int](0xff3e, 0xff40, 2),
       Array[Int](0xffe3, 0xffe3, 1)
     )
-  private final lazy val _Sc: Array[Array[Int]] =
+  private[this] final val _Sc = make_Sc()
+  private def make_Sc() =
     Array[Array[Int]](
       Array[Int](0x0024, 0x00a2, 126),
       Array[Int](0x00a3, 0x00a5, 1),
@@ -2079,7 +2111,8 @@ object UnicodeTables {
       Array[Int](0xffe0, 0xffe1, 1),
       Array[Int](0xffe5, 0xffe6, 1)
     )
-  private final lazy val _Lu: Array[Array[Int]] =
+  private[this] final val _Lu = make_Lu()
+  private def make_Lu() =
     Array[Array[Int]](
       Array[Int](0x0041, 0x005a, 1),
       Array[Int](0x00c0, 0x00d6, 1),
@@ -2209,7 +2242,8 @@ object UnicodeTables {
       Array[Int](0x1d790, 0x1d7a8, 1),
       Array[Int](0x1d7ca, 0x1d7ca, 1)
     )
-  private final lazy val _Lt: Array[Array[Int]] =
+  private[this] final val _Lt = make_Lt()
+  private def make_Lt() =
     Array[Array[Int]](
       Array[Int](0x01c5, 0x01cb, 3),
       Array[Int](0x01f2, 0x1f88, 7574),
@@ -2219,7 +2253,8 @@ object UnicodeTables {
       Array[Int](0x1fbc, 0x1fcc, 16),
       Array[Int](0x1ffc, 0x1ffc, 1)
     )
-  private final lazy val _Lo: Array[Array[Int]] =
+  private[this] final val _Lo = make_Lo()
+  private def make_Lo() =
     Array[Array[Int]](
       Array[Int](0x01bb, 0x01c0, 5),
       Array[Int](0x01c1, 0x01c3, 1),
@@ -2534,54 +2569,58 @@ object UnicodeTables {
       Array[Int](0x2b740, 0x2b81d, 1),
       Array[Int](0x2f800, 0x2fa1d, 1)
     )
-  final lazy val Cc: Array[Array[Int]]     = _Cc
-  final lazy val Cf: Array[Array[Int]]     = _Cf
-  final lazy val Co: Array[Array[Int]]     = _Co
-  final lazy val Cs: Array[Array[Int]]     = _Cs
-  final lazy val Digit: Array[Array[Int]]  = _Nd
-  final lazy val Nd: Array[Array[Int]]     = _Nd
-  final lazy val Letter: Array[Array[Int]] = _L
-  final lazy val L: Array[Array[Int]]      = _L
-  final lazy val Lm: Array[Array[Int]]     = _Lm
-  final lazy val Lo: Array[Array[Int]]     = _Lo
-  final lazy val Lower: Array[Array[Int]]  = _Ll
-  final lazy val Ll: Array[Array[Int]]     = _Ll
-  final lazy val Mark: Array[Array[Int]]   = _M
-  final lazy val M: Array[Array[Int]]      = _M
-  final lazy val Mc: Array[Array[Int]]     = _Mc
-  final lazy val Me: Array[Array[Int]]     = _Me
-  final lazy val Mn: Array[Array[Int]]     = _Mn
-  final lazy val Nl: Array[Array[Int]]     = _Nl
-  final lazy val No: Array[Array[Int]]     = _No
-  final lazy val Number: Array[Array[Int]] = _N
-  final lazy val N: Array[Array[Int]]      = _N
-  final lazy val Other: Array[Array[Int]]  = _C
-  final lazy val C: Array[Array[Int]]      = _C
-  final lazy val Pc: Array[Array[Int]]     = _Pc
-  final lazy val Pd: Array[Array[Int]]     = _Pd
-  final lazy val Pe: Array[Array[Int]]     = _Pe
-  final lazy val Pf: Array[Array[Int]]     = _Pf
-  final lazy val Pi: Array[Array[Int]]     = _Pi
-  final lazy val Po: Array[Array[Int]]     = _Po
-  final lazy val Ps: Array[Array[Int]]     = _Ps
-  final lazy val Punct: Array[Array[Int]]  = _P
-  final lazy val P: Array[Array[Int]]      = _P
-  final lazy val Sc: Array[Array[Int]]     = _Sc
-  final lazy val Sk: Array[Array[Int]]     = _Sk
-  final lazy val Sm: Array[Array[Int]]     = _Sm
-  final lazy val So: Array[Array[Int]]     = _So
-  final lazy val Space: Array[Array[Int]]  = _Z
-  final lazy val Z: Array[Array[Int]]      = _Z
-  final lazy val Symbol: Array[Array[Int]] = _S
-  final lazy val S: Array[Array[Int]]      = _S
-  final lazy val Title: Array[Array[Int]]  = _Lt
-  final lazy val Lt: Array[Array[Int]]     = _Lt
-  final lazy val Upper: Array[Array[Int]]  = _Lu
-  final lazy val Lu: Array[Array[Int]]     = _Lu
-  final lazy val Zl: Array[Array[Int]]     = _Zl
-  final lazy val Zp: Array[Array[Int]]     = _Zp
-  final lazy val Zs: Array[Array[Int]]     = _Zs
-  private final lazy val _Katakana: Array[Array[Int]] =
+  final val Cc: Array[Array[Int]] = _Cc
+  final val Cf: Array[Array[Int]] = _Cf
+  final val Co: Array[Array[Int]] = _Co
+  final val Cs: Array[Array[Int]] = _Cs
+  final val Digit: Array[Array[Int]] = _Nd
+  final val Nd: Array[Array[Int]] = _Nd
+  final val Letter = mkLetter()
+  private def mkLetter() = _L
+  final val L: Array[Array[Int]] = _L
+  final val Lm: Array[Array[Int]] = _Lm
+  final val Lo: Array[Array[Int]] = _Lo
+  final val Lower: Array[Array[Int]] = _Ll
+  final val Ll: Array[Array[Int]] = _Ll
+  final val Mark: Array[Array[Int]] = _M
+  final val M: Array[Array[Int]] = _M
+  final val Mc: Array[Array[Int]] = _Mc
+  final val Me: Array[Array[Int]] = _Me
+  final val Mn: Array[Array[Int]] = _Mn
+  final val Nl: Array[Array[Int]] = _Nl
+  final val No: Array[Array[Int]] = _No
+  final val Number = mkNumber()
+  private def mkNumber() = _N
+  final val N: Array[Array[Int]] = _N
+  final val Other: Array[Array[Int]] = _C
+  final val C: Array[Array[Int]] = _C
+  final val Pc: Array[Array[Int]] = _Pc
+  final val Pd: Array[Array[Int]] = _Pd
+  final val Pe: Array[Array[Int]] = _Pe
+  final val Pf: Array[Array[Int]] = _Pf
+  final val Pi: Array[Array[Int]] = _Pi
+  final val Po: Array[Array[Int]] = _Po
+  final val Ps: Array[Array[Int]] = _Ps
+  final val Punct: Array[Array[Int]] = _P
+  final val P: Array[Array[Int]] = _P
+  final val Sc: Array[Array[Int]] = _Sc
+  final val Sk: Array[Array[Int]] = _Sk
+  final val Sm: Array[Array[Int]] = _Sm
+  final val So: Array[Array[Int]] = _So
+  final val Space: Array[Array[Int]] = _Z
+  final val Z: Array[Array[Int]] = _Z
+  final val Symbol = mkSymbol()
+  private def mkSymbol() = _S
+  final val S: Array[Array[Int]] = _S
+  final val Title: Array[Array[Int]] = _Lt
+  final val Lt: Array[Array[Int]] = _Lt
+  final val Upper: Array[Array[Int]] = _Lu
+  final val Lu: Array[Array[Int]] = _Lu
+  final val Zl: Array[Array[Int]] = _Zl
+  final val Zp: Array[Array[Int]] = _Zp
+  final val Zs: Array[Array[Int]] = _Zs
+  private[this] final val _Katakana = make_Katakana()
+  private def make_Katakana() =
     Array[Array[Int]](
       Array[Int](0x30a1, 0x30fa, 1),
       Array[Int](0x30fd, 0x30ff, 1),
@@ -2592,7 +2631,8 @@ object UnicodeTables {
       Array[Int](0xff71, 0xff9d, 1),
       Array[Int](0x1b000, 0x1b000, 1)
     )
-  private final lazy val _Malayalam: Array[Array[Int]] =
+  private[this] final val _Malayalam = make_Malayalam()
+  private def make_Malayalam() =
     Array[Array[Int]](
       Array[Int](0x0d02, 0x0d03, 1),
       Array[Int](0x0d05, 0x0d0c, 1),
@@ -2606,11 +2646,14 @@ object UnicodeTables {
       Array[Int](0x0d66, 0x0d75, 1),
       Array[Int](0x0d79, 0x0d7f, 1)
     )
-  private final lazy val _Phags_Pa: Array[Array[Int]] =
+  private[this] final val _Phags_Pa = make_Phags_Pa()
+  private def make_Phags_Pa() =
     Array[Array[Int]](Array[Int](0xa840, 0xa877, 1))
-  private final lazy val _Inscriptional_Parthian: Array[Array[Int]] =
+  private[this] final val _Inscriptional_Parthian = make_Inscriptional_Parthian()
+  private def make_Inscriptional_Parthian() =
     Array[Array[Int]](Array[Int](0x10b40, 0x10b55, 1), Array[Int](0x10b58, 0x10b5f, 1))
-  private final lazy val _Latin: Array[Array[Int]] =
+  private[this] final val _Latin = make_Latin()
+  private def make_Latin() =
     Array[Array[Int]](
       Array[Int](0x0041, 0x005a, 1),
       Array[Int](0x0061, 0x007a, 1),
@@ -2643,16 +2686,20 @@ object UnicodeTables {
       Array[Int](0xff21, 0xff3a, 1),
       Array[Int](0xff41, 0xff5a, 1)
     )
-  private final lazy val _Inscriptional_Pahlavi: Array[Array[Int]] =
+  private[this] final val _Inscriptional_Pahlavi = make_Inscriptional_Pahlavi()
+  private def make_Inscriptional_Pahlavi() =
     Array[Array[Int]](Array[Int](0x10b60, 0x10b72, 1), Array[Int](0x10b78, 0x10b7f, 1))
-  private final lazy val _Osmanya: Array[Array[Int]] =
+  private[this] final val _Osmanya = make_Osmanya()
+  private def make_Osmanya() =
     Array[Array[Int]](Array[Int](0x10480, 0x1049d, 1), Array[Int](0x104a0, 0x104a9, 1))
-  private final lazy val _Khmer: Array[Array[Int]] =
+  private[this] final val _Khmer = make_Khmer()
+  private def make_Khmer() =
     Array[Array[Int]](Array[Int](0x1780, 0x17dd, 1),
-          Array[Int](0x17e0, 0x17e9, 1),
-          Array[Int](0x17f0, 0x17f9, 1),
-          Array[Int](0x19e0, 0x19ff, 1))
-  private final lazy val _Inherited: Array[Array[Int]] =
+      Array[Int](0x17e0, 0x17e9, 1),
+      Array[Int](0x17f0, 0x17f9, 1),
+      Array[Int](0x19e0, 0x19ff, 1))
+  private[this] final val _Inherited = make_Inherited()
+  private def make_Inherited() =
     Array[Array[Int]](
       Array[Int](0x0300, 0x036f, 1),
       Array[Int](0x0485, 0x0486, 1),
@@ -2679,7 +2726,8 @@ object UnicodeTables {
       Array[Int](0x1d1aa, 0x1d1ad, 1),
       Array[Int](0xe0100, 0xe01ef, 1)
     )
-  private final lazy val _Telugu: Array[Array[Int]] =
+  private[this] final val _Telugu = make_Telugu()
+  private def make_Telugu() =
     Array[Array[Int]](
       Array[Int](0x0c01, 0x0c03, 1),
       Array[Int](0x0c05, 0x0c0c, 1),
@@ -2696,30 +2744,40 @@ object UnicodeTables {
       Array[Int](0x0c66, 0x0c6f, 1),
       Array[Int](0x0c78, 0x0c7f, 1)
     )
-  private final lazy val _Samaritan: Array[Array[Int]] =
+  private[this] final val _Samaritan = make_Samaritan()
+  private def make_Samaritan() =
     Array[Array[Int]](Array[Int](0x0800, 0x082d, 1), Array[Int](0x0830, 0x083e, 1))
-  private final lazy val _Bopomofo: Array[Array[Int]] =
+  private[this] final val _Bopomofo = make_Bopomofo()
+  private def make_Bopomofo() =
     Array[Array[Int]](Array[Int](0x02ea, 0x02eb, 1),
-          Array[Int](0x3105, 0x312d, 1),
-          Array[Int](0x31a0, 0x31ba, 1))
-  private final lazy val _Imperial_Aramaic: Array[Array[Int]] =
+      Array[Int](0x3105, 0x312d, 1),
+      Array[Int](0x31a0, 0x31ba, 1))
+  private[this] final val _Imperial_Aramaic = make_Imperial_Aramaic()
+  private def make_Imperial_Aramaic() =
     Array[Array[Int]](Array[Int](0x10840, 0x10855, 1), Array[Int](0x10857, 0x1085f, 1))
-  private final lazy val _Kaithi: Array[Array[Int]] =
+  private[this] final val _Kaithi = make_Kaithi()
+  private def make_Kaithi() =
     Array[Array[Int]](Array[Int](0x11080, 0x110c1, 1))
-  private final lazy val _Mandaic: Array[Array[Int]] =
+  private[this] final val _Mandaic = make_Mandaic()
+  private def make_Mandaic() =
     Array[Array[Int]](Array[Int](0x0840, 0x085b, 1), Array[Int](0x085e, 0x085e, 1))
-  private final lazy val _Old_South_Arabian: Array[Array[Int]] =
+  private[this] final val _Old_South_Arabian = make_Old_South_Arabian()
+  private def make_Old_South_Arabian() =
     Array[Array[Int]](Array[Int](0x10a60, 0x10a7f, 1))
-  private final lazy val _Kayah_Li: Array[Array[Int]] =
+  private[this] final val _Kayah_Li = make_Kayah_Li()
+  private def make_Kayah_Li() =
     Array[Array[Int]](Array[Int](0xa900, 0xa92f, 1))
-  private final lazy val _New_Tai_Lue: Array[Array[Int]] =
+  private[this] final val _New_Tai_Lue = make_New_Tai_Lue()
+  private def make_New_Tai_Lue() =
     Array[Array[Int]](Array[Int](0x1980, 0x19ab, 1),
-          Array[Int](0x19b0, 0x19c9, 1),
-          Array[Int](0x19d0, 0x19da, 1),
-          Array[Int](0x19de, 0x19df, 1))
-  private final lazy val _Tai_Le: Array[Array[Int]] =
+      Array[Int](0x19b0, 0x19c9, 1),
+      Array[Int](0x19d0, 0x19da, 1),
+      Array[Int](0x19de, 0x19df, 1))
+  private[this] final val _Tai_Le = make_Tai_Le()
+  private def make_Tai_Le() =
     Array[Array[Int]](Array[Int](0x1950, 0x196d, 1), Array[Int](0x1970, 0x1974, 1))
-  private final lazy val _Kharoshthi: Array[Array[Int]] =
+  private[this] final val _Kharoshthi = make_Kharoshthi()
+  private def make_Kharoshthi() =
     Array[Array[Int]](
       Array[Int](0x10a00, 0x10a03, 1),
       Array[Int](0x10a05, 0x10a06, 1),
@@ -2730,7 +2788,8 @@ object UnicodeTables {
       Array[Int](0x10a3f, 0x10a47, 1),
       Array[Int](0x10a50, 0x10a58, 1)
     )
-  private final lazy val _Common: Array[Array[Int]] =
+  private[this] final val _Common = make_Common()
+  private def make_Common() =
     Array[Array[Int]](
       Array[Int](0x0000, 0x0040, 1),
       Array[Int](0x005b, 0x0060, 1),
@@ -2902,7 +2961,8 @@ object UnicodeTables {
       Array[Int](0xe0001, 0xe0001, 1),
       Array[Int](0xe0020, 0xe007f, 1)
     )
-  private final lazy val _Kannada: Array[Array[Int]] =
+  private[this] final val _Kannada = make_Kannada()
+  private def make_Kannada() =
     Array[Array[Int]](
       Array[Int](0x0c82, 0x0c83, 1),
       Array[Int](0x0c85, 0x0c8c, 1),
@@ -2919,9 +2979,11 @@ object UnicodeTables {
       Array[Int](0x0ce6, 0x0cef, 1),
       Array[Int](0x0cf1, 0x0cf2, 1)
     )
-  private final lazy val _Old_Turkic: Array[Array[Int]] =
+  private[this] final val _Old_Turkic = make_Old_Turkic()
+  private def make_Old_Turkic() =
     Array[Array[Int]](Array[Int](0x10c00, 0x10c48, 1))
-  private final lazy val _Tamil: Array[Array[Int]] =
+  private[this] final val _Tamil = make_Tamil()
+  private def make_Tamil() =
     Array[Array[Int]](
       Array[Int](0x0b82, 0x0b83, 1),
       Array[Int](0x0b85, 0x0b8a, 1),
@@ -2940,11 +3002,14 @@ object UnicodeTables {
       Array[Int](0x0bd7, 0x0bd7, 1),
       Array[Int](0x0be6, 0x0bfa, 1)
     )
-  private final lazy val _Tagalog: Array[Array[Int]] =
+  private[this] final val _Tagalog = make_Tagalog()
+  private def make_Tagalog() =
     Array[Array[Int]](Array[Int](0x1700, 0x170c, 1), Array[Int](0x170e, 0x1714, 1))
-  private final lazy val _Brahmi: Array[Array[Int]] =
+  private[this] final val _Brahmi = make_Brahmi()
+  private def make_Brahmi() =
     Array[Array[Int]](Array[Int](0x11000, 0x1104d, 1), Array[Int](0x11052, 0x1106f, 1))
-  private final lazy val _Arabic: Array[Array[Int]] =
+  private[this] final val _Arabic = make_Arabic()
+  private def make_Arabic() =
     Array[Array[Int]](
       Array[Int](0x0600, 0x0603, 1),
       Array[Int](0x0606, 0x060b, 1),
@@ -2966,13 +3031,16 @@ object UnicodeTables {
       Array[Int](0xfe76, 0xfefc, 1),
       Array[Int](0x10e60, 0x10e7e, 1)
     )
-  private final lazy val _Tagbanwa: Array[Array[Int]] =
+  private[this] final val _Tagbanwa = make_Tagbanwa()
+  private def make_Tagbanwa() =
     Array[Array[Int]](Array[Int](0x1760, 0x176c, 1),
-          Array[Int](0x176e, 0x1770, 1),
-          Array[Int](0x1772, 0x1773, 1))
-  private final lazy val _Canadian_Aboriginal: Array[Array[Int]] =
+      Array[Int](0x176e, 0x1770, 1),
+      Array[Int](0x1772, 0x1773, 1))
+  private[this] final val _Canadian_Aboriginal = make_Canadian_Aboriginal()
+  private def make_Canadian_Aboriginal() =
     Array[Array[Int]](Array[Int](0x1400, 0x167f, 1), Array[Int](0x18b0, 0x18f5, 1))
-  private final lazy val _Tibetan: Array[Array[Int]] =
+  private[this] final val _Tibetan = make_Tibetan()
+  private def make_Tibetan() =
     Array[Array[Int]](
       Array[Int](0x0f00, 0x0f47, 1),
       Array[Int](0x0f49, 0x0f6c, 1),
@@ -2982,34 +3050,42 @@ object UnicodeTables {
       Array[Int](0x0fce, 0x0fd4, 1),
       Array[Int](0x0fd9, 0x0fda, 1)
     )
-  private final lazy val _Coptic: Array[Array[Int]] =
+  private[this] final val _Coptic = make_Coptic()
+  private def make_Coptic() =
     Array[Array[Int]](Array[Int](0x03e2, 0x03ef, 1),
-          Array[Int](0x2c80, 0x2cf1, 1),
-          Array[Int](0x2cf9, 0x2cff, 1))
-  private final lazy val _Hiragana: Array[Array[Int]] =
+      Array[Int](0x2c80, 0x2cf1, 1),
+      Array[Int](0x2cf9, 0x2cff, 1))
+  private[this] final val _Hiragana = make_Hiragana()
+  private def make_Hiragana() =
     Array[Array[Int]](Array[Int](0x3041, 0x3096, 1),
-          Array[Int](0x309d, 0x309f, 1),
-          Array[Int](0x1b001, 0x1b001, 1),
-          Array[Int](0x1f200, 0x1f200, 1))
-  private final lazy val _Limbu: Array[Array[Int]] =
+      Array[Int](0x309d, 0x309f, 1),
+      Array[Int](0x1b001, 0x1b001, 1),
+      Array[Int](0x1f200, 0x1f200, 1))
+  private[this] final val _Limbu = make_Limbu()
+  private def make_Limbu() =
     Array[Array[Int]](Array[Int](0x1900, 0x191c, 1),
-          Array[Int](0x1920, 0x192b, 1),
-          Array[Int](0x1930, 0x193b, 1),
-          Array[Int](0x1940, 0x1940, 1),
-          Array[Int](0x1944, 0x194f, 1))
-  private final lazy val _Egyptian_Hieroglyphs: Array[Array[Int]] =
+      Array[Int](0x1920, 0x192b, 1),
+      Array[Int](0x1930, 0x193b, 1),
+      Array[Int](0x1940, 0x1940, 1),
+      Array[Int](0x1944, 0x194f, 1))
+  private[this] final val _Egyptian_Hieroglyphs = make_Egyptian_Hieroglyphs()
+  private def make_Egyptian_Hieroglyphs() =
     Array[Array[Int]](Array[Int](0x13000, 0x1342e, 1))
-  private final lazy val _Avestan: Array[Array[Int]] =
+  private[this] final val _Avestan = make_Avestan()
+  private def make_Avestan() =
     Array[Array[Int]](Array[Int](0x10b00, 0x10b35, 1), Array[Int](0x10b39, 0x10b3f, 1))
-  private final lazy val _Myanmar: Array[Array[Int]] =
+  private[this] final val _Myanmar = make_Myanmar()
+  private def make_Myanmar() =
     Array[Array[Int]](Array[Int](0x1000, 0x109f, 1), Array[Int](0xaa60, 0xaa7b, 1))
-  private final lazy val _Armenian: Array[Array[Int]] =
+  private[this] final val _Armenian = make_Armenian()
+  private def make_Armenian() =
     Array[Array[Int]](Array[Int](0x0531, 0x0556, 1),
-          Array[Int](0x0559, 0x055f, 1),
-          Array[Int](0x0561, 0x0587, 1),
-          Array[Int](0x058a, 0x058a, 1),
-          Array[Int](0xfb13, 0xfb17, 1))
-  private final lazy val _Sinhala: Array[Array[Int]] =
+      Array[Int](0x0559, 0x055f, 1),
+      Array[Int](0x0561, 0x0587, 1),
+      Array[Int](0x058a, 0x058a, 1),
+      Array[Int](0xfb13, 0xfb17, 1))
+  private[this] final val _Sinhala = make_Sinhala()
+  private def make_Sinhala() =
     Array[Array[Int]](
       Array[Int](0x0d82, 0x0d83, 1),
       Array[Int](0x0d85, 0x0d96, 1),
@@ -3023,7 +3099,8 @@ object UnicodeTables {
       Array[Int](0x0dd8, 0x0ddf, 1),
       Array[Int](0x0df2, 0x0df4, 1)
     )
-  private final lazy val _Bengali: Array[Array[Int]] =
+  private[this] final val _Bengali = make_Bengali()
+  private def make_Bengali() =
     Array[Array[Int]](
       Array[Int](0x0981, 0x0983, 1),
       Array[Int](0x0985, 0x098c, 1),
@@ -3040,7 +3117,8 @@ object UnicodeTables {
       Array[Int](0x09df, 0x09e3, 1),
       Array[Int](0x09e6, 0x09fb, 1)
     )
-  private final lazy val _Greek: Array[Array[Int]] =
+  private[this] final val _Greek = make_Greek()
+  private def make_Greek() =
     Array[Array[Int]](
       Array[Int](0x0370, 0x0373, 1),
       Array[Int](0x0375, 0x0377, 1),
@@ -3076,12 +3154,14 @@ object UnicodeTables {
       Array[Int](0x10140, 0x1018a, 1),
       Array[Int](0x1d200, 0x1d245, 1)
     )
-  private final lazy val _Cham: Array[Array[Int]] =
+  private[this] final val _Cham = make_Cham()
+  private def make_Cham() =
     Array[Array[Int]](Array[Int](0xaa00, 0xaa36, 1),
-          Array[Int](0xaa40, 0xaa4d, 1),
-          Array[Int](0xaa50, 0xaa59, 1),
-          Array[Int](0xaa5c, 0xaa5f, 1))
-  private final lazy val _Hebrew: Array[Array[Int]] =
+      Array[Int](0xaa40, 0xaa4d, 1),
+      Array[Int](0xaa50, 0xaa59, 1),
+      Array[Int](0xaa5c, 0xaa5f, 1))
+  private[this] final val _Hebrew = make_Hebrew()
+  private def make_Hebrew() =
     Array[Array[Int]](
       Array[Int](0x0591, 0x05c7, 1),
       Array[Int](0x05d0, 0x05ea, 1),
@@ -3093,11 +3173,14 @@ object UnicodeTables {
       Array[Int](0xfb43, 0xfb44, 1),
       Array[Int](0xfb46, 0xfb4f, 1)
     )
-  private final lazy val _Meetei_Mayek: Array[Array[Int]] =
+  private[this] final val _Meetei_Mayek = make_Meetei_Mayek()
+  private def make_Meetei_Mayek() =
     Array[Array[Int]](Array[Int](0xabc0, 0xabed, 1), Array[Int](0xabf0, 0xabf9, 1))
-  private final lazy val _Saurashtra: Array[Array[Int]] =
+  private[this] final val _Saurashtra = make_Saurashtra()
+  private def make_Saurashtra() =
     Array[Array[Int]](Array[Int](0xa880, 0xa8c4, 1), Array[Int](0xa8ce, 0xa8d9, 1))
-  private final lazy val _Hangul: Array[Array[Int]] =
+  private[this] final val _Hangul = make_Hangul()
+  private def make_Hangul() =
     Array[Array[Int]](
       Array[Int](0x1100, 0x11ff, 1),
       Array[Int](0x302e, 0x302f, 1),
@@ -3114,17 +3197,23 @@ object UnicodeTables {
       Array[Int](0xffd2, 0xffd7, 1),
       Array[Int](0xffda, 0xffdc, 1)
     )
-  private final lazy val _Runic: Array[Array[Int]] =
+  private[this] final val _Runic = make_Runic()
+  private def make_Runic() =
     Array[Array[Int]](Array[Int](0x16a0, 0x16ea, 1), Array[Int](0x16ee, 0x16f0, 1))
-  private final lazy val _Deseret: Array[Array[Int]] =
+  private[this] final val _Deseret = make_Deseret()
+  private def make_Deseret() =
     Array[Array[Int]](Array[Int](0x10400, 0x1044f, 1))
-  private final lazy val _Lisu: Array[Array[Int]] =
+  private[this] final val _Lisu = make_Lisu()
+  private def make_Lisu() =
     Array[Array[Int]](Array[Int](0xa4d0, 0xa4ff, 1))
-  private final lazy val _Sundanese: Array[Array[Int]] =
+  private[this] final val _Sundanese = make_Sundanese()
+  private def make_Sundanese() =
     Array[Array[Int]](Array[Int](0x1b80, 0x1baa, 1), Array[Int](0x1bae, 0x1bb9, 1))
-  private final lazy val _Glagolitic: Array[Array[Int]] =
+  private[this] final val _Glagolitic = make_Glagolitic()
+  private def make_Glagolitic() =
     Array[Array[Int]](Array[Int](0x2c00, 0x2c2e, 1), Array[Int](0x2c30, 0x2c5e, 1))
-  private final lazy val _Oriya: Array[Array[Int]] =
+  private[this] final val _Oriya = make_Oriya()
+  private def make_Oriya() =
     Array[Array[Int]](
       Array[Int](0x0b01, 0x0b03, 1),
       Array[Int](0x0b05, 0x0b0c, 1),
@@ -3141,9 +3230,11 @@ object UnicodeTables {
       Array[Int](0x0b5f, 0x0b63, 1),
       Array[Int](0x0b66, 0x0b77, 1)
     )
-  private final lazy val _Buhid: Array[Array[Int]] =
+  private[this] final val _Buhid = make_Buhid()
+  private def make_Buhid() =
     Array[Array[Int]](Array[Int](0x1740, 0x1753, 1))
-  private final lazy val _Ethiopic: Array[Array[Int]] =
+  private[this] final val _Ethiopic = make_Ethiopic()
+  private def make_Ethiopic() =
     Array[Array[Int]](
       Array[Int](0x1200, 0x1248, 1),
       Array[Int](0x124a, 0x124d, 1),
@@ -3178,25 +3269,33 @@ object UnicodeTables {
       Array[Int](0xab20, 0xab26, 1),
       Array[Int](0xab28, 0xab2e, 1)
     )
-  private final lazy val _Javanese: Array[Array[Int]] =
+  private[this] final val _Javanese = make_Javanese()
+  private def make_Javanese() =
     Array[Array[Int]](Array[Int](0xa980, 0xa9cd, 1),
-          Array[Int](0xa9cf, 0xa9d9, 1),
-          Array[Int](0xa9de, 0xa9df, 1))
-  private final lazy val _Syloti_Nagri: Array[Array[Int]] =
+      Array[Int](0xa9cf, 0xa9d9, 1),
+      Array[Int](0xa9de, 0xa9df, 1))
+  private[this] final val _Syloti_Nagri = make_Syloti_Nagri()
+  private def make_Syloti_Nagri() =
     Array[Array[Int]](Array[Int](0xa800, 0xa82b, 1))
-  private final lazy val _Vai: Array[Array[Int]] =
+  private[this] final val _Vai = make_Vai()
+  private def make_Vai() =
     Array[Array[Int]](Array[Int](0xa500, 0xa62b, 1))
-  private final lazy val _Cherokee: Array[Array[Int]] =
+  private[this] final val _Cherokee = make_Cherokee()
+  private def make_Cherokee() =
     Array[Array[Int]](Array[Int](0x13a0, 0x13f4, 1))
-  private final lazy val _Ogham: Array[Array[Int]] =
+  private[this] final val _Ogham = make_Ogham()
+  private def make_Ogham() =
     Array[Array[Int]](Array[Int](0x1680, 0x169c, 1))
-  private final lazy val _Batak: Array[Array[Int]] =
+  private[this] final val _Batak = make_Batak()
+  private def make_Batak() =
     Array[Array[Int]](Array[Int](0x1bc0, 0x1bf3, 1), Array[Int](0x1bfc, 0x1bff, 1))
-  private final lazy val _Syriac: Array[Array[Int]] =
+  private[this] final val _Syriac = make_Syriac()
+  private def make_Syriac() =
     Array[Array[Int]](Array[Int](0x0700, 0x070d, 1),
-          Array[Int](0x070f, 0x074a, 1),
-          Array[Int](0x074d, 0x074f, 1))
-  private final lazy val _Gurmukhi: Array[Array[Int]] =
+      Array[Int](0x070f, 0x074a, 1),
+      Array[Int](0x074d, 0x074f, 1))
+  private[this] final val _Gurmukhi = make_Gurmukhi()
+  private def make_Gurmukhi() =
     Array[Array[Int]](
       Array[Int](0x0a01, 0x0a03, 1),
       Array[Int](0x0a05, 0x0a0a, 1),
@@ -3215,62 +3314,80 @@ object UnicodeTables {
       Array[Int](0x0a5e, 0x0a5e, 1),
       Array[Int](0x0a66, 0x0a75, 1)
     )
-  private final lazy val _Tai_Tham: Array[Array[Int]] =
+  private[this] final val _Tai_Tham = make_Tai_Tham()
+  private def make_Tai_Tham() =
     Array[Array[Int]](Array[Int](0x1a20, 0x1a5e, 1),
-          Array[Int](0x1a60, 0x1a7c, 1),
-          Array[Int](0x1a7f, 0x1a89, 1),
-          Array[Int](0x1a90, 0x1a99, 1),
-          Array[Int](0x1aa0, 0x1aad, 1))
-  private final lazy val _Ol_Chiki: Array[Array[Int]] =
+      Array[Int](0x1a60, 0x1a7c, 1),
+      Array[Int](0x1a7f, 0x1a89, 1),
+      Array[Int](0x1a90, 0x1a99, 1),
+      Array[Int](0x1aa0, 0x1aad, 1))
+  private[this] final val _Ol_Chiki = make_Ol_Chiki()
+  private def make_Ol_Chiki() =
     Array[Array[Int]](Array[Int](0x1c50, 0x1c7f, 1))
-  private final lazy val _Mongolian: Array[Array[Int]] =
+  private[this] final val _Mongolian = make_Mongolian()
+  private def make_Mongolian() =
     Array[Array[Int]](Array[Int](0x1800, 0x1801, 1),
-          Array[Int](0x1804, 0x1804, 1),
-          Array[Int](0x1806, 0x180e, 1),
-          Array[Int](0x1810, 0x1819, 1),
-          Array[Int](0x1820, 0x1877, 1),
-          Array[Int](0x1880, 0x18aa, 1))
-  private final lazy val _Hanunoo: Array[Array[Int]] =
+      Array[Int](0x1804, 0x1804, 1),
+      Array[Int](0x1806, 0x180e, 1),
+      Array[Int](0x1810, 0x1819, 1),
+      Array[Int](0x1820, 0x1877, 1),
+      Array[Int](0x1880, 0x18aa, 1))
+  private[this] final val _Hanunoo = make_Hanunoo()
+  private def make_Hanunoo() =
     Array[Array[Int]](Array[Int](0x1720, 0x1734, 1))
-  private final lazy val _Cypriot: Array[Array[Int]] =
+  private[this] final val _Cypriot = make_Cypriot()
+  private def make_Cypriot() =
     Array[Array[Int]](Array[Int](0x10800, 0x10805, 1),
-          Array[Int](0x10808, 0x10808, 1),
-          Array[Int](0x1080a, 0x10835, 1),
-          Array[Int](0x10837, 0x10838, 1),
-          Array[Int](0x1083c, 0x1083c, 1),
-          Array[Int](0x1083f, 0x1083f, 1))
-  private final lazy val _Buginese: Array[Array[Int]] =
+      Array[Int](0x10808, 0x10808, 1),
+      Array[Int](0x1080a, 0x10835, 1),
+      Array[Int](0x10837, 0x10838, 1),
+      Array[Int](0x1083c, 0x1083c, 1),
+      Array[Int](0x1083f, 0x1083f, 1))
+  private[this] final val _Buginese = make_Buginese()
+  private def make_Buginese() =
     Array[Array[Int]](Array[Int](0x1a00, 0x1a1b, 1), Array[Int](0x1a1e, 0x1a1f, 1))
-  private final lazy val _Bamum: Array[Array[Int]] =
+  private[this] final val _Bamum = make_Bamum()
+  private def make_Bamum() =
     Array[Array[Int]](Array[Int](0xa6a0, 0xa6f7, 1), Array[Int](0x16800, 0x16a38, 1))
-  private final lazy val _Lepcha: Array[Array[Int]] =
+  private[this] final val _Lepcha = make_Lepcha()
+  private def make_Lepcha() =
     Array[Array[Int]](Array[Int](0x1c00, 0x1c37, 1),
-          Array[Int](0x1c3b, 0x1c49, 1),
-          Array[Int](0x1c4d, 0x1c4f, 1))
-  private final lazy val _Thaana: Array[Array[Int]] =
+      Array[Int](0x1c3b, 0x1c49, 1),
+      Array[Int](0x1c4d, 0x1c4f, 1))
+  private[this] final val _Thaana = make_Thaana()
+  private def make_Thaana() =
     Array[Array[Int]](Array[Int](0x0780, 0x07b1, 1))
-  private final lazy val _Old_Persian: Array[Array[Int]] =
+  private[this] final val _Old_Persian = make_Old_Persian()
+  private def make_Old_Persian() =
     Array[Array[Int]](Array[Int](0x103a0, 0x103c3, 1), Array[Int](0x103c8, 0x103d5, 1))
-  private final lazy val _Cuneiform: Array[Array[Int]] =
+  private[this] final val _Cuneiform = make_Cuneiform()
+  private def make_Cuneiform() =
     Array[Array[Int]](Array[Int](0x12000, 0x1236e, 1),
-          Array[Int](0x12400, 0x12462, 1),
-          Array[Int](0x12470, 0x12473, 1))
-  private final lazy val _Rejang: Array[Array[Int]] =
+      Array[Int](0x12400, 0x12462, 1),
+      Array[Int](0x12470, 0x12473, 1))
+  private[this] final val _Rejang = make_Rejang()
+  private def make_Rejang() =
     Array[Array[Int]](Array[Int](0xa930, 0xa953, 1), Array[Int](0xa95f, 0xa95f, 1))
-  private final lazy val _Georgian: Array[Array[Int]] =
+  private[this] final val _Georgian = make_Georgian()
+  private def make_Georgian() =
     Array[Array[Int]](Array[Int](0x10a0, 0x10c5, 1),
-          Array[Int](0x10d0, 0x10fa, 1),
-          Array[Int](0x10fc, 0x10fc, 1),
-          Array[Int](0x2d00, 0x2d25, 1))
-  private final lazy val _Shavian: Array[Array[Int]] =
+      Array[Int](0x10d0, 0x10fa, 1),
+      Array[Int](0x10fc, 0x10fc, 1),
+      Array[Int](0x2d00, 0x2d25, 1))
+  private[this] final val _Shavian = make_Shavian()
+  private def make_Shavian() =
     Array[Array[Int]](Array[Int](0x10450, 0x1047f, 1))
-  private final lazy val _Lycian: Array[Array[Int]] =
+  private[this] final val _Lycian = make_Lycian()
+  private def make_Lycian() =
     Array[Array[Int]](Array[Int](0x10280, 0x1029c, 1))
-  private final lazy val _Nko: Array[Array[Int]] =
+  private[this] final val _Nko = make_Nko()
+  private def make_Nko() =
     Array[Array[Int]](Array[Int](0x07c0, 0x07fa, 1))
-  private final lazy val _Yi: Array[Array[Int]] =
+  private[this] final val _Yi = make_Yi()
+  private def make_Yi() =
     Array[Array[Int]](Array[Int](0xa000, 0xa48c, 1), Array[Int](0xa490, 0xa4c6, 1))
-  private final lazy val _Lao: Array[Array[Int]] =
+  private[this] final val _Lao = make_Lao()
+  private def make_Lao() =
     Array[Array[Int]](
       Array[Int](0x0e81, 0x0e82, 1),
       Array[Int](0x0e84, 0x0e84, 1),
@@ -3291,7 +3408,8 @@ object UnicodeTables {
       Array[Int](0x0ed0, 0x0ed9, 1),
       Array[Int](0x0edc, 0x0edd, 1)
     )
-  private final lazy val _Linear_B: Array[Array[Int]] =
+  private[this] final val _Linear_B = make_Linear_B()
+  private def make_Linear_B() =
     Array[Array[Int]](
       Array[Int](0x10000, 0x1000b, 1),
       Array[Int](0x1000d, 0x10026, 1),
@@ -3301,28 +3419,36 @@ object UnicodeTables {
       Array[Int](0x10050, 0x1005d, 1),
       Array[Int](0x10080, 0x100fa, 1)
     )
-  private final lazy val _Old_Italic: Array[Array[Int]] =
+  private[this] final val _Old_Italic = make_Old_Italic()
+  private def make_Old_Italic() =
     Array[Array[Int]](Array[Int](0x10300, 0x1031e, 1), Array[Int](0x10320, 0x10323, 1))
-  private final lazy val _Tai_Viet: Array[Array[Int]] =
+  private[this] final val _Tai_Viet = make_Tai_Viet()
+  private def make_Tai_Viet() =
     Array[Array[Int]](Array[Int](0xaa80, 0xaac2, 1), Array[Int](0xaadb, 0xaadf, 1))
-  private final lazy val _Devanagari: Array[Array[Int]] =
+  private[this] final val _Devanagari = make_Devanagari()
+  private def make_Devanagari() =
     Array[Array[Int]](Array[Int](0x0900, 0x0950, 1),
-          Array[Int](0x0953, 0x0963, 1),
-          Array[Int](0x0966, 0x096f, 1),
-          Array[Int](0x0971, 0x0977, 1),
-          Array[Int](0x0979, 0x097f, 1),
-          Array[Int](0xa8e0, 0xa8fb, 1))
-  private final lazy val _Lydian: Array[Array[Int]] =
+      Array[Int](0x0953, 0x0963, 1),
+      Array[Int](0x0966, 0x096f, 1),
+      Array[Int](0x0971, 0x0977, 1),
+      Array[Int](0x0979, 0x097f, 1),
+      Array[Int](0xa8e0, 0xa8fb, 1))
+  private[this] final val _Lydian = make_Lydian()
+  private def make_Lydian() =
     Array[Array[Int]](Array[Int](0x10920, 0x10939, 1), Array[Int](0x1093f, 0x1093f, 1))
-  private final lazy val _Tifinagh: Array[Array[Int]] =
+  private[this] final val _Tifinagh = make_Tifinagh()
+  private def make_Tifinagh() =
     Array[Array[Int]](Array[Int](0x2d30, 0x2d65, 1),
-          Array[Int](0x2d6f, 0x2d70, 1),
-          Array[Int](0x2d7f, 0x2d7f, 1))
-  private final lazy val _Ugaritic: Array[Array[Int]] =
+      Array[Int](0x2d6f, 0x2d70, 1),
+      Array[Int](0x2d7f, 0x2d7f, 1))
+  private[this] final val _Ugaritic = make_Ugaritic()
+  private def make_Ugaritic() =
     Array[Array[Int]](Array[Int](0x10380, 0x1039d, 1), Array[Int](0x1039f, 0x1039f, 1))
-  private final lazy val _Thai: Array[Array[Int]] =
+  private[this] final val _Thai = make_Thai()
+  private def make_Thai() =
     Array[Array[Int]](Array[Int](0x0e01, 0x0e3a, 1), Array[Int](0x0e40, 0x0e5b, 1))
-  private final lazy val _Cyrillic: Array[Array[Int]] =
+  private[this] final val _Cyrillic = make_Cyrillic()
+  private def make_Cyrillic() =
     Array[Array[Int]](
       Array[Int](0x0400, 0x0484, 1),
       Array[Int](0x0487, 0x0527, 1),
@@ -3332,7 +3458,8 @@ object UnicodeTables {
       Array[Int](0xa640, 0xa673, 1),
       Array[Int](0xa67c, 0xa697, 1)
     )
-  private final lazy val _Gujarati: Array[Array[Int]] =
+  private[this] final val _Gujarati = make_Gujarati()
+  private def make_Gujarati() =
     Array[Array[Int]](
       Array[Int](0x0a81, 0x0a83, 1),
       Array[Int](0x0a85, 0x0a8d, 1),
@@ -3349,15 +3476,20 @@ object UnicodeTables {
       Array[Int](0x0ae6, 0x0aef, 1),
       Array[Int](0x0af1, 0x0af1, 1)
     )
-  private final lazy val _Carian: Array[Array[Int]] =
+  private[this] final val _Carian = make_Carian()
+  private def make_Carian() =
     Array[Array[Int]](Array[Int](0x102a0, 0x102d0, 1))
-  private final lazy val _Phoenician: Array[Array[Int]] =
+  private[this] final val _Phoenician = make_Phoenician()
+  private def make_Phoenician() =
     Array[Array[Int]](Array[Int](0x10900, 0x1091b, 1), Array[Int](0x1091f, 0x1091f, 1))
-  private final lazy val _Balinese: Array[Array[Int]] =
+  private[this] final val _Balinese = make_Balinese()
+  private def make_Balinese() =
     Array[Array[Int]](Array[Int](0x1b00, 0x1b4b, 1), Array[Int](0x1b50, 0x1b7c, 1))
-  private final lazy val _Braille: Array[Array[Int]] =
+  private[this] final val _Braille = make_Braille()
+  private def make_Braille() =
     Array[Array[Int]](Array[Int](0x2800, 0x28ff, 1))
-  private final lazy val _Han: Array[Array[Int]] =
+  private[this] final val _Han = make_Han()
+  private def make_Han() =
     Array[Array[Int]](
       Array[Int](0x2e80, 0x2e99, 1),
       Array[Int](0x2e9b, 0x2ef3, 1),
@@ -3376,104 +3508,107 @@ object UnicodeTables {
       Array[Int](0x2b740, 0x2b81d, 1),
       Array[Int](0x2f800, 0x2fa1d, 1)
     )
-  private final lazy val _Gothic: Array[Array[Int]] =
+  private[this] final val _Gothic = make_Gothic()
+  private def make_Gothic() =
     Array[Array[Int]](Array[Int](0x10330, 0x1034a, 1))
-  final lazy val Arabic: Array[Array[Int]]                 = _Arabic
-  final lazy val Armenian: Array[Array[Int]]               = _Armenian
-  final lazy val Avestan: Array[Array[Int]]                = _Avestan
-  final lazy val Balinese: Array[Array[Int]]               = _Balinese
-  final lazy val Bamum: Array[Array[Int]]                  = _Bamum
-  final lazy val Batak: Array[Array[Int]]                  = _Batak
-  final lazy val Bengali: Array[Array[Int]]                = _Bengali
-  final lazy val Bopomofo: Array[Array[Int]]               = _Bopomofo
-  final lazy val Brahmi: Array[Array[Int]]                 = _Brahmi
-  final lazy val Braille: Array[Array[Int]]                = _Braille
-  final lazy val Buginese: Array[Array[Int]]               = _Buginese
-  final lazy val Buhid: Array[Array[Int]]                  = _Buhid
-  final lazy val Canadian_Aboriginal: Array[Array[Int]]    = _Canadian_Aboriginal
-  final lazy val Carian: Array[Array[Int]]                 = _Carian
-  final lazy val Cham: Array[Array[Int]]                   = _Cham
-  final lazy val Cherokee: Array[Array[Int]]               = _Cherokee
-  final lazy val Common: Array[Array[Int]]                 = _Common
-  final lazy val Coptic: Array[Array[Int]]                 = _Coptic
-  final lazy val Cuneiform: Array[Array[Int]]              = _Cuneiform
-  final lazy val Cypriot: Array[Array[Int]]                = _Cypriot
-  final lazy val Cyrillic: Array[Array[Int]]               = _Cyrillic
-  final lazy val Deseret: Array[Array[Int]]                = _Deseret
-  final lazy val Devanagari: Array[Array[Int]]             = _Devanagari
-  final lazy val Egyptian_Hieroglyphs: Array[Array[Int]]   = _Egyptian_Hieroglyphs
-  final lazy val Ethiopic: Array[Array[Int]]               = _Ethiopic
-  final lazy val Georgian: Array[Array[Int]]               = _Georgian
-  final lazy val Glagolitic: Array[Array[Int]]             = _Glagolitic
-  final lazy val Gothic: Array[Array[Int]]                 = _Gothic
-  final lazy val Greek: Array[Array[Int]]                  = _Greek
-  final lazy val Gujarati: Array[Array[Int]]               = _Gujarati
-  final lazy val Gurmukhi: Array[Array[Int]]               = _Gurmukhi
-  final lazy val Han: Array[Array[Int]]                    = _Han
-  final lazy val Hangul: Array[Array[Int]]                 = _Hangul
-  final lazy val Hanunoo: Array[Array[Int]]                = _Hanunoo
-  final lazy val Hebrew: Array[Array[Int]]                 = _Hebrew
-  final lazy val Hiragana: Array[Array[Int]]               = _Hiragana
-  final lazy val Imperial_Aramaic: Array[Array[Int]]       = _Imperial_Aramaic
-  final lazy val Inherited: Array[Array[Int]]              = _Inherited
-  final lazy val Inscriptional_Pahlavi: Array[Array[Int]]  = _Inscriptional_Pahlavi
-  final lazy val Inscriptional_Parthian: Array[Array[Int]] = _Inscriptional_Parthian
-  final lazy val Javanese: Array[Array[Int]]               = _Javanese
-  final lazy val Kaithi: Array[Array[Int]]                 = _Kaithi
-  final lazy val Kannada: Array[Array[Int]]                = _Kannada
-  final lazy val Katakana: Array[Array[Int]]               = _Katakana
-  final lazy val Kayah_Li: Array[Array[Int]]               = _Kayah_Li
-  final lazy val Kharoshthi: Array[Array[Int]]             = _Kharoshthi
-  final lazy val Khmer: Array[Array[Int]]                  = _Khmer
-  final lazy val Lao: Array[Array[Int]]                    = _Lao
-  final lazy val Latin: Array[Array[Int]]                  = _Latin
-  final lazy val Lepcha: Array[Array[Int]]                 = _Lepcha
-  final lazy val Limbu: Array[Array[Int]]                  = _Limbu
-  final lazy val Linear_B: Array[Array[Int]]               = _Linear_B
-  final lazy val Lisu: Array[Array[Int]]                   = _Lisu
-  final lazy val Lycian: Array[Array[Int]]                 = _Lycian
-  final lazy val Lydian: Array[Array[Int]]                 = _Lydian
-  final lazy val Malayalam: Array[Array[Int]]              = _Malayalam
-  final lazy val Mandaic: Array[Array[Int]]                = _Mandaic
-  final lazy val Meetei_Mayek: Array[Array[Int]]           = _Meetei_Mayek
-  final lazy val Mongolian: Array[Array[Int]]              = _Mongolian
-  final lazy val Myanmar: Array[Array[Int]]                = _Myanmar
-  final lazy val New_Tai_Lue: Array[Array[Int]]            = _New_Tai_Lue
-  final lazy val Nko: Array[Array[Int]]                    = _Nko
-  final lazy val Ogham: Array[Array[Int]]                  = _Ogham
-  final lazy val Ol_Chiki: Array[Array[Int]]               = _Ol_Chiki
-  final lazy val Old_Italic: Array[Array[Int]]             = _Old_Italic
-  final lazy val Old_Persian: Array[Array[Int]]            = _Old_Persian
-  final lazy val Old_South_Arabian: Array[Array[Int]]      = _Old_South_Arabian
-  final lazy val Old_Turkic: Array[Array[Int]]             = _Old_Turkic
-  final lazy val Oriya: Array[Array[Int]]                  = _Oriya
-  final lazy val Osmanya: Array[Array[Int]]                = _Osmanya
-  final lazy val Phags_Pa: Array[Array[Int]]               = _Phags_Pa
-  final lazy val Phoenician: Array[Array[Int]]             = _Phoenician
-  final lazy val Rejang: Array[Array[Int]]                 = _Rejang
-  final lazy val Runic: Array[Array[Int]]                  = _Runic
-  final lazy val Samaritan: Array[Array[Int]]              = _Samaritan
-  final lazy val Saurashtra: Array[Array[Int]]             = _Saurashtra
-  final lazy val Shavian: Array[Array[Int]]                = _Shavian
-  final lazy val Sinhala: Array[Array[Int]]                = _Sinhala
-  final lazy val Sundanese: Array[Array[Int]]              = _Sundanese
-  final lazy val Syloti_Nagri: Array[Array[Int]]           = _Syloti_Nagri
-  final lazy val Syriac: Array[Array[Int]]                 = _Syriac
-  final lazy val Tagalog: Array[Array[Int]]                = _Tagalog
-  final lazy val Tagbanwa: Array[Array[Int]]               = _Tagbanwa
-  final lazy val Tai_Le: Array[Array[Int]]                 = _Tai_Le
-  final lazy val Tai_Tham: Array[Array[Int]]               = _Tai_Tham
-  final lazy val Tai_Viet: Array[Array[Int]]               = _Tai_Viet
-  final lazy val Tamil: Array[Array[Int]]                  = _Tamil
-  final lazy val Telugu: Array[Array[Int]]                 = _Telugu
-  final lazy val Thaana: Array[Array[Int]]                 = _Thaana
-  final lazy val Thai: Array[Array[Int]]                   = _Thai
-  final lazy val Tibetan: Array[Array[Int]]                = _Tibetan
-  final lazy val Tifinagh: Array[Array[Int]]               = _Tifinagh
-  final lazy val Ugaritic: Array[Array[Int]]               = _Ugaritic
-  final lazy val Vai: Array[Array[Int]]                    = _Vai
-  final lazy val Yi: Array[Array[Int]]                     = _Yi
-  private final lazy val _Pattern_Syntax: Array[Array[Int]] =
+  final val Arabic: Array[Array[Int]] = _Arabic
+  final val Armenian: Array[Array[Int]] = _Armenian
+  final val Avestan: Array[Array[Int]] = _Avestan
+  final val Balinese: Array[Array[Int]] = _Balinese
+  final val Bamum: Array[Array[Int]] = _Bamum
+  final val Batak: Array[Array[Int]] = _Batak
+  final val Bengali: Array[Array[Int]] = _Bengali
+  final val Bopomofo: Array[Array[Int]] = _Bopomofo
+  final val Brahmi: Array[Array[Int]] = _Brahmi
+  final val Braille: Array[Array[Int]] = _Braille
+  final val Buginese: Array[Array[Int]] = _Buginese
+  final val Buhid: Array[Array[Int]] = _Buhid
+  final val Canadian_Aboriginal: Array[Array[Int]] = _Canadian_Aboriginal
+  final val Carian: Array[Array[Int]] = _Carian
+  final val Cham: Array[Array[Int]] = _Cham
+  final val Cherokee: Array[Array[Int]] = _Cherokee
+  final val Common: Array[Array[Int]] = _Common
+  final val Coptic: Array[Array[Int]] = _Coptic
+  final val Cuneiform: Array[Array[Int]] = _Cuneiform
+  final val Cypriot: Array[Array[Int]] = _Cypriot
+  final val Cyrillic: Array[Array[Int]] = _Cyrillic
+  final val Deseret: Array[Array[Int]] = _Deseret
+  final val Devanagari: Array[Array[Int]] = _Devanagari
+  final val Egyptian_Hieroglyphs: Array[Array[Int]] = _Egyptian_Hieroglyphs
+  final val Ethiopic: Array[Array[Int]] = _Ethiopic
+  final val Georgian: Array[Array[Int]] = _Georgian
+  final val Glagolitic: Array[Array[Int]] = _Glagolitic
+  final val Gothic: Array[Array[Int]] = _Gothic
+  final val Greek: Array[Array[Int]] = _Greek
+  final val Gujarati: Array[Array[Int]] = _Gujarati
+  final val Gurmukhi: Array[Array[Int]] = _Gurmukhi
+  final val Han: Array[Array[Int]] = _Han
+  final val Hangul: Array[Array[Int]] = _Hangul
+  final val Hanunoo: Array[Array[Int]] = _Hanunoo
+  final val Hebrew: Array[Array[Int]] = _Hebrew
+  final val Hiragana: Array[Array[Int]] = _Hiragana
+  final val Imperial_Aramaic: Array[Array[Int]] = _Imperial_Aramaic
+  final val Inherited: Array[Array[Int]] = _Inherited
+  final val Inscriptional_Pahlavi: Array[Array[Int]] = _Inscriptional_Pahlavi
+  final val Inscriptional_Parthian = mkInscriptional_Parthian()
+  private def mkInscriptional_Parthian() = _Inscriptional_Parthian
+  final val Javanese: Array[Array[Int]] = _Javanese
+  final val Kaithi: Array[Array[Int]] = _Kaithi
+  final val Kannada: Array[Array[Int]] = _Kannada
+  final val Katakana: Array[Array[Int]] = _Katakana
+  final val Kayah_Li: Array[Array[Int]] = _Kayah_Li
+  final val Kharoshthi: Array[Array[Int]] = _Kharoshthi
+  final val Khmer: Array[Array[Int]] = _Khmer
+  final val Lao: Array[Array[Int]] = _Lao
+  final val Latin: Array[Array[Int]] = _Latin
+  final val Lepcha: Array[Array[Int]] = _Lepcha
+  final val Limbu: Array[Array[Int]] = _Limbu
+  final val Linear_B: Array[Array[Int]] = _Linear_B
+  final val Lisu: Array[Array[Int]] = _Lisu
+  final val Lycian: Array[Array[Int]] = _Lycian
+  final val Lydian: Array[Array[Int]] = _Lydian
+  final val Malayalam: Array[Array[Int]] = _Malayalam
+  final val Mandaic: Array[Array[Int]] = _Mandaic
+  final val Meetei_Mayek: Array[Array[Int]] = _Meetei_Mayek
+  final val Mongolian: Array[Array[Int]] = _Mongolian
+  final val Myanmar: Array[Array[Int]] = _Myanmar
+  final val New_Tai_Lue: Array[Array[Int]] = _New_Tai_Lue
+  final val Nko: Array[Array[Int]] = _Nko
+  final val Ogham: Array[Array[Int]] = _Ogham
+  final val Ol_Chiki: Array[Array[Int]] = _Ol_Chiki
+  final val Old_Italic: Array[Array[Int]] = _Old_Italic
+  final val Old_Persian: Array[Array[Int]] = _Old_Persian
+  final val Old_South_Arabian: Array[Array[Int]] = _Old_South_Arabian
+  final val Old_Turkic: Array[Array[Int]] = _Old_Turkic
+  final val Oriya: Array[Array[Int]] = _Oriya
+  final val Osmanya: Array[Array[Int]] = _Osmanya
+  final val Phags_Pa: Array[Array[Int]] = _Phags_Pa
+  final val Phoenician: Array[Array[Int]] = _Phoenician
+  final val Rejang: Array[Array[Int]] = _Rejang
+  final val Runic: Array[Array[Int]] = _Runic
+  final val Samaritan: Array[Array[Int]] = _Samaritan
+  final val Saurashtra: Array[Array[Int]] = _Saurashtra
+  final val Shavian: Array[Array[Int]] = _Shavian
+  final val Sinhala: Array[Array[Int]] = _Sinhala
+  final val Sundanese: Array[Array[Int]] = _Sundanese
+  final val Syloti_Nagri: Array[Array[Int]] = _Syloti_Nagri
+  final val Syriac: Array[Array[Int]] = _Syriac
+  final val Tagalog: Array[Array[Int]] = _Tagalog
+  final val Tagbanwa: Array[Array[Int]] = _Tagbanwa
+  final val Tai_Le: Array[Array[Int]] = _Tai_Le
+  final val Tai_Tham: Array[Array[Int]] = _Tai_Tham
+  final val Tai_Viet: Array[Array[Int]] = _Tai_Viet
+  final val Tamil: Array[Array[Int]] = _Tamil
+  final val Telugu: Array[Array[Int]] = _Telugu
+  final val Thaana: Array[Array[Int]] = _Thaana
+  final val Thai: Array[Array[Int]] = _Thai
+  final val Tibetan: Array[Array[Int]] = _Tibetan
+  final val Tifinagh: Array[Array[Int]] = _Tifinagh
+  final val Ugaritic: Array[Array[Int]] = _Ugaritic
+  final val Vai: Array[Array[Int]] = _Vai
+  final val Yi: Array[Array[Int]] = _Yi
+  private[this] final val _Pattern_Syntax = make_Pattern_Syntax()
+  private def make_Pattern_Syntax() =
     Array[Array[Int]](
       Array[Int](0x0021, 0x002f, 1),
       Array[Int](0x003a, 0x0040, 1),
@@ -3504,17 +3639,20 @@ object UnicodeTables {
       Array[Int](0xfd3e, 0xfd3f, 1),
       Array[Int](0xfe45, 0xfe46, 1)
     )
-  private final lazy val _Other_ID_Start: Array[Array[Int]] =
+  private[this] final val _Other_ID_Start = make_Other_ID_Start()
+  private def make_Other_ID_Start() =
     Array[Array[Int]](Array[Int](0x2118, 0x2118, 1),
-          Array[Int](0x212e, 0x212e, 1),
-          Array[Int](0x309b, 0x309c, 1))
-  private final lazy val _Pattern_White_Space: Array[Array[Int]] =
+      Array[Int](0x212e, 0x212e, 1),
+      Array[Int](0x309b, 0x309c, 1))
+  private[this] final val _Pattern_White_Space = make_Pattern_White_Space()
+  private def make_Pattern_White_Space() =
     Array[Array[Int]](Array[Int](0x0009, 0x000d, 1),
-          Array[Int](0x0020, 0x0020, 1),
-          Array[Int](0x0085, 0x0085, 1),
-          Array[Int](0x200e, 0x200f, 1),
-          Array[Int](0x2028, 0x2029, 1))
-  private final lazy val _Other_Lowercase: Array[Array[Int]] =
+      Array[Int](0x0020, 0x0020, 1),
+      Array[Int](0x0085, 0x0085, 1),
+      Array[Int](0x200e, 0x200f, 1),
+      Array[Int](0x2028, 0x2029, 1))
+  private[this] final val _Other_Lowercase = make_Other_Lowercase()
+  private def make_Other_Lowercase() =
     Array[Array[Int]](
       Array[Int](0x02b0, 0x02b8, 1),
       Array[Int](0x02c0, 0x02c1, 1),
@@ -3530,7 +3668,8 @@ object UnicodeTables {
       Array[Int](0x2c7d, 0x2c7d, 1),
       Array[Int](0xa770, 0xa770, 1)
     )
-  private final lazy val _Soft_Dotted: Array[Array[Int]] =
+  private[this] final val _Soft_Dotted = make_Soft_Dotted()
+  private def make_Soft_Dotted() =
     Array[Array[Int]](
       Array[Int](0x0069, 0x006a, 1),
       Array[Int](0x012f, 0x012f, 1),
@@ -3564,18 +3703,21 @@ object UnicodeTables {
       Array[Int](0x1d65e, 0x1d65f, 1),
       Array[Int](0x1d692, 0x1d693, 1)
     )
-  private final lazy val _Hex_Digit: Array[Array[Int]] =
+  private[this] final val _Hex_Digit = make_Hex_Digit()
+  private def make_Hex_Digit() =
     Array[Array[Int]](Array[Int](0x0030, 0x0039, 1),
-          Array[Int](0x0041, 0x0046, 1),
-          Array[Int](0x0061, 0x0066, 1),
-          Array[Int](0xff10, 0xff19, 1),
-          Array[Int](0xff21, 0xff26, 1),
-          Array[Int](0xff41, 0xff46, 1))
-  private final lazy val _ASCII_Hex_Digit: Array[Array[Int]] =
+      Array[Int](0x0041, 0x0046, 1),
+      Array[Int](0x0061, 0x0066, 1),
+      Array[Int](0xff10, 0xff19, 1),
+      Array[Int](0xff21, 0xff26, 1),
+      Array[Int](0xff41, 0xff46, 1))
+  private[this] final val _ASCII_Hex_Digit = make_ASCII_Hex_Digit()
+  private def make_ASCII_Hex_Digit() =
     Array[Array[Int]](Array[Int](0x0030, 0x0039, 1),
-          Array[Int](0x0041, 0x0046, 1),
-          Array[Int](0x0061, 0x0066, 1))
-  private final lazy val _Deprecated: Array[Array[Int]] =
+      Array[Int](0x0041, 0x0046, 1),
+      Array[Int](0x0061, 0x0066, 1))
+  private[this] final val _Deprecated = make_Deprecated()
+  private def make_Deprecated() =
     Array[Array[Int]](
       Array[Int](0x0149, 0x0149, 1),
       Array[Int](0x0673, 0x0673, 1),
@@ -3587,7 +3729,8 @@ object UnicodeTables {
       Array[Int](0xe0001, 0xe0001, 1),
       Array[Int](0xe0020, 0xe007f, 1)
     )
-  private final lazy val _Terminal_Punctuation: Array[Array[Int]] =
+  private[this] final val _Terminal_Punctuation = make_Terminal_Punctuation()
+  private def make_Terminal_Punctuation() =
     Array[Array[Int]](
       Array[Int](0x0021, 0x0021, 1),
       Array[Int](0x002c, 0x002c, 1),
@@ -3657,7 +3800,8 @@ object UnicodeTables {
       Array[Int](0x110be, 0x110c1, 1),
       Array[Int](0x12470, 0x12473, 1)
     )
-  private final lazy val _Quotation_Mark: Array[Array[Int]] =
+  private[this] final val _Quotation_Mark = make_Quotation_Mark()
+  private def make_Quotation_Mark() =
     Array[Array[Int]](
       Array[Int](0x0022, 0x0022, 1),
       Array[Int](0x0027, 0x0027, 1),
@@ -3672,18 +3816,22 @@ object UnicodeTables {
       Array[Int](0xff07, 0xff07, 1),
       Array[Int](0xff62, 0xff63, 1)
     )
-  private final lazy val _Other_ID_Continue: Array[Array[Int]] =
+  private[this] final val _Other_ID_Continue = make_Other_ID_Continue()
+  private def make_Other_ID_Continue() =
     Array[Array[Int]](Array[Int](0x00b7, 0x00b7, 1),
-          Array[Int](0x0387, 0x0387, 1),
-          Array[Int](0x1369, 0x1371, 1),
-          Array[Int](0x19da, 0x19da, 1))
-  private final lazy val _Bidi_Control: Array[Array[Int]] =
+      Array[Int](0x0387, 0x0387, 1),
+      Array[Int](0x1369, 0x1371, 1),
+      Array[Int](0x19da, 0x19da, 1))
+  private[this] final val _Bidi_Control = make_Bidi_Control()
+  private def make_Bidi_Control() =
     Array[Array[Int]](Array[Int](0x200e, 0x200f, 1), Array[Int](0x202a, 0x202e, 1))
-  private final lazy val _Variation_Selector: Array[Array[Int]] =
+  private[this] final val _Variation_Selector = make_Variation_Selector()
+  private def make_Variation_Selector() =
     Array[Array[Int]](Array[Int](0x180b, 0x180d, 1),
-          Array[Int](0xfe00, 0xfe0f, 1),
-          Array[Int](0xe0100, 0xe01ef, 1))
-  private final lazy val _Noncharacter_Code_Point: Array[Array[Int]] =
+      Array[Int](0xfe00, 0xfe0f, 1),
+      Array[Int](0xe0100, 0xe01ef, 1))
+  private[this] final val _Noncharacter_Code_Point = make_Noncharacter_Code_Point()
+  private def make_Noncharacter_Code_Point() =
     Array[Array[Int]](
       Array[Int](0xfdd0, 0xfdef, 1),
       Array[Int](0xfffe, 0xffff, 1),
@@ -3704,7 +3852,8 @@ object UnicodeTables {
       Array[Int](0xffffe, 0xfffff, 1),
       Array[Int](0x10fffe, 0x10ffff, 1)
     )
-  private final lazy val _Other_Math: Array[Array[Int]] =
+  private[this] final val _Other_Math = make_Other_Math()
+  private def make_Other_Math() =
     Array[Array[Int]](
       Array[Int](0x005e, 0x005e, 1),
       Array[Int](0x03d0, 0x03d2, 1),
@@ -3807,7 +3956,8 @@ object UnicodeTables {
       Array[Int](0x1d7c4, 0x1d7cb, 1),
       Array[Int](0x1d7ce, 0x1d7ff, 1)
     )
-  private final lazy val _Unified_Ideograph: Array[Array[Int]] =
+  private[this] final val _Unified_Ideograph = make_Unified_Ideograph()
+  private def make_Unified_Ideograph() =
     Array[Array[Int]](
       Array[Int](0x3400, 0x4db5, 1),
       Array[Int](0x4e00, 0x9fcb, 1),
@@ -3822,7 +3972,8 @@ object UnicodeTables {
       Array[Int](0x2a700, 0x2b734, 1),
       Array[Int](0x2b740, 0x2b81d, 1)
     )
-  private final lazy val _Hyphen: Array[Array[Int]] =
+  private[this] final val _Hyphen = make_Hyphen()
+  private def make_Hyphen() =
     Array[Array[Int]](
       Array[Int](0x002d, 0x002d, 1),
       Array[Int](0x00ad, 0x00ad, 1),
@@ -3835,21 +3986,26 @@ object UnicodeTables {
       Array[Int](0xff0d, 0xff0d, 1),
       Array[Int](0xff65, 0xff65, 1)
     )
-  private final lazy val _IDS_Binary_Operator: Array[Array[Int]] =
+  private[this] final val _IDS_Binary_Operator = make_IDS_Binary_Operator()
+  private def make_IDS_Binary_Operator() =
     Array[Array[Int]](Array[Int](0x2ff0, 0x2ff1, 1), Array[Int](0x2ff4, 0x2ffb, 1))
-  private final lazy val _Logical_Order_Exception: Array[Array[Int]] =
+  private[this] final val _Logical_Order_Exception = make_Logical_Order_Exception()
+  private def make_Logical_Order_Exception() =
     Array[Array[Int]](Array[Int](0x0e40, 0x0e44, 1),
-          Array[Int](0x0ec0, 0x0ec4, 1),
-          Array[Int](0xaab5, 0xaab6, 1),
-          Array[Int](0xaab9, 0xaab9, 1),
-          Array[Int](0xaabb, 0xaabc, 1))
-  private final lazy val _Radical: Array[Array[Int]] =
+      Array[Int](0x0ec0, 0x0ec4, 1),
+      Array[Int](0xaab5, 0xaab6, 1),
+      Array[Int](0xaab9, 0xaab9, 1),
+      Array[Int](0xaabb, 0xaabc, 1))
+  private[this] final val _Radical = make_Radical()
+  private def make_Radical() =
     Array[Array[Int]](Array[Int](0x2e80, 0x2e99, 1),
-          Array[Int](0x2e9b, 0x2ef3, 1),
-          Array[Int](0x2f00, 0x2fd5, 1))
-  private final lazy val _Other_Uppercase: Array[Array[Int]] =
+      Array[Int](0x2e9b, 0x2ef3, 1),
+      Array[Int](0x2f00, 0x2fd5, 1))
+  private[this] final val _Other_Uppercase = make_Other_Uppercase()
+  private def make_Other_Uppercase() =
     Array[Array[Int]](Array[Int](0x2160, 0x216f, 1), Array[Int](0x24b6, 0x24cf, 1))
-  private final lazy val _STerm: Array[Array[Int]] =
+  private[this] final val _STerm = make_STerm()
+  private def make_STerm() =
     Array[Array[Int]](
       Array[Int](0x0021, 0x0021, 1),
       Array[Int](0x002e, 0x002e, 1),
@@ -3899,7 +4055,8 @@ object UnicodeTables {
       Array[Int](0x11047, 0x11048, 1),
       Array[Int](0x110be, 0x110c1, 1)
     )
-  private final lazy val _Other_Alphabetic: Array[Array[Int]] =
+  private[this] final val _Other_Alphabetic = make_Other_Alphabetic()
+  private def make_Other_Alphabetic() =
     Array[Array[Int]](
       Array[Int](0x0345, 0x0345, 1),
       Array[Int](0x05b0, 0x05bd, 1),
@@ -4047,7 +4204,8 @@ object UnicodeTables {
       Array[Int](0x11082, 0x11082, 1),
       Array[Int](0x110b0, 0x110b8, 1)
     )
-  private final lazy val _Diacritic: Array[Array[Int]] =
+  private[this] final val _Diacritic = make_Diacritic()
+  private def make_Diacritic() =
     Array[Array[Int]](
       Array[Int](0x005e, 0x005e, 1),
       Array[Int](0x0060, 0x0060, 1),
@@ -4167,7 +4325,8 @@ object UnicodeTables {
       Array[Int](0x1d185, 0x1d18b, 1),
       Array[Int](0x1d1aa, 0x1d1ad, 1)
     )
-  private final lazy val _Extender: Array[Array[Int]] =
+  private[this] final val _Extender = make_Extender()
+  private def make_Extender() =
     Array[Array[Int]](
       Array[Int](0x00b7, 0x00b7, 1),
       Array[Int](0x02d0, 0x02d1, 1),
@@ -4190,9 +4349,11 @@ object UnicodeTables {
       Array[Int](0xaadd, 0xaadd, 1),
       Array[Int](0xff70, 0xff70, 1)
     )
-  private final lazy val _Join_Control: Array[Array[Int]] =
+  private[this] final val _Join_Control = make_Join_Control()
+  private def make_Join_Control() =
     Array[Array[Int]](Array[Int](0x200c, 0x200d, 1))
-  private final lazy val _Ideographic: Array[Array[Int]] =
+  private[this] final val _Ideographic = make_Ideographic()
+  private def make_Ideographic() =
     Array[Array[Int]](
       Array[Int](0x3006, 0x3007, 1),
       Array[Int](0x3021, 0x3029, 1),
@@ -4207,7 +4368,8 @@ object UnicodeTables {
       Array[Int](0x2b740, 0x2b81d, 1),
       Array[Int](0x2f800, 0x2fa1d, 1)
     )
-  private final lazy val _Dash: Array[Array[Int]] =
+  private[this] final val _Dash = make_Dash()
+  private def make_Dash() =
     Array[Array[Int]](
       Array[Int](0x002d, 0x002d, 1),
       Array[Int](0x058a, 0x058a, 1),
@@ -4229,9 +4391,11 @@ object UnicodeTables {
       Array[Int](0xfe63, 0xfe63, 1),
       Array[Int](0xff0d, 0xff0d, 1)
     )
-  private final lazy val _IDS_Trinary_Operator: Array[Array[Int]] =
+  private[this] final val _IDS_Trinary_Operator = make_IDS_Trinary_Operator()
+  private def make_IDS_Trinary_Operator() =
     Array[Array[Int]](Array[Int](0x2ff2, 0x2ff3, 1))
-  private final lazy val _Other_Grapheme_Extend: Array[Array[Int]] =
+  private[this] final val _Other_Grapheme_Extend = make_Other_Grapheme_Extend()
+  private def make_Other_Grapheme_Extend() =
     Array[Array[Int]](
       Array[Int](0x09be, 0x09be, 1),
       Array[Int](0x09d7, 0x09d7, 1),
@@ -4250,7 +4414,8 @@ object UnicodeTables {
       Array[Int](0x1d165, 0x1d165, 1),
       Array[Int](0x1d16e, 0x1d172, 1)
     )
-  private final lazy val _Other_Default_Ignorable_Code_Point: Array[Array[Int]] =
+  private[this] final val _Other_Default_Ignorable_Code_Point = make_Other_Default_Ignorable_Code_Point()
+  private def make_Other_Default_Ignorable_Code_Point() =
     Array[Array[Int]](
       Array[Int](0x034f, 0x034f, 1),
       Array[Int](0x115f, 0x1160, 1),
@@ -4263,7 +4428,8 @@ object UnicodeTables {
       Array[Int](0xe0080, 0xe00ff, 1),
       Array[Int](0xe01f0, 0xe0fff, 1)
     )
-  private final lazy val _White_Space: Array[Array[Int]] =
+  private[this] final val _White_Space = make_White_Space()
+  private def make_White_Space() =
     Array[Array[Int]](
       Array[Int](0x0009, 0x000d, 1),
       Array[Int](0x0020, 0x0020, 1),
@@ -4277,40 +4443,45 @@ object UnicodeTables {
       Array[Int](0x205f, 0x205f, 1),
       Array[Int](0x3000, 0x3000, 1)
     )
-  final lazy val ASCII_Hex_Digit: Array[Array[Int]]         = _ASCII_Hex_Digit
-  final lazy val Bidi_Control: Array[Array[Int]]            = _Bidi_Control
-  final lazy val Dash: Array[Array[Int]]                    = _Dash
-  final lazy val Deprecated: Array[Array[Int]]              = _Deprecated
-  final lazy val Diacritic: Array[Array[Int]]               = _Diacritic
-  final lazy val Extender: Array[Array[Int]]                = _Extender
-  final lazy val Hex_Digit: Array[Array[Int]]               = _Hex_Digit
-  final lazy val Hyphen: Array[Array[Int]]                  = _Hyphen
-  final lazy val IDS_Binary_Operator: Array[Array[Int]]     = _IDS_Binary_Operator
-  final lazy val IDS_Trinary_Operator: Array[Array[Int]]    = _IDS_Trinary_Operator
-  final lazy val Ideographic: Array[Array[Int]]             = _Ideographic
-  final lazy val Join_Control: Array[Array[Int]]            = _Join_Control
-  final lazy val Logical_Order_Exception: Array[Array[Int]] = _Logical_Order_Exception
-  final lazy val Noncharacter_Code_Point: Array[Array[Int]] = _Noncharacter_Code_Point
-  final lazy val Other_Alphabetic: Array[Array[Int]]        = _Other_Alphabetic
-  final lazy val Other_Default_Ignorable_Code_Point: Array[Array[Int]] =
+  final val ASCII_Hex_Digit: Array[Array[Int]] = _ASCII_Hex_Digit
+  final val Bidi_Control: Array[Array[Int]] = _Bidi_Control
+  final val Dash: Array[Array[Int]] = _Dash
+  final val Deprecated: Array[Array[Int]] = _Deprecated
+  final val Diacritic: Array[Array[Int]] = _Diacritic
+  final val Extender: Array[Array[Int]] = _Extender
+  final val Hex_Digit: Array[Array[Int]] = _Hex_Digit
+  final val Hyphen: Array[Array[Int]] = _Hyphen
+  final val IDS_Binary_Operator: Array[Array[Int]] = _IDS_Binary_Operator
+  final val IDS_Trinary_Operator: Array[Array[Int]] = _IDS_Trinary_Operator
+  final val Ideographic: Array[Array[Int]] = _Ideographic
+  final val Join_Control: Array[Array[Int]] = _Join_Control
+  final val Logical_Order_Exception = mkLogical_Order_Exception()
+  private def mkLogical_Order_Exception() = _Logical_Order_Exception
+  final val Noncharacter_Code_Point = mkNoncharacter_Code_Point()
+  private def mkNoncharacter_Code_Point() = _Noncharacter_Code_Point
+  final val Other_Alphabetic: Array[Array[Int]] = _Other_Alphabetic
+  final val Other_Default_Ignorable_Code_Point = mkOther_Default_Ignorable_Code_Point()
+  private def mkOther_Default_Ignorable_Code_Point() =
     _Other_Default_Ignorable_Code_Point
-  final lazy val Other_Grapheme_Extend: Array[Array[Int]] = _Other_Grapheme_Extend
-  final lazy val Other_ID_Continue: Array[Array[Int]]     = _Other_ID_Continue
-  final lazy val Other_ID_Start: Array[Array[Int]]        = _Other_ID_Start
-  final lazy val Other_Lowercase: Array[Array[Int]]       = _Other_Lowercase
-  final lazy val Other_Math: Array[Array[Int]]            = _Other_Math
-  final lazy val Other_Uppercase: Array[Array[Int]]       = _Other_Uppercase
-  final lazy val Pattern_Syntax: Array[Array[Int]]        = _Pattern_Syntax
-  final lazy val Pattern_White_Space: Array[Array[Int]]   = _Pattern_White_Space
-  final lazy val Quotation_Mark: Array[Array[Int]]        = _Quotation_Mark
-  final lazy val Radical: Array[Array[Int]]               = _Radical
-  final lazy val STerm: Array[Array[Int]]                 = _STerm
-  final lazy val Soft_Dotted: Array[Array[Int]]           = _Soft_Dotted
-  final lazy val Terminal_Punctuation: Array[Array[Int]]  = _Terminal_Punctuation
-  final lazy val Unified_Ideograph: Array[Array[Int]]     = _Unified_Ideograph
-  final lazy val Variation_Selector: Array[Array[Int]]    = _Variation_Selector
-  final lazy val White_Space: Array[Array[Int]]           = _White_Space
-  final lazy val CASE_RANGES: Array[Array[Int]] = Array[Array[Int]](
+  final val Other_Grapheme_Extend = mkOther_Grapheme_Extend()
+  private def mkOther_Grapheme_Extend() = _Other_Grapheme_Extend
+  final val Other_ID_Continue: Array[Array[Int]] = _Other_ID_Continue
+  final val Other_ID_Start: Array[Array[Int]] = _Other_ID_Start
+  final val Other_Lowercase: Array[Array[Int]] = _Other_Lowercase
+  final val Other_Math: Array[Array[Int]] = _Other_Math
+  final val Other_Uppercase: Array[Array[Int]] = _Other_Uppercase
+  final val Pattern_Syntax: Array[Array[Int]] = _Pattern_Syntax
+  final val Pattern_White_Space: Array[Array[Int]] = _Pattern_White_Space
+  final val Quotation_Mark: Array[Array[Int]] = _Quotation_Mark
+  final val Radical: Array[Array[Int]] = _Radical
+  final val STerm: Array[Array[Int]] = _STerm
+  final val Soft_Dotted: Array[Array[Int]] = _Soft_Dotted
+  final val Terminal_Punctuation: Array[Array[Int]] = _Terminal_Punctuation
+  final val Unified_Ideograph: Array[Array[Int]] = _Unified_Ideograph
+  final val Variation_Selector: Array[Array[Int]] = _Variation_Selector
+  final val White_Space: Array[Array[Int]] = _White_Space
+  final val CASE_RANGES = mkCASE_RANGES()
+  private def mkCASE_RANGES() = Array[Array[Int]](
     Array[Int](0x0041, 0x005A, 0, 32, 0),
     Array[Int](0x0061, 0x007A, -32, 0, -32),
     Array[Int](0x00B5, 0x00B5, 743, 0, 743),
@@ -4570,7 +4741,8 @@ object UnicodeTables {
     Array[Int](0x10400, 0x10427, 0, 40, 0),
     Array[Int](0x10428, 0x1044F, -40, 0, -40)
   )
-  final lazy val CASE_ORBIT: Array[Array[Int]] = Array[Array[Int]](
+  final val CASE_ORBIT = mkCASE_ORBIT()
+  private def mkCASE_ORBIT() = Array[Array[Int]](
     Array[Int](0x004B, 0x006B),
     Array[Int](0x0053, 0x0073),
     Array[Int](0x006B, 0x212A),
@@ -4635,7 +4807,8 @@ object UnicodeTables {
     Array[Int](0x212A, 0x004B),
     Array[Int](0x212B, 0x00C5)
   )
-  private final lazy val foldLl: Array[Array[Int]] =
+  private[this] final val foldLl = mkfoldLl()
+  private def mkfoldLl() =
     Array[Array[Int]](
       Array[Int](0x0041, 0x005a, 1),
       Array[Int](0x00c0, 0x00d6, 1),
@@ -4735,19 +4908,26 @@ object UnicodeTables {
       Array[Int](0xff21, 0xff3a, 1),
       Array[Int](0x10400, 0x10427, 1)
     )
-  private final lazy val foldInherited: Array[Array[Int]] =
+  private[this] final val foldInherited = mkfoldInherited()
+  private def mkfoldInherited() =
     Array[Array[Int]](Array[Int](0x0399, 0x03b9, 32), Array[Int](0x1fbe, 0x1fbe, 1))
-  private final lazy val foldM: Array[Array[Int]] =
+  private[this] final val foldM = mkfoldM()
+  private def mkfoldM() =
     Array[Array[Int]](Array[Int](0x0399, 0x03b9, 32), Array[Int](0x1fbe, 0x1fbe, 1))
-  private final lazy val foldL: Array[Array[Int]] =
+  private[this] final val foldL = mkfoldL()
+  private def mkfoldL() =
     Array[Array[Int]](Array[Int](0x0345, 0x0345, 1))
-  private final lazy val foldMn: Array[Array[Int]] =
+  private[this] final val foldMn = mkfoldMn()
+  private def mkfoldMn() =
     Array[Array[Int]](Array[Int](0x0399, 0x03b9, 32), Array[Int](0x1fbe, 0x1fbe, 1))
-  private final lazy val foldCommon: Array[Array[Int]] =
+  private[this] final val foldCommon = mkfoldCommon()
+  private def mkfoldCommon() =
     Array[Array[Int]](Array[Int](0x039c, 0x03bc, 32))
-  private final lazy val foldGreek: Array[Array[Int]] =
+  private[this] final val foldGreek = mkfoldGreek()
+  private def mkfoldGreek() =
     Array[Array[Int]](Array[Int](0x00b5, 0x0345, 656))
-  private final lazy val foldLu: Array[Array[Int]] =
+  private[this] final val foldLu = mkfoldLu()
+  private def mkfoldLu() =
     Array[Array[Int]](
       Array[Int](0x0061, 0x007a, 1),
       Array[Int](0x00b5, 0x00df, 42),
@@ -4843,7 +5023,8 @@ object UnicodeTables {
       Array[Int](0xff41, 0xff5a, 1),
       Array[Int](0x10428, 0x1044f, 1)
     )
-  private final lazy val foldLt: Array[Array[Int]] =
+  private[this] final val foldLt = mkfoldLt()
+  private def mkfoldLt() =
     Array[Array[Int]](
       Array[Int](0x01c4, 0x01c6, 2),
       Array[Int](0x01c7, 0x01c9, 2),
@@ -4855,8 +5036,8 @@ object UnicodeTables {
       Array[Int](0x1fb3, 0x1fc3, 16),
       Array[Int](0x1ff3, 0x1ff3, 1)
     )
-  final lazy val CATEGORIES: Map[String, Array[Array[Int]]] = {
-    lazy val map: HashMap[String, Array[Array[Int]]] = new HashMap[String, Array[Array[Int]]]()
+  final val CATEGORIES: Map[String, Array[Array[Int]]] = {
+    val map: HashMap[String, Array[Array[Int]]] = new HashMap[String, Array[Array[Int]]]()
     map.put("Lm", Lm)
     map.put("Ll", Ll)
     map.put("C", C)
@@ -4895,8 +5076,8 @@ object UnicodeTables {
     map.put("Lo", Lo)
     map
   }
-  final lazy val SCRIPTS: Map[String, Array[Array[Int]]] = {
-    lazy val map: HashMap[String, Array[Array[Int]]] = new HashMap[String, Array[Array[Int]]]()
+  final val SCRIPTS: Map[String, Array[Array[Int]]] = {
+    val map: HashMap[String, Array[Array[Int]]] = new HashMap[String, Array[Array[Int]]]()
     map.put("Katakana", Katakana)
     map.put("Malayalam", Malayalam)
     map.put("Phags_Pa", Phags_Pa)
@@ -4994,8 +5175,8 @@ object UnicodeTables {
     map.put("Gothic", Gothic)
     map
   }
-  final lazy val PROPERTIES: Map[String, Array[Array[Int]]] = {
-    lazy val map: HashMap[String, Array[Array[Int]]] = new HashMap[String, Array[Array[Int]]]()
+  final val PROPERTIES: Map[String, Array[Array[Int]]] = {
+    val map: HashMap[String, Array[Array[Int]]] = new HashMap[String, Array[Array[Int]]]()
     map.put("Pattern_Syntax", Pattern_Syntax)
     map.put("Other_ID_Start", Other_ID_Start)
     map.put("Pattern_White_Space", Pattern_White_Space)
@@ -5027,12 +5208,12 @@ object UnicodeTables {
     map.put("IDS_Trinary_Operator", IDS_Trinary_Operator)
     map.put("Other_Grapheme_Extend", Other_Grapheme_Extend)
     map.put("Other_Default_Ignorable_Code_Point",
-            Other_Default_Ignorable_Code_Point)
+      Other_Default_Ignorable_Code_Point)
     map.put("White_Space", White_Space)
     map
   }
-  final lazy val FOLD_CATEGORIES: Map[String, Array[Array[Int]]] = {
-    lazy val map: HashMap[String, Array[Array[Int]]] = new HashMap[String, Array[Array[Int]]]()
+  final val FOLD_CATEGORIES: Map[String, Array[Array[Int]]] = {
+    val map: HashMap[String, Array[Array[Int]]] = new HashMap[String, Array[Array[Int]]]()
     map.put("Ll", foldLl)
     map.put("Inherited", foldInherited)
     map.put("M", foldM)
@@ -5044,8 +5225,8 @@ object UnicodeTables {
     map.put("Lt", foldLt)
     map
   }
-  final lazy val FOLD_SCRIPT: Map[String, Array[Array[Int]]] = {
+  final val FOLD_SCRIPT: Map[String, Array[Array[Int]]] = {
     new HashMap[String, Array[Array[Int]]]()
   }
-// Fold orbit bytes: 63 pairs, 252 bytes
+  // Fold orbit bytes: 63 pairs, 252 bytes
 }

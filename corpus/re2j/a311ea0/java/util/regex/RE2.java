@@ -329,7 +329,7 @@ class RE2 {
   String replaceAll(String src, final String repl) {
     return replaceAllFunc(src, new ReplaceFunc() {
         @Override public String replace(String orig) { return repl; }
-      }, 2 * src.length() + 1);
+      }, 2 * src.length () + 1);
     // TODO(afrozm): Is the reasoning correct, there can be at the most 2*len +1
     // replacements. Basically [a-z]*? abc x will be xaxbcx. So should it be
     // len + 1 or 2*len + 1.
