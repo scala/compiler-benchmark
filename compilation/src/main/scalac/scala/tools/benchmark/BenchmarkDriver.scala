@@ -1,11 +1,17 @@
 package scala.tools.benchmark
 
+import java.io.File
 import java.nio.file._
+
 import scala.tools.nsc._
 
 trait BenchmarkDriver extends BaseBenchmarkDriver {
   private var driver: MainClass = _
   private var files: List[String] = _
+
+  private def findScalaJars = {
+    sys.props("java.class.path").split(File.pathSeparatorChar).filter(_.matches(""".*\bscala-(reflect|compiler|library).*\.jar""")).mkString(":")
+  }
 
   // MainClass is copy-pasted from compiler for source compatibility with 2.10.x - 2.13.x
   private class MainClass extends Driver with EvalLoop {
@@ -15,11 +21,12 @@ trait BenchmarkDriver extends BaseBenchmarkDriver {
       compiler
     }
 
+
     override protected def processSettingsHook(): Boolean = {
       if (source == "scala")
         settings.sourcepath.value = Paths.get(s"../corpus/$source/$corpusVersion/library").toAbsolutePath.normalize.toString
       else
-        settings.usejavacp.value = true
+        settings.classpath.value = findScalaJars
       settings.outdir.value = tempDir.getAbsolutePath
       settings.nowarn.value = true
       if (depsClasspath != null)
