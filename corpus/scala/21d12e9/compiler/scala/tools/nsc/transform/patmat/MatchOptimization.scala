@@ -104,7 +104,7 @@ trait MatchOptimization extends MatchTreeMaking with MatchAnalysis {
               reusedTest <- test.reuses;
               nextDeps <- dependencies.get(reusedTest);
               diff <- (nextDeps -- currDeps).headOption;
-              _ <- Some(currDeps = nextDeps))
+              _ <- {currDeps = nextDeps; Some(currDeps)})
                 yield diff).nonEmpty
         }
 
