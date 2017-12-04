@@ -1971,7 +1971,7 @@ self =>
        *  }}}
        */
       def pattern3(): Tree = {
-        val top = simplePattern(badPattern3)
+        val top = simplePattern(() => badPattern3())
         val base = opstack
         // See SI-3189, SI-4832 for motivation. Cf SI-3480 for counter-motivation.
         def isCloseDelim = in.token match {
@@ -1987,7 +1987,7 @@ self =>
           case _ => EmptyTree
         }
         def loop(top: Tree): Tree = reducePatternStack(base, top) match {
-          case next if isIdent && !isRawBar => pushOpInfo(next) ; loop(simplePattern(badPattern3))
+          case next if isIdent && !isRawBar => pushOpInfo(next) ; loop(simplePattern(() => badPattern3()))
           case next                         => next
         }
         checkWildStar orElse stripParens(loop(top))
