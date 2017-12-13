@@ -54,6 +54,9 @@ sbt> set scalaHome in ThisBuild := Some(file("/code/scala/build/pack"))
 sbt> set scalaHome in compilation := "2.11.1" // if micro project isn't compatible with "2.11.1"
 ```
 
+### Adding dependencies
+List classpath entries for dependencies in a file `/path/to/corpus/deps.txt`.
+
 ### Persisting results
 
  - Provide `INFLUX_PASSWORD` as an environment variable
