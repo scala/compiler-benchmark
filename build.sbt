@@ -102,7 +102,7 @@ def profParser(s: State): Parser[String] = {
   token("prof" ~> OptSpace) flatMap { _ => matched(s.combinedParser)} map (_.trim)
 }
 
-commands += Command.custom((s: State) => Command.applyEffect(profParser(s))((line: String) => {
+commands += Command.arb(profParser)((s: State, line: String) => {
   val flameGraphOpts = s"--minwidth,1,--colors,java,--cp,--width,1800"
   abstract class Profiler(val name: String) {
     def command(outDir: File): String
@@ -129,7 +129,7 @@ commands += Command.custom((s: State) => Command.applyEffect(profParser(s))((lin
     List(line + " -jvmArgs -Dsun.reflect.inflationThreshold=0 " + prof.command(outDir) + s" -o ${(outDir / "jmh.log").getAbsolutePath} -rf json -rff ${(outDir / "result.json").getAbsolutePath}", BasicCommandStrings.FailureWall)
   }
   s.copy(remainingCommands = BasicCommandStrings.ClearOnFailure :: commands ++ s.remainingCommands)
-}))
+})
 
 
 def addJmh(project: Project): Project = {
