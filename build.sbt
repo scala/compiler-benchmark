@@ -115,7 +115,8 @@ commands += Command.custom((s: State) => Command.applyEffect(profParser(s))((lin
     def command(outDir: File): String = s"-prof jmh.extras.JFR:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true'"
   }
   object async extends Profiler("async") {
-    def command(outDir: File): String = s"-prof jmh.extras.Async:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true;event=cpu" // + ";simpleName=true" TODO add this after upgrading next sbt-jmh release
+    val framebuf = 16777216
+    def command(outDir: File): String = s"-prof jmh.extras.Async:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true;event=cpu;framebuf=$framebuf" // + ";simpleName=true" TODO add this after upgrading next sbt-jmh release
   }
   object perfNorm extends Profiler("perfNorm") {
     def command(outDir: File): String = "-prof perfnorm"
