@@ -67,9 +67,9 @@ public class ScalacBenchmarkRunner {
 
     public static void main(String[] args) throws Exception {
         CommandLineOptions opts = new CommandLineOptions(args);
-        // Support `-h`, copied from org.openjdk.jmh.Main. Could also add -l/lp/lprof/lrf.
-        if (opts.shouldHelp()) {
-            opts.showHelp();
+        // Support `-h/-l/lp/lprof/lrf`.
+        if (opts.shouldHelp() || opts.shouldList() || opts.shouldListProfilers() || opts.shouldListResultFormats() || opts.shouldListWithParams()) {
+            org.openjdk.jmh.Main.main(args);
             return;
         }
         new Runner(setCorpusVersion(opts)).run();
