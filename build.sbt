@@ -1,3 +1,6 @@
+import sbt.complete.DefaultParsers.OptSpace
+import sbt.complete.Parser
+
 name := "compiler-benchmark"
 
 version := "1.0-SNAPSHOT"
@@ -92,6 +95,40 @@ lazy val addJavaOptions = javaOptions ++= {
 addCommandAlias("hot", "compilation/jmh:run HotScalacBenchmark -foe true")
 
 addCommandAlias("cold", "compilation/jmh:run ColdScalacBenchmark -foe true")
+
+
+def profParser(s: State): Parser[String] = {
+  import Parser._
+  token("prof" ~> OptSpace) flatMap { _ => matched(s.combinedParser)} map (_.trim)
+}
+
+commands += Command.custom((s: State) => Command.applyEffect(profParser(s))((line: String) => {
+  abstract class Profiler(val name: String) {
+    def command(outDir: File): String
+  }
+
+  object basic extends Profiler("basic") {
+    def command(outDir: File): String = "-jvmArgs -Xprof -prof hs_comp -prof hs_gc -prof stack -prof hs_rt"
+  }
+  object jfr extends Profiler("jfr") {
+    def command(outDir: File): String = s"-prof jmh.extras.JFR:dir=${outDir.getAbsolutePath};flameGraphOpts=--hash,--minwidth,1;verbose=true'"
+  }
+  object async extends Profiler("async") {
+    def command(outDir: File): String = s"-prof jmh.extras.Async:dir=${outDir.getAbsolutePath};flameGraphOpts=--hash,--minwidth,1;verbose=true;event=cpu"
+  }
+  object perfNorm extends Profiler("perfNorm") {
+    def command(outDir: File): String = "-prof perfnorm"
+  }
+
+  val profs = List(perfNorm, basic, async, jfr)
+  val commands: List[String] = profs.flatMap { (prof: Profiler) =>
+    val outDir = file(s"target/profile-${prof.name}")
+    IO.createDirectory(outDir)
+    List(line + " " + prof.command(outDir) + s" -o ${(outDir / "jmh.log").getAbsolutePath} -rf json -rff ${(outDir / "result.json").getAbsolutePath}", BasicCommandStrings.FailureWall)
+  }
+  s.copy(remainingCommands = BasicCommandStrings.ClearOnFailure :: commands ++ s.remainingCommands)
+}))
+
 
 def addJmh(project: Project): Project = {
   // IntelliJ SBT project import doesn't like sbt-jmh's default setup, which results the prod and test
