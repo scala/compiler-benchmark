@@ -16,7 +16,11 @@ import java.io.UnsupportedEncodingException;
 public class UploadingRunner {
     public static void main(String[] args) throws Exception {
         Options opts = ScalacBenchmarkRunner.setCorpusVersion(new CommandLineOptions(args));
-        Runner runner = new Runner(opts, new UploadingOutputFormat(createOutputFormat(opts)));
+        OutputFormat outputFormat = createOutputFormat(opts);
+        if (opts.getProfilers().size() == 0) {
+            outputFormat = new UploadingOutputFormat(outputFormat);
+        }
+        Runner runner = new Runner(opts, outputFormat);
         runner.run();
     }
 
