@@ -103,6 +103,7 @@ def profParser(s: State): Parser[String] = {
 }
 
 commands += Command.custom((s: State) => Command.applyEffect(profParser(s))((line: String) => {
+  val flameGraphOpts = s"--minwidth,1,--colors,java,--cp,--width,1800"
   abstract class Profiler(val name: String) {
     def command(outDir: File): String
   }
@@ -111,10 +112,10 @@ commands += Command.custom((s: State) => Command.applyEffect(profParser(s))((lin
     def command(outDir: File): String = "-jvmArgs -Xprof -prof hs_comp -prof hs_gc -prof stack -prof hs_rt"
   }
   object jfr extends Profiler("jfr") {
-    def command(outDir: File): String = s"-prof jmh.extras.JFR:dir=${outDir.getAbsolutePath};flameGraphOpts=--hash,--minwidth,1;verbose=true'"
+    def command(outDir: File): String = s"-prof jmh.extras.JFR:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true'"
   }
   object async extends Profiler("async") {
-    def command(outDir: File): String = s"-prof jmh.extras.Async:dir=${outDir.getAbsolutePath};flameGraphOpts=--hash,--minwidth,1;verbose=true;event=cpu"
+    def command(outDir: File): String = s"-prof jmh.extras.Async:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true;event=cpu" // + ";simpleName=true" TODO add this after upgrading next sbt-jmh release
   }
   object perfNorm extends Profiler("perfNorm") {
     def command(outDir: File): String = "-prof perfnorm"
@@ -124,7 +125,7 @@ commands += Command.custom((s: State) => Command.applyEffect(profParser(s))((lin
   val commands: List[String] = profs.flatMap { (prof: Profiler) =>
     val outDir = file(s"target/profile-${prof.name}")
     IO.createDirectory(outDir)
-    List(line + " " + prof.command(outDir) + s" -o ${(outDir / "jmh.log").getAbsolutePath} -rf json -rff ${(outDir / "result.json").getAbsolutePath}", BasicCommandStrings.FailureWall)
+    List(line + " -jvmArgs -Dsun.reflect.inflationThreshold=0 " + prof.command(outDir) + s" -o ${(outDir / "jmh.log").getAbsolutePath} -rf json -rff ${(outDir / "result.json").getAbsolutePath}", BasicCommandStrings.FailureWall)
   }
   s.copy(remainingCommands = BasicCommandStrings.ClearOnFailure :: commands ++ s.remainingCommands)
 }))
