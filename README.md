@@ -31,7 +31,7 @@ sbt> compilation/jmh:run -help
   - (optional) add new Scala sources (say `aardvark`) to a new directory in src/main/corpus
 
 ```
-compilation/jmh:run (Cold|Warm|Hot)CompilationBenchmark 
+compilation/jmh:run (Cold|Warm|Hot)CompilationBenchmark
    -p source=(<subdir of corpus>|/path/to/src/dir|@/path/to/argsfile)
    -p extraArgs=-nowarn
       # Note: `extraArgs` accepts multiple `|`-separated compiler arguments
@@ -42,8 +42,8 @@ compilation/jmh:run (Cold|Warm|Hot)CompilationBenchmark
 Avoid the tedium of typing all that out with:
 
 ```
-sbt> hot -psource=scalap 
-sbt> cold -psource=better-files 
+sbt> hot -psource=scalap
+sbt> cold -psource=better-files
 ```
 
 ### Changing Scala Version
@@ -63,8 +63,8 @@ List classpath entries for dependencies in a file `/path/to/corpus/deps.txt`.
  - Replace `jmh/run` with `jmh:runMain scala.bench.UploadingRunner`
 
 Results will be uploading into an [InfluxDB]() instance at `https://scala-ci.typesafe.com/influx/`. An quick introduction to InfluxDB is [here](https://github.com/scala/compiler-benchmark/wiki/InfluxDB-101).
- 
-These results will be plotted in our [Grafana dashboard](https://scala-ci.typesafe.com/grafana/dashboard/db/scala-benchmark) 
+
+These results will be plotted in our [Grafana dashboard](https://scala-ci.typesafe.com/grafana/dashboard/db/scala-benchmark)
 
 The [https://github.com/scala/compiler-benchq](scala/compiler-benchq) project triggers benchmarks
 for merges and sets of commits that we're backtesting (UI on https://scala-ci.typesafe.com/benchq).
@@ -75,20 +75,22 @@ for merges and sets of commits that we're backtesting (UI on https://scala-ci.ty
 sbt> .../jmh:run Benchmark -prof jmh.extras.JFR // Java Flight Recorder
 ```
 
-### Using Graal
+### Using GraalVM
 
-[Install](http://www.oracle.com/technetwork/oracle-labs/program-languages/downloads/index.html) Graal VM and JDK8 with [JVMCI](http://openjdk.java.net/jeps/243).
+[Install](http://www.oracle.com/technetwork/oracle-labs/program-languages/downloads/index.html) GraalVM for you operating system.
+
+To run benchmarks on Linux:
 
 ```
-compilation/jmh:run CompileSourcesBenchmark 
-    -jvm      /path/to/labsjdk1.8.0_92-jvmci-0.20/bin/java
-    -jvmArgs -XX:+UnlockExperimentalVMOptions
-    -jvmArgs -XX:+EnableJVMCI
-    -jvmArgs -Djvmci.class.path.append=/path/to/graalvm-0.15-re/lib/jvmci/graal.jar
-    -jvmArgs -Xbootclasspath/a:/path/to/graalvm-0.15-re/lib/truffle-api.jar
-    -jvmArgs -Djvmci.Compiler=graal 
-    -jvmArgs -XX:+UseJVMCICompiler 
+sbt> compilation/jmh:run CompileSourcesBenchmark -jvm /path/to/graalvm/bin/java
 ```
+
+And on OS X:
+```
+sbt> compilation/jmh:run CompileSourcesBenchmark -jvm /path/to/graalvm/Contents/Home/bin/java
+```
+
+To run only the open-source version of GraalVM add `-jvmArgs -Dgraal.CompilerConfiguration=core` to the command.
 
 ### Exporting an args file from SBT
 
