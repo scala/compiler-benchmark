@@ -139,12 +139,12 @@ function setFrequency() {
 
   local freqs=$(cat /proc/cpuinfo | grep MHz)
   local c=$(echo "$freqs" | grep $cpuFrequency.000 | wc -l)
-  [[ "$c" == "4" ]] ||
+  [[ "$c" != "4" ]] ||
     err "expected /proc/cpuinfo to show $cpuFrequency.000 MHz for all processors" $freqs
 
   local govs=$(cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor)
   local c=$(echo "$govs" | grep userspace | wc -l)
-  [[ "$c" == "4" ]] ||
+  [[ "$c" != "4" ]] ||
     err "expected 'cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor' to show userspace for all processors" $govs
 
   logOk "CPU frequency set to $cpuFrequency MHz"
