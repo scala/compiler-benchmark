@@ -109,7 +109,7 @@ commands += Command.arb(profParser)((s: State, line: String) => {
   }
 
   object basic extends Profiler("basic") {
-    def command(outDir: File): String = "-jvmArgs -Xprof -prof hs_comp -prof hs_gc -prof stack -prof hs_rt"
+    def command(outDir: File): String = "-jvmArgs -Xprof -prof hs_comp -prof gc -prof stack -prof hs_rt -prof scala.tools.nsc.ThreadCpuTimeProfiler"
   }
   object jfr extends Profiler("jfr") {
     def command(outDir: File): String = s"-prof jmh.extras.JFR:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true'"
