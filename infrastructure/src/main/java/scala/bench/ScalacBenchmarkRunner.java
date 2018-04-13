@@ -2,6 +2,7 @@ package scala.bench;
 
 import org.eclipse.jgit.lib.Repository;
 import org.openjdk.jmh.runner.Runner;
+import org.openjdk.jmh.runner.options.ChainedOptionsBuilder;
 import org.openjdk.jmh.runner.options.CommandLineOptions;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
@@ -51,18 +52,20 @@ public class ScalacBenchmarkRunner {
         return null;
     }
 
-    public static Options setCorpusVersion(CommandLineOptions clOpts) throws IOException {
+    public static Options setParameters(CommandLineOptions clOpts) throws IOException {
+        ChainedOptionsBuilder b = new OptionsBuilder()
+                .parent(clOpts)
+                .param("scalaVersion", System.getProperty("scalaVersion"));
+
         Collection<String> sources = clOpts.getParameter("source").orElse(Collections.emptyList());
         String source = null;
         if (sources.size() == 1) source = sources.iterator().next();
-        if (source == null) return clOpts;
-
-        String corpusVer = corpusVersion(source);
-        if (corpusVer == null) return clOpts;
-        else return new OptionsBuilder()
-                .parent(clOpts)
-                .param("corpusVersion", corpusVersion(source))
-                .build();
+        if (source != null) {
+            String corpusVer = corpusVersion(source);
+            if (corpusVer != null)
+              b.param("corpusVersion", corpusVersion(source));
+        }
+        return b.build();
     }
 
     public static void main(String[] args) throws Exception {
@@ -72,6 +75,6 @@ public class ScalacBenchmarkRunner {
             org.openjdk.jmh.Main.main(args);
             return;
         }
-        new Runner(setCorpusVersion(opts)).run();
+        new Runner(setParameters(opts)).run();
     }
 }

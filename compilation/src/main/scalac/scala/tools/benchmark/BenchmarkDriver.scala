@@ -3,6 +3,8 @@ package scala.tools.benchmark
 import java.io.File
 import java.nio.file._
 
+import com.typesafe.config.ConfigFactory
+
 import scala.tools.nsc._
 
 trait BenchmarkDriver extends BaseBenchmarkDriver {
@@ -26,7 +28,7 @@ trait BenchmarkDriver extends BaseBenchmarkDriver {
       if (!source.startsWith("@")) {
         // Don't set the classpath manually if it's to be loaded by the `@` processor
         if (source == "scala")
-          settings.sourcepath.value = Paths.get(s"../corpus/$source/$corpusVersion/library").toAbsolutePath.normalize.toString
+          settings.sourcepath.value = Paths.get(ConfigFactory.load.getString("sourceAssembly.localdir")).resolve("library").toAbsolutePath.normalize.toString
         else settings.classpath.value = findScalaJars
         if (depsClasspath != null && depsClasspath.nonEmpty)
           settings.processArgumentString(s"-cp $depsClasspath")
