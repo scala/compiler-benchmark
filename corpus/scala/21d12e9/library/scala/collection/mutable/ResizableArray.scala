@@ -32,7 +32,7 @@ trait ResizableArray[A] extends IndexedSeq[A]
   protected var array: Array[AnyRef] = new Array[AnyRef](math.max(initialSize, 1))
   protected var size0: Int = 0
 
-  //##########################################################################
+  // ##########################################################################
   // implement/override methods of IndexedSeq[A]
 
   /** Returns the length of this resizable array.
@@ -77,7 +77,7 @@ trait ResizableArray[A] extends IndexedSeq[A]
      if (len1 > 0) Array.copy(array, 0, xs, start, len1)
    }
 
-  //##########################################################################
+  // ##########################################################################
 
   /** Remove elements of this array at indices after `sz`.
    */

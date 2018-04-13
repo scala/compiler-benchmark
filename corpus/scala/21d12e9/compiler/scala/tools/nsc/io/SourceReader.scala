@@ -18,7 +18,7 @@ class SourceReader(decoder: CharsetDecoder, reporter: Reporter) {
 
   import SourceReader.{decode, flush}
 
-  //########################################################################
+  // ########################################################################
   // Private Fields
 
   /** The input byte buffer (small enough to fit in cache) */
@@ -77,7 +77,7 @@ class SourceReader(decoder: CharsetDecoder, reporter: Reporter) {
     terminate(flush(decoder, decode(decoder, bytes, chars, endOfInput = true)))
   }
 
-  //########################################################################
+  // ########################################################################
   // Private Methods
 
   /**
