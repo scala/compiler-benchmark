@@ -1,13 +1,15 @@
 package scala.tools.nsc
 
-import java.io.File
+import java.io.{File, PrintWriter}
 import java.nio.file._
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
+import com.typesafe.config.ConfigFactory
 import org.openjdk.jmh.annotations.Mode._
 import org.openjdk.jmh.annotations._
 
+import scala.io.Source
 import scala.tools.benchmark.BenchmarkDriver
 
 trait BaseBenchmarkDriver {
@@ -40,22 +42,44 @@ class ScalacBenchmark extends BenchmarkDriver {
   @Param(value = Array("false"))
   var resident: Boolean = false
 
+  @Param(value = Array())
+  var scalaVersion: String = _
+
   override def isResident = resident
 
   var depsClasspath: String = _
 
-  def compilerArgs: List[String] = if (source.startsWith("@")) source :: Nil else Nil
+  lazy val compilerArgs: List[String] = if (source.startsWith("@")) source :: Nil else Nil
 
-  def sourceFiles: List[String] =
+  // lazy val so it's computed (and sources are copied) only once per JVM fork
+  lazy val sourceFiles: List[String] =
     if (source.startsWith("@")) Nil
     else {
       import scala.collection.JavaConverters._
-      val allFiles = Files.walk(findSourceDir, FileVisitOption.FOLLOW_LINKS).collect(Collectors.toList[Path]).asScala.toList
-      val files = allFiles.filter(f => {
+      val sourceDir = findSourceDir
+      val sourceAssemblyDir = Paths.get(ConfigFactory.load.getString("sourceAssembly.localdir"))
+      BenchmarkUtils.deleteRecursive(sourceAssemblyDir)
+
+      val filterProcessor = new BenchmarkUtils.FilterExprProcessor(scalaVersion)
+
+      val allFiles = Files.walk(sourceDir, FileVisitOption.FOLLOW_LINKS).collect(Collectors.toList[Path]).asScala.toList
+      def isSource(f: Path) = {
         val name = f.getFileName.toString
         name.endsWith(".scala") || name.endsWith(".java")
-      }).map(_.toAbsolutePath.normalize.toString)
-      files
+      }
+      allFiles collect {
+        case f if isSource(f) =>
+          val targetFile = sourceAssemblyDir.resolve(sourceDir.relativize(f))
+          Files.createDirectories(targetFile.getParent)
+          val w = new PrintWriter(targetFile.toFile)
+          Source.fromFile(f.toFile).getLines().foreach(line => {
+            val t = line.trim
+            if (t.startsWith("//#")) filterProcessor(t)
+            else if (filterProcessor.on) w.println(line)
+          })
+          w.close()
+          targetFile.toAbsolutePath.normalize.toString
+      }
     }
 
   var tempDir: File = null

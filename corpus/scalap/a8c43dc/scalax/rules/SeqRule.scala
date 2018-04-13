@@ -16,6 +16,8 @@ package rules
 
 import language.postfixOps
 
+import scala.collection.Seq
+
 /**
  * A workaround for the difficulties of dealing with
  * a contravariant 'In' parameter type...
@@ -84,7 +86,8 @@ class SeqRule[S, +A, +X](rule: Rule[S, S, A, X]) {
 
   /** Repeats this rule num times */
   def times(num: Int): Rule[S, S, Seq[A], X] = from[S] {
-    val result = new scala.collection.mutable.ArraySeq[A](num)
+    import scala.collection.mutable.WrappedArray
+    val result = WrappedArray.make(new Array[AnyRef](num)).asInstanceOf[WrappedArray[A]]
     // more compact using HoF but written this way so it's tail-recursive
     def rep(i: Int, in: S): Result[S, Seq[A], X] = {
       if (i == num) Success(in, result)

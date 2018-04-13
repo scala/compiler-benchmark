@@ -13,6 +13,7 @@ package scalasig
 
 import language.postfixOps
 
+import scala.collection.Seq
 import java.io.{PrintStream, ByteArrayOutputStream}
 import java.util.regex.Pattern
 import scala.tools.scalap.scalax.util.StringUtil

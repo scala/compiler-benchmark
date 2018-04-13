@@ -3,6 +3,8 @@ package scalax
 package rules
 package scalasig
 
+import scala.collection.Seq
+
 abstract class Type
 
 case object NoType extends Type

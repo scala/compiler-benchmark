@@ -3,6 +3,7 @@ package scalax
 package rules
 package scalasig
 
+import scala.collection.Seq
 import ScalaSigEntryParsers._
 
 trait Symbol extends Flags {

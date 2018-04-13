@@ -94,7 +94,7 @@ object Decode {
     }
     yield {
       val typeAliases = ssig.symbols collect { case x: AliasSymbol => x }
-      Map(typeAliases map (x => (x.name, getAliasSymbol(x.infoType).path)): _*)
+      Map(typeAliases.toSeq map (x => (x.name, getAliasSymbol(x.infoType).path)): _*)
     }
   }
 }

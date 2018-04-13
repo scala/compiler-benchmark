@@ -5,6 +5,7 @@ package scalasig
 
 import language.postfixOps
 
+import scala.collection.Seq
 import java.io.IOException
 
 object ByteCode {
