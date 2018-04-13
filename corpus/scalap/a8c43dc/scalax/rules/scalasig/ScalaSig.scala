@@ -14,6 +14,7 @@ package scalasig
 import scala.language.postfixOps
 import scala.language.implicitConversions
 
+import scala.collection.Seq
 import ClassFileParser.{ ConstValueIndex, Annotation }
 import scala.reflect.internal.pickling.ByteCodecs
 

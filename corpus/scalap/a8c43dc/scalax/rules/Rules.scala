@@ -16,6 +16,8 @@ package rules
 
 import language.postfixOps
 
+import scala.collection.Seq
+
 trait Name {
   def name: String
   override def toString = name
