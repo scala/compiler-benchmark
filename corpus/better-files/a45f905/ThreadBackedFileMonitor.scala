@@ -26,7 +26,11 @@ abstract class ThreadBackedFileMonitor(val root: File, maxDepth: Int) extends Fi
 
     val path = key.watchable().asInstanceOf[Path]
 
+    //#if 2.10|2.11
     import scala.collection.JavaConversions._
+    //#else
+    import collection.convert.ImplicitConversions._
+    //#fi
     key.pollEvents() foreach {
       case event: WatchEvent[Path] @unchecked =>
         val target: File = path resolve event.context()

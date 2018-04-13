@@ -3,7 +3,11 @@ package better.files
 import java.nio.file.attribute.{PosixFileAttributes, PosixFilePermission, PosixFilePermissions}
 import java.util.zip.{Deflater, ZipOutputStream}
 
+//#if 2.10|2.11
 import scala.collection.JavaConversions._
+//#else
+import collection.convert.ImplicitConversions._
+//#fi
 import scala.io.Codec
 
 /**

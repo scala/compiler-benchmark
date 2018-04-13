@@ -9,7 +9,7 @@ package object files extends Implicits {
     def close(): Unit
   }
 
-  type ManagedResource[A <: Closeable] = Traversable[A]
+  type ManagedResource[A <: Closeable] = Iterable[A]
 
   // Some utils:
   private[files] def newMultiMap[A, B]: mutable.MultiMap[A, B] = new mutable.HashMap[A, mutable.Set[B]] with mutable.MultiMap[A, B]

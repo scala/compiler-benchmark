@@ -9,7 +9,11 @@ import java.time.Instant
 import java.util.zip.{Deflater, ZipFile}
 import javax.xml.bind.DatatypeConverter
 
+//#if 2.10|2.11
 import scala.collection.JavaConversions._
+//#else
+import collection.convert.ImplicitConversions._
+//#fi
 import scala.io.{BufferedSource, Codec, Source}
 import scala.util.Properties
 
@@ -185,7 +189,7 @@ class File private(val path: Path) {
     * @param codec
     * @return all lines in this file
     */
-  def lines(implicit codec: Codec): Traversable[String] =
+  def lines(implicit codec: Codec): Iterable[String] =
     Files.readAllLines(path, codec)
 
   /**
@@ -199,7 +203,7 @@ class File private(val path: Path) {
   def lineIterator(implicit codec: Codec): Iterator[String] =
     Files.lines(path, codec).toAutoClosedIterator
 
-  def tokens(implicit config: Scanner.Config = Scanner.Config.default, codec: Codec): Traversable[String] =
+  def tokens(implicit config: Scanner.Config = Scanner.Config.default, codec: Codec): Iterable[String] =
     bufferedReader(codec).flatMap(_.tokens(config))
 
   def contentAsString(implicit codec: Codec): String =
