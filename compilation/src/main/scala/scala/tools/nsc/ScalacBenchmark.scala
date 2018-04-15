@@ -1,15 +1,13 @@
 package scala.tools.nsc
 
-import java.io.{File, PrintWriter}
+import java.io.File
 import java.nio.file._
 import java.util.concurrent.TimeUnit
-import java.util.stream.Collectors
 
 import com.typesafe.config.ConfigFactory
 import org.openjdk.jmh.annotations.Mode._
 import org.openjdk.jmh.annotations._
 
-import scala.io.Source
 import scala.tools.benchmark.BenchmarkDriver
 
 trait BaseBenchmarkDriver {
@@ -55,31 +53,10 @@ class ScalacBenchmark extends BenchmarkDriver {
   lazy val sourceFiles: List[String] =
     if (source.startsWith("@")) Nil
     else {
-      import scala.collection.JavaConverters._
       val sourceDir = findSourceDir
       val sourceAssemblyDir = Paths.get(ConfigFactory.load.getString("sourceAssembly.localdir"))
       BenchmarkUtils.deleteRecursive(sourceAssemblyDir)
-
-      val filterProcessor = new BenchmarkUtils.FilterExprProcessor(scalaVersion)
-
-      val allFiles = Files.walk(sourceDir, FileVisitOption.FOLLOW_LINKS).collect(Collectors.toList[Path]).asScala.toList
-      def isSource(f: Path) = {
-        val name = f.getFileName.toString
-        name.endsWith(".scala") || name.endsWith(".java")
-      }
-      allFiles collect {
-        case f if isSource(f) =>
-          val targetFile = sourceAssemblyDir.resolve(sourceDir.relativize(f))
-          Files.createDirectories(targetFile.getParent)
-          val w = new PrintWriter(targetFile.toFile)
-          Source.fromFile(f.toFile).getLines().foreach(line => {
-            val t = line.trim
-            if (t.startsWith("//#")) filterProcessor(t)
-            else if (filterProcessor.on) w.println(line)
-          })
-          w.close()
-          targetFile.toAbsolutePath.normalize.toString
-      }
+      BenchmarkUtils.prepareSources(sourceDir, sourceAssemblyDir, scalaVersion)
     }
 
   var tempDir: File = null

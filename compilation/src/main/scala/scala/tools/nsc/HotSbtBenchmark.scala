@@ -34,10 +34,14 @@ class HotSbtBenchmark {
   @Param(value = Array("latest"))
   var corpusVersion: String = _
 
+  @Param(value = Array())
+  var scalaVersion: String = _
+
   var sbtProcess: Process = _
   var inputRedirect: ProcessBuilder.Redirect = _
   var outputRedirect: ProcessBuilder.Redirect = _
   var tempDir: Path = _
+  var srcDir: Path = _
   var scalaHome: Path = _
   var processOutputReader: BufferedReader = _
   var processInputReader: BufferedWriter = _
@@ -64,7 +68,7 @@ class HotSbtBenchmark {
        |
        |cleanClasses := IO.delete((classDirectory in Compile).value)
        |
-       |scalaSource in Compile := file("${corpusSourcePath.toAbsolutePath.toString}")
+       |scalaSource in Compile := file("${srcDir.toAbsolutePath.toString}")
        |
        |libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
        |libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
@@ -82,9 +86,13 @@ class HotSbtBenchmark {
     tempDir = Files.createTempDirectory("sbt-")
     scalaHome = Files.createTempDirectory("scalaHome-")
     initDepsClasspath()
+    srcDir = Files.createDirectory(tempDir.resolve("src"))
+    println(srcDir)
+    BenchmarkUtils.prepareSources(corpusSourcePath, srcDir, scalaVersion)
     Files.createDirectory(tempDir.resolve("project"))
     Files.write(tempDir.resolve("project/build.properties"), java.util.Arrays.asList("sbt.version=" + sbtVersion))
     Files.write(tempDir.resolve("build.sbt"), buildDef.getBytes("UTF-8"))
+
     val sbtLaucherPath = System.getProperty("sbt.launcher")
     if (sbtLaucherPath == null) sys.error("System property -Dsbt.launcher absent")
     val builder = new ProcessBuilder(sys.props("java.home") + "/bin/java", "-Xms2G", "-Xmx2G", "-Dsbt.log.format=false", "-jar", sbtLaucherPath)
