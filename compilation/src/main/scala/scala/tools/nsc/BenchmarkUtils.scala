@@ -1,15 +1,41 @@
 package scala.tools.nsc
 
-import java.io.{File, IOException}
+import java.io.{IOException, PrintWriter}
 import java.net.URL
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
+import java.util.stream.Collectors
 
 import com.typesafe.config.ConfigFactory
 
 import scala.collection.JavaConverters._
+import scala.io.Source
 
 object BenchmarkUtils {
+  def prepareSources(sourceDir: Path, targetDir: Path, scalaVersion: String): List[String] = {
+    val filterProcessor = new FilterExprProcessor(scalaVersion)
+
+    val allFiles = Files.walk(sourceDir, FileVisitOption.FOLLOW_LINKS).collect(Collectors.toList[Path]).asScala.toList
+    def isSource(f: Path) = {
+      val name = f.getFileName.toString
+      name.endsWith(".scala") || name.endsWith(".java")
+    }
+
+    allFiles collect {
+      case f if isSource(f) =>
+        val targetFile = targetDir.resolve(sourceDir.relativize(f))
+        Files.createDirectories(targetFile.getParent)
+        val w = new PrintWriter(targetFile.toFile)
+        Source.fromFile(f.toFile).getLines().foreach(line => {
+          val t = line.trim
+          if (t.startsWith("//#")) filterProcessor(t)
+          else if (filterProcessor.on) w.println(line)
+        })
+        w.close()
+        targetFile.toAbsolutePath.normalize.toString
+    }
+  }
+
   class FilterExprProcessor(scalaVersion: String) {
     var on = true
 
