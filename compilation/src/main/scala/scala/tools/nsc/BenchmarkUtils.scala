@@ -10,6 +10,7 @@ import com.typesafe.config.ConfigFactory
 
 import scala.collection.JavaConverters._
 import scala.io.Source
+import scala.io.Codec
 
 object BenchmarkUtils {
   def prepareSources(sourceDir: Path, targetDir: Path, scalaVersion: String): List[String] = {
@@ -26,7 +27,8 @@ object BenchmarkUtils {
         val targetFile = targetDir.resolve(sourceDir.relativize(f))
         Files.createDirectories(targetFile.getParent)
         val w = new PrintWriter(targetFile.toFile)
-        Source.fromFile(f.toFile).getLines().foreach(line => {
+        val codec = new Codec(java.nio.charset.Charset.forName("UTF-8"))
+        Source.fromFile(f.toFile)(codec).getLines().foreach(line => {
           val t = line.trim
           if (t.startsWith("//#")) filterProcessor(t)
           else if (filterProcessor.on) w.println(line)
