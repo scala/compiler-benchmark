@@ -72,11 +72,14 @@ class ScalacBenchmark extends BenchmarkDriver {
 
   // Executed once per fork
   @Setup(Level.Trial) def initTemp(): Unit = {
-    val tempFile = java.io.File.createTempFile("output", "")
+    val tempRootPath = ConfigFactory.load.getString("benchmark.outdir")
+    val tempDirRoot = new java.io.File(tempRootPath)
+    val tempFile = java.io.File.createTempFile("output", "", tempDirRoot)
     tempFile.delete()
     tempFile.mkdir()
     tempDir = tempFile
   }
+
   @TearDown(Level.Trial) def clearTemp(): Unit = {
     BenchmarkUtils.deleteRecursive(tempDir.toPath)
   }
