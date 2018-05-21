@@ -4,11 +4,11 @@ import java.io._
 import java.nio.file._
 import java.util.concurrent.TimeUnit
 
-import org.openjdk.jmh.annotations.Mode.SampleTime
+import org.openjdk.jmh.annotations.Mode
 import org.openjdk.jmh.annotations._
 
 @State(Scope.Benchmark)
-@BenchmarkMode(Array(SampleTime))
+@BenchmarkMode(Array(org.openjdk.jmh.annotations.Mode.SampleTime))
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @Warmup(iterations = 10, time = 10, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 10, time = 10, timeUnit = TimeUnit.SECONDS)
