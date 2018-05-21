@@ -5,9 +5,10 @@ name := "compiler-benchmark"
 
 version := "1.0-SNAPSHOT"
 
-def scala211 = "2.11.11"
-def dottyLatest = "0.2.0-RC1"
-scalaVersion in ThisBuild := scala211
+def scala212 = "2.12.6"
+def dottyLatest = "0.8.0-RC1"
+scalaVersion in ThisBuild := scala212
+val JmhConfig = config("jmh")
 
 commands += Command.command("testAll") { s =>
   "test:compile" ::
@@ -16,7 +17,7 @@ commands += Command.command("testAll") { s =>
     s"++$dottyLatest" ::
     "compilation/test" ::
     "hot -psource=vector -wi 1 -i 1 -f1" ::
-    s"++$scala211" ::
+    s"++$scala212" ::
     "micro/jmh:run -w1 -f1" ::
     s
 }
@@ -57,7 +58,7 @@ lazy val compilation = addJmh(project).settings(
     if (isDotty.value) "ch.epfl.lamp" %% "dotty-compiler" % scalaVersion.value
     else scalaOrganization.value % "scala-compiler" % scalaVersion.value
   },
-  crossScalaVersions := List(scala211, dottyLatest),
+  crossScalaVersions := List(scala212, dottyLatest),
   unmanagedSourceDirectories.in(Compile) +=
     sourceDirectory.in(Compile).value / (if (isDotty.value) "dotc" else "scalac"),
   mainClass in (Jmh, run) := Some("scala.bench.ScalacBenchmarkRunner"),
@@ -122,13 +123,14 @@ commands += Command.arb(profParser)((s: State, line: String) => {
     def command(outDir: File): String = "-prof perfnorm"
   }
 
-  val profs = List(perfNorm, basic, async, jfr)
+  val profs = List(jfr, perfNorm, basic, async)
   val commands: List[String] = profs.flatMap { (prof: Profiler) =>
     val outDir = file(s"target/profile-${prof.name}")
     IO.createDirectory(outDir)
     List(line + " -jvmArgs -Dsun.reflect.inflationThreshold=0 " + prof.command(outDir) + s" -o ${(outDir / "jmh.log").getAbsolutePath} -rf json -rff ${(outDir / "result.json").getAbsolutePath}", BasicCommandStrings.FailureWall)
   }
-  s.copy(remainingCommands = BasicCommandStrings.ClearOnFailure :: commands ++ s.remainingCommands)
+  val remainingCommands1 = (BasicCommandStrings.ClearOnFailure :: commands).map(s => Exec(s, None)) ++ s.remainingCommands
+  s.copy(remainingCommands = remainingCommands1)
 })
 
 
@@ -136,5 +138,5 @@ def addJmh(project: Project): Project = {
   // IntelliJ SBT project import doesn't like sbt-jmh's default setup, which results the prod and test
   // output paths overlapping. This is because sbt-jmh declares the `jmh` config as extending `test`, but
   // configures `classDirectory in Jmh := classDirectory in Compile`.
-  project.enablePlugins(JmhPlugin).overrideConfigs(config("jmh").extend(Compile))
+  project.enablePlugins(JmhPlugin).overrideConfigs(JmhConfig.extend(Compile))
 }
