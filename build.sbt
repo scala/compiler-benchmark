@@ -7,7 +7,7 @@ version := "1.0-SNAPSHOT"
 
 def scala212 = "2.12.6"
 def dottyLatest = "0.8.0-RC1"
-scalaVersion in ThisBuild := scala212
+scalaVersion in ThisBuild := System.getProperty("scala.version", scala212)
 val JmhConfig = config("jmh")
 
 commands += Command.command("testAll") { s =>
