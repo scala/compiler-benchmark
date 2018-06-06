@@ -25,7 +25,7 @@ commands += Command.command("testAll") { s =>
 resolvers += "scala-integration" at "https://scala-ci.typesafe.com/artifactory/scala-integration/"
 
 // Convenient access to builds from PR validation
-resolvers ++= (
+resolvers in ThisBuild ++= (
   if (scalaVersion.value.endsWith("-SNAPSHOT"))
     List(
       "pr-scala snapshots" at "https://scala-ci.typesafe.com/artifactory/scala-pr-validation-snapshots/",
