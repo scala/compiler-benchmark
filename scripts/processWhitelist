@@ -52,3 +52,5 @@ ttm_swap                  # swap gpu memory
 vmstat                    # virtual memory stats, not sure why this is running
 watchdog                  # detects problems, per cpu
 writeback                 # write to disk buffer
+zing-licensed             # Support for Azul Zing JVM
+zing-licensem             # Support for Azul Zing JVM
