@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import com.typesafe.config.Config;
@@ -26,6 +27,9 @@ public class Database {
         String influxPassword = getPassword(conf, influxUrl, influxUser);
 
         OkHttpClient.Builder client = new OkHttpClient.Builder();
+        client.connectTimeout(10, TimeUnit.SECONDS);
+        client.readTimeout(120, TimeUnit.SECONDS);
+        client.writeTimeout(120, TimeUnit.SECONDS);
 
         // workaround https://github.com/influxdata/influxdb-java/issues/268
         client.addNetworkInterceptor(chain -> {

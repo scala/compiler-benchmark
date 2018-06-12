@@ -12,13 +12,19 @@ import static scala.bench.GitFactory.openGit;
 public class GitHistoryUploader {
     public static void main(String[] args) throws IOException, GitAPIException {
         Repository gitRepo = openGit();
-        InfluxDB influxDB = connectDb();
 
         try {
+            System.out.println("Walking Git history...");
             GitWalkerResult result = GitWalker.walk(gitRepo);
-            influxDB.write(result.getBatchPoints());
+            InfluxDB influxDB = connectDb();
+            try {
+                System.out.println("Writing results to DB...");
+                influxDB.write(result.getBatchPoints());
+                System.out.println("Done.");
+            } finally {
+                influxDB.close();
+            }
         } finally {
-            influxDB.close();
             gitRepo.close();
         }
     }
