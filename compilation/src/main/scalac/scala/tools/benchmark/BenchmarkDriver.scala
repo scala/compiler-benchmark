@@ -10,8 +10,12 @@ import scala.tools.nsc._
 trait BenchmarkDriver extends BaseBenchmarkDriver {
   private var driver: MainClass = _
   private var files: List[String] = _
-  protected def findScalaJars = {
-    sys.props("java.class.path").split(File.pathSeparatorChar).filter(_.matches(""".*\bscala-(reflect|compiler|library).*\.jar""")).mkString(":")
+  private def findScalaJars = {
+    System.getProperty("scala.compiler.class.path") match {
+      case null =>
+        sys.props("java.class.path").split(File.pathSeparatorChar).filter(_.matches(""".*\bscala-(reflect|compiler|library).*\.jar""")).mkString(":")
+      case s => s
+    }
   }
 
   // MainClass is copy-pasted from compiler for source compatibility with 2.10.x - 2.13.x
@@ -21,7 +25,6 @@ trait BenchmarkDriver extends BaseBenchmarkDriver {
       compiler = Global(settings, reporter)
       compiler
     }
-
 
     override protected def processSettingsHook(): Boolean = {
       if (!source.startsWith("@")) {

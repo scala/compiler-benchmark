@@ -46,12 +46,6 @@ class ScalacBenchmark extends BenchmarkDriver {
   @Param(value = Array())
   var scalaVersion: String = _
 
-  var scalaJars: String = _
-
-  override def findScalaJars: String =
-    if (scalaJars != null) scalaJars
-    else super.findScalaJars
-
   override def isResident = resident
 
   var depsClasspath: String = _
