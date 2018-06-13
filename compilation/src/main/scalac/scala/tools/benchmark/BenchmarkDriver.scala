@@ -10,8 +10,7 @@ import scala.tools.nsc._
 trait BenchmarkDriver extends BaseBenchmarkDriver {
   private var driver: MainClass = _
   private var files: List[String] = _
-
-  private def findScalaJars = {
+  protected def findScalaJars = {
     sys.props("java.class.path").split(File.pathSeparatorChar).filter(_.matches(""".*\bscala-(reflect|compiler|library).*\.jar""")).mkString(":")
   }
 

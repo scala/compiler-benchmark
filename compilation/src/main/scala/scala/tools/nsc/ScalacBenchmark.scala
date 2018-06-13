@@ -32,6 +32,9 @@ class ScalacBenchmark extends BenchmarkDriver {
   @Param(value = Array(""))
   var extraArgs: String = _
 
+  @Param(value = Array("../corpus"))
+  var corpusPath: String = "../corpus"
+
   // This parameter is set by ScalacBenchmarkRunner / UploadingRunner based on the Scala version.
   // When running the benchmark directly the "latest" symlink is used.
   @Param(value = Array("latest"))
@@ -42,6 +45,12 @@ class ScalacBenchmark extends BenchmarkDriver {
 
   @Param(value = Array())
   var scalaVersion: String = _
+
+  var scalaJars: String = _
+
+  override def findScalaJars: String =
+    if (scalaJars != null) scalaJars
+    else super.findScalaJars
 
   override def isResident = resident
 
@@ -63,16 +72,19 @@ class ScalacBenchmark extends BenchmarkDriver {
 
   // Executed once per fork
   @Setup(Level.Trial) def initTemp(): Unit = {
-    val tempFile = java.io.File.createTempFile("output", "")
+    val tempRootPath = ConfigFactory.load.getString("benchmark.outdir")
+    val tempDirRoot = new java.io.File(tempRootPath)
+    val tempFile = java.io.File.createTempFile("output", "", tempDirRoot)
     tempFile.delete()
     tempFile.mkdir()
     tempDir = tempFile
   }
+
   @TearDown(Level.Trial) def clearTemp(): Unit = {
     BenchmarkUtils.deleteRecursive(tempDir.toPath)
   }
 
-  def corpusSourcePath: Path = Paths.get(s"../corpus/$source/$corpusVersion")
+  def corpusSourcePath: Path = Paths.get(s"$corpusPath/$source/$corpusVersion")
 
   @Setup(Level.Trial) def initDepsClasspath(): Unit = {
     val classPath = BenchmarkUtils.initDeps(corpusSourcePath)
