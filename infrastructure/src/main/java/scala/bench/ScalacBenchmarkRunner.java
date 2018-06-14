@@ -2,14 +2,13 @@ package scala.bench;
 
 import org.eclipse.jgit.lib.Repository;
 import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.options.ChainedOptionsBuilder;
-import org.openjdk.jmh.runner.options.CommandLineOptions;
-import org.openjdk.jmh.runner.options.Options;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
+import org.openjdk.jmh.runner.options.*;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class ScalacBenchmarkRunner {
     private static String corpusVersion(String source) throws IOException {
@@ -77,6 +76,21 @@ public class ScalacBenchmarkRunner {
             org.openjdk.jmh.Main.main(args);
             return;
         }
+        if (opts.verbosity().orElse(VerboseMode.NORMAL) == VerboseMode.EXTRA) {
+            printCommandLine(args);
+        }
         new Runner(setParameters(opts)).run();
+    }
+
+    private static void printCommandLine(String[] args) {
+        StringBuilder commandLine = new StringBuilder();
+        String inputArgs = ManagementFactory.getRuntimeMXBean().getInputArguments().stream().collect(Collectors.joining(" "));
+        commandLine.append(inputArgs).append(" ");
+        commandLine.append("-classpath ").append(System.getProperty("java.class.path")).append(" ");
+        commandLine.append(ScalacBenchmarkRunner.class.getName()).append(" ");
+        for (String arg : args) {
+            commandLine.append(arg).append(" ");
+        }
+        System.out.println(commandLine);
     }
 }

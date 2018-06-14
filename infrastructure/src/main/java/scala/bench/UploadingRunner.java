@@ -12,6 +12,8 @@ import org.openjdk.jmh.util.Utils;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.management.ManagementFactory;
+import java.util.stream.Collectors;
 
 public class UploadingRunner {
     public static void main(String[] args) throws Exception {
