@@ -330,7 +330,7 @@ class File private(val path: Path) {
     newPrintWriter(autoFlush)(openOptions).autoClosed
 
   def newInputStream(implicit openOptions: File.OpenOptions = File.OpenOptions.default): InputStream =
-    Files.newInputStream(path, openOptions: _*)
+    JFiles.newInputStream(path, openOptions: _*)
 
   def inputStream(implicit openOptions: File.OpenOptions = File.OpenOptions.default): ManagedResource[InputStream] =
     newInputStream(openOptions).autoClosed
@@ -342,7 +342,7 @@ class File private(val path: Path) {
     newScanner(config).autoClosed
 
   def newOutputStream(implicit openOptions: File.OpenOptions = File.OpenOptions.default): OutputStream =
-    Files.newOutputStream(path, openOptions: _*)
+    JFiles.newOutputStream(path, openOptions: _*)
 
   def outputStream(implicit openOptions: File.OpenOptions = File.OpenOptions.default): ManagedResource[OutputStream] =
     newOutputStream(openOptions).autoClosed
