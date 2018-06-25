@@ -3,7 +3,7 @@ package better.files
 import java.io.{File => JFile, FileSystem => JFileSystem, _} //TODO: Scala 2.10 does not like java.io._
 import java.net.URI
 import java.nio.channels.{OverlappingFileLockException, AsynchronousFileChannel, FileChannel, NonWritableChannelException, NonReadableChannelException}
-import java.nio.file._, attribute._
+import java.nio.file.{Files => JFiles, _}, attribute._
 import java.security.{MessageDigest, DigestInputStream}
 import java.time.Instant
 import java.util.zip.{Deflater, ZipFile}
@@ -84,7 +84,7 @@ class File private(val path: Path) {
     if (isRegularFile) renameTo(s"$nameWithoutExtension$extension") else this
 
   def contentType: Option[String] =
-    Option(Files.probeContentType(path))
+    Option(JFiles.probeContentType(path))
 
   /**
     * Return parent of this file
@@ -125,16 +125,16 @@ class File private(val path: Path) {
       createDirectories()(attributes)
     } else {
       if (createParents) parent.createDirectories()(attributes)
-      Files.createFile(path, attributes: _*)
+      JFiles.createFile(path, attributes: _*)
       this
     }
   }
 
   def exists(implicit linkOptions: File.LinkOptions = File.LinkOptions.default): Boolean =
-    Files.exists(path, linkOptions: _*)
+    JFiles.exists(path, linkOptions: _*)
 
   def notExists(implicit linkOptions: File.LinkOptions = File.LinkOptions.default): Boolean =
-    Files.notExists(path, linkOptions: _*)
+    JFiles.notExists(path, linkOptions: _*)
 
   def sibling(name: String): File =
     path resolveSibling name
@@ -164,18 +164,18 @@ class File private(val path: Path) {
     newInputStream.buffered.bytes //TODO: ManagedResource here?
 
   def loadBytes: Array[Byte] =
-    Files.readAllBytes(path)
+    JFiles.readAllBytes(path)
 
   def byteArray: Array[Byte] =
     loadBytes
 
   def createDirectory()(implicit attributes: File.Attributes = File.Attributes.default): this.type = {
-    Files.createDirectory(path, attributes: _*)
+    JFiles.createDirectory(path, attributes: _*)
     this
   }
 
   def createDirectories()(implicit attributes: File.Attributes = File.Attributes.default): this.type = {
-    Files.createDirectories(path, attributes: _*)
+    JFiles.createDirectories(path, attributes: _*)
     this
   }
 
@@ -190,7 +190,7 @@ class File private(val path: Path) {
     * @return all lines in this file
     */
   def lines(implicit codec: Codec): Iterable[String] =
-    Files.readAllLines(path, codec)
+    JFiles.readAllLines(path, codec)
 
   /**
     * Iterate over lines in a file (auto-close stream on complete)
@@ -201,7 +201,7 @@ class File private(val path: Path) {
     * @return
     */
   def lineIterator(implicit codec: Codec): Iterator[String] =
-    Files.lines(path, codec).toAutoClosedIterator
+    JFiles.lines(path, codec).toAutoClosedIterator
 
   def tokens(implicit config: Scanner.Config = Scanner.Config.default, codec: Codec): Iterable[String] =
     bufferedReader(codec).flatMap(_.tokens(config))
@@ -229,7 +229,7 @@ class File private(val path: Path) {
     * @return
     */
   def appendLines(lines: String*)(implicit openOptions: File.OpenOptions = File.OpenOptions.append, codec: Codec): this.type = {
-    Files.write(path, lines, codec, openOptions: _*)
+    JFiles.write(path, lines, codec, openOptions: _*)
     this
   }
 
@@ -249,7 +249,7 @@ class File private(val path: Path) {
     append(text)(openOptions, codec)
 
   def appendByteArray(bytes: Array[Byte])(implicit openOptions: File.OpenOptions = File.OpenOptions.append): this.type = {
-    Files.write(path, bytes, openOptions: _*)
+    JFiles.write(path, bytes, openOptions: _*)
     this
   }
 
@@ -263,7 +263,7 @@ class File private(val path: Path) {
     * @return this
     */
   def writeByteArray(bytes: Array[Byte])(implicit openOptions: File.OpenOptions = File.OpenOptions.default): this.type = {
-    Files.write(path, bytes, openOptions: _*)
+    JFiles.write(path, bytes, openOptions: _*)
     this
   }
 
@@ -300,13 +300,13 @@ class File private(val path: Path) {
     newRandomAccess(mode).autoClosed //TODO: Mode enum?
 
   def newBufferedReader(implicit codec: Codec): BufferedReader =
-    Files.newBufferedReader(path, codec)
+    JFiles.newBufferedReader(path, codec)
 
   def bufferedReader(implicit codec: Codec): ManagedResource[BufferedReader] =
     newBufferedReader(codec).autoClosed
 
   def newBufferedWriter(implicit codec: Codec, openOptions: File.OpenOptions = File.OpenOptions.default): BufferedWriter =
-    Files.newBufferedWriter(path, codec, openOptions: _*)
+    JFiles.newBufferedWriter(path, codec, openOptions: _*)
 
   def bufferedWriter(implicit codec: Codec, openOptions: File.OpenOptions = File.OpenOptions.default): ManagedResource[BufferedWriter] =
     newBufferedWriter(codec, openOptions).autoClosed
@@ -408,25 +408,25 @@ class File private(val path: Path) {
     * @return Some(target) if this is a symbolic link (to target) else None
     */
   def symbolicLink: Option[File] =
-    when(isSymbolicLink)(Files.readSymbolicLink(path))
+    when(isSymbolicLink)(JFiles.readSymbolicLink(path))
 
   /**
     * @return true if this file (or the file found by following symlink) is a directory
     */
   def isDirectory(implicit linkOptions: File.LinkOptions = File.LinkOptions.default): Boolean =
-    Files.isDirectory(path, linkOptions: _*)
+    JFiles.isDirectory(path, linkOptions: _*)
 
   /**
     * @return true if this file (or the file found by following symlink) is a regular file
     */
   def isRegularFile(implicit linkOptions: File.LinkOptions = File.LinkOptions.default): Boolean =
-    Files.isRegularFile(path, linkOptions: _*)
+    JFiles.isRegularFile(path, linkOptions: _*)
 
   def isSymbolicLink: Boolean =
-    Files.isSymbolicLink(path)
+    JFiles.isSymbolicLink(path)
 
   def isHidden: Boolean =
-    Files.isHidden(path)
+    JFiles.isHidden(path)
 
   def isLocked(mode: File.RandomAccessMode, position: Long = 0L, size: Long = Long.MaxValue, isShared: Boolean = false): Boolean = {
     val channel = newRandomAccess(mode).getChannel
@@ -447,7 +447,7 @@ class File private(val path: Path) {
     isLocked(File.RandomAccessMode.readWrite, position, size, isShared)
 
   def list: Files =
-    Files.list(path)
+    JFiles.list(path)
 
   def children: Files = list
 
@@ -463,7 +463,7 @@ class File private(val path: Path) {
     * @return List of children in BFS maxDepth level deep (includes self since self is at depth = 0)
     */
   def walk(maxDepth: Int = Int.MaxValue)(implicit visitOptions: File.VisitOptions = File.VisitOptions.default): Files =
-    Files.walk(path, maxDepth, visitOptions: _*) //TODO: that ignores I/O errors?
+    JFiles.walk(path, maxDepth, visitOptions: _*) //TODO: that ignores I/O errors?
 
   def pathMatcher(syntax: File.PathMatcherSyntax)(pattern: String): PathMatcher =
     fileSystem.getPathMatcher(s"${syntax.name}:$pattern")
@@ -497,16 +497,16 @@ class File private(val path: Path) {
     * @return file size (for directories, return size of the directory) in bytes
     */
   def size(implicit visitOptions: File.VisitOptions = File.VisitOptions.default): Long =
-    walk()(visitOptions).map(f => Files.size(f.path)).sum
+    walk()(visitOptions).map(f => JFiles.size(f.path)).sum
 
   def permissions(implicit linkOptions: File.LinkOptions = File.LinkOptions.default): Set[PosixFilePermission] =
-    Files.getPosixFilePermissions(path, linkOptions: _*).toSet
+    JFiles.getPosixFilePermissions(path, linkOptions: _*).toSet
 
   def permissionsAsString(implicit linkOptions: File.LinkOptions = File.LinkOptions.default): String =
     PosixFilePermissions.toString(permissions(linkOptions))
 
   def setPermissions(permissions: Set[PosixFilePermission]): this.type = {
-    Files.setPosixFilePermissions(path, permissions)
+    JFiles.setPosixFilePermissions(path, permissions)
     this
   }
 
@@ -565,16 +565,16 @@ class File private(val path: Path) {
     toJava.canExecute
 
   def attributes(implicit linkOptions: File.LinkOptions = File.LinkOptions.default): BasicFileAttributes =
-    Files.readAttributes(path, classOf[BasicFileAttributes], linkOptions: _*)
+    JFiles.readAttributes(path, classOf[BasicFileAttributes], linkOptions: _*)
 
   def posixAttributes(implicit linkOptions: File.LinkOptions = File.LinkOptions.default): PosixFileAttributes =
-    Files.readAttributes(path, classOf[PosixFileAttributes], linkOptions: _*)
+    JFiles.readAttributes(path, classOf[PosixFileAttributes], linkOptions: _*)
 
   def dosAttributes(implicit linkOptions: File.LinkOptions = File.LinkOptions.default): DosFileAttributes =
-    Files.readAttributes(path, classOf[DosFileAttributes], linkOptions: _*)
+    JFiles.readAttributes(path, classOf[DosFileAttributes], linkOptions: _*)
 
   def owner(implicit linkOptions: File.LinkOptions = File.LinkOptions.default): UserPrincipal =
-    Files.getOwner(path, linkOptions: _*)
+    JFiles.getOwner(path, linkOptions: _*)
 
   def ownerName(implicit linkOptions: File.LinkOptions = File.LinkOptions.default): String =
     owner(linkOptions).getName
@@ -586,12 +586,12 @@ class File private(val path: Path) {
     group(linkOptions).getName
 
   def setOwner(owner: String): this.type = {
-    Files.setOwner(path, fileSystem.getUserPrincipalLookupService.lookupPrincipalByName(owner))
+    JFiles.setOwner(path, fileSystem.getUserPrincipalLookupService.lookupPrincipalByName(owner))
     this
   }
 
   def setGroup(group: String): this.type = {
-    Files.setOwner(path, fileSystem.getUserPrincipalLookupService.lookupPrincipalByGroupName(group))
+    JFiles.setOwner(path, fileSystem.getUserPrincipalLookupService.lookupPrincipalByGroupName(group))
     this
   }
 
@@ -599,12 +599,12 @@ class File private(val path: Path) {
     * Similar to the UNIX command touch - create this file if it does not exist and set its last modification time
     */
   def touch(time: Instant = Instant.now())(implicit attributes: File.Attributes = File.Attributes.default, linkOptions: File.LinkOptions = File.LinkOptions.default): this.type = {
-    Files.setLastModifiedTime(createIfNotExists()(attributes, linkOptions).path, FileTime.from(time))
+    JFiles.setLastModifiedTime(createIfNotExists()(attributes, linkOptions).path, FileTime.from(time))
     this
   }
 
   def lastModifiedTime(implicit linkOptions: File.LinkOptions = File.LinkOptions.default): Instant =
-    Files.getLastModifiedTime(path, linkOptions: _*).toInstant
+    JFiles.getLastModifiedTime(path, linkOptions: _*).toInstant
 
   /**
     * Deletes this file or directory
@@ -614,7 +614,7 @@ class File private(val path: Path) {
   def delete(swallowIOExceptions: Boolean = false): this.type = {
     try {
       if (isDirectory) list.foreach(_.delete(swallowIOExceptions))
-      Files.delete(path)
+      JFiles.delete(path)
     } catch {
       case e: IOException if swallowIOExceptions => //e.printStackTrace() //swallow
     }
@@ -631,7 +631,7 @@ class File private(val path: Path) {
     * @return destination
     */
   def moveTo(destination: File, overwrite: Boolean = false): destination.type = {
-    Files.move(path, destination.path, File.CopyOptions(overwrite): _*)
+    JFiles.move(path, destination.path, File.CopyOptions(overwrite): _*)
     destination
   }
 
@@ -644,33 +644,33 @@ class File private(val path: Path) {
   def copyTo(destination: File, overwrite: Boolean = false): destination.type = {
     if (isDirectory) {//TODO: maxDepth?
       if (overwrite) destination.delete(swallowIOExceptions = true)
-      Files.walkFileTree(path, new SimpleFileVisitor[Path] {
+      JFiles.walkFileTree(path, new SimpleFileVisitor[Path] {
         def newPath(subPath: Path): Path = destination.path resolve (path relativize subPath)
 
         override def preVisitDirectory(dir: Path, attrs: BasicFileAttributes) = {
-          Files.createDirectories(newPath(dir))
+          JFiles.createDirectories(newPath(dir))
           super.preVisitDirectory(dir, attrs)
         }
 
         override def visitFile(file: Path, attrs: BasicFileAttributes) = {
-          Files.copy(file, newPath(file), File.CopyOptions(overwrite): _*)
+          JFiles.copy(file, newPath(file), File.CopyOptions(overwrite): _*)
           super.visitFile(file, attrs)
         }
       })
     } else {
-      Files.copy(path, destination.path, File.CopyOptions(overwrite): _*)
+      JFiles.copy(path, destination.path, File.CopyOptions(overwrite): _*)
     }
     destination
   }
 
   def symbolicLinkTo(destination: File)(implicit attributes: File.Attributes = File.Attributes.default): destination.type = {
-    Files.createSymbolicLink(path, destination.path, attributes: _*)
+    JFiles.createSymbolicLink(path, destination.path, attributes: _*)
     destination
   }
 
   def linkTo(destination: File, symbolic: Boolean = false)(implicit attributes: File.Attributes = File.Attributes.default): destination.type = {
     if (symbolic) symbolicLinkTo(destination)(attributes) else {
-      Files.createLink(destination.path, path)
+      JFiles.createLink(destination.path, path)
       destination
     }
   }
@@ -685,7 +685,7 @@ class File private(val path: Path) {
     this.path == that.path
 
   def isSameFileAs(that: File): Boolean =
-    Files.isSameFile(this.path, that.path)
+    JFiles.isSameFile(this.path, that.path)
 
   /**
     * @return true if this file is exactly same as that file
@@ -797,15 +797,15 @@ class File private(val path: Path) {
 object File {
   def newTemporaryDirectory(prefix: String = "", parent: Option[File] = None)(implicit attributes: Attributes = Attributes.default): File = {
     parent match {
-      case Some(dir) => Files.createTempDirectory(dir.path, prefix, attributes: _*)
-      case _ => Files.createTempDirectory(prefix, attributes: _*)
+      case Some(dir) => JFiles.createTempDirectory(dir.path, prefix, attributes: _*)
+      case _ => JFiles.createTempDirectory(prefix, attributes: _*)
     }
   }
 
   def newTemporaryFile(prefix: String = "", suffix: String = "", parent: Option[File] = None)(implicit attributes: Attributes = Attributes.default): File = {
     parent match {
-      case Some(dir) => Files.createTempFile(dir.path, prefix, suffix, attributes: _*)
-      case _ => Files.createTempFile(prefix, suffix, attributes: _*)
+      case Some(dir) => JFiles.createTempFile(dir.path, prefix, suffix, attributes: _*)
+      case _ => JFiles.createTempFile(prefix, suffix, attributes: _*)
     }
   }
 
