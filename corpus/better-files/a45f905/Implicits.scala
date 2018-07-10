@@ -161,7 +161,7 @@ trait Implicits {
       add(file, file.name)
   }
 
-  implicit class CloseableOps[A <: Closeable](resource: A) {
+  implicit class CloseableOps[A <: better.files.Closeable](resource: A) {
     /**
       * Lightweight automatic resource management
       * Closes the resource when done e.g.
