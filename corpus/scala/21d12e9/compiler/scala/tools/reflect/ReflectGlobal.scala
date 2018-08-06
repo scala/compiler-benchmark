@@ -27,7 +27,7 @@ class ReflectGlobal(currentSettings: Settings, reporter: Reporter, override val 
     }
   }
 
-  override def transformedType(sym: Symbol) =
+  override def transformedType(sym: Symbol): Type =
     postErasure.transformInfo(sym,
       erasure.transformInfo(sym,
         uncurry.transformInfo(sym, sym.info)))

@@ -31,12 +31,12 @@ trait Transforms { self: SymbolTable =>
   def erasure = erasureLazy.force
   def postErasure = postErasureLazy.force
 
-  def transformedType(sym: Symbol) =
+  def transformedType(sym: Symbol): Type =
     postErasure.transformInfo(sym,
       erasure.transformInfo(sym,
         uncurry.transformInfo(sym, sym.info)))
 
-  def transformedType(tpe: Type) =
+  def transformedType(tpe: Type): Type =
     postErasure.elimErasedValueType(erasure.scalaErasure(uncurry.uncurry(tpe)))
 
 }
