@@ -114,4 +114,6 @@ public final class Statics {
 
     return x.hashCode();
   }
+
+  public static void releaseFence() {}
 }
