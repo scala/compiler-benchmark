@@ -116,4 +116,13 @@ public final class Statics {
   }
 
   public static void releaseFence() {}
+
+  /**
+   * Just throws an exception.
+   * Used by the synthetic `productElement` and `productElementName` methods in case classes.
+   * Delegating the exception-throwing to this function reduces the bytecode size of the case class.
+   */
+  public static final <T> T ioobe(int n) throws IndexOutOfBoundsException {
+    throw new IndexOutOfBoundsException(String.valueOf(n));
+  }
 }
