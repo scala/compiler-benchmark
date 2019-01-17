@@ -16,6 +16,7 @@ ipv6_addrconf             # ipv6, could probably be disabled
 irq/326-mei_me            # an interrupt handler, it seems to stick around, no idea..
 irqbalance                # systemctl, stopped by benv. balance irq handlers across cpus
 java_java_-jar_slave.jar  # oh jenkins
+java_java_-jar_remoting.jar_-workDir_/home/jenkins # oh jenkins
 jbd2                      # ext4 journal
 kauditd                   # not sure, "kernel audit events" (https://wiki.gentoo.org/wiki/SELinux/Tutorials/The_security_context_of_a_process)
 kblockd                   # block device io
