@@ -905,7 +905,7 @@ abstract class Erasure extends InfoTransform
      */
     private def bridgeDefs(owner: Symbol): (List[Tree], immutable.Set[Symbol]) = {
       assert(phase == currentRun.erasurePhase, phase)
-      new ComputeBridges(unit, owner) compute()
+      new ComputeBridges(unit, owner).compute()
     }
 
     def addBridges(stats: List[Tree], base: Symbol): List[Tree] =
