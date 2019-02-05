@@ -42,6 +42,8 @@ public class ScalacBenchmarkRunner {
                     break;
 
                 case "scala":
+                    if (GitWalker.isAncestor("df29ebb", scalaRef, repo))
+                        return "df29ebb";
                     if (GitWalker.isAncestor("v2.11.5", scalaRef, repo))
                         return "21d12e9";
                     break;
