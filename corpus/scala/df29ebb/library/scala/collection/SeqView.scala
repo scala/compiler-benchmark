@@ -17,7 +17,11 @@ import TraversableView.NoBuilder
 /** A base trait for non-strict views of sequences.
  *  $seqViewInfo
  */
-trait SeqView[+A, +Coll] extends SeqViewLike[A, Coll, SeqView[A, Coll]]
+trait SeqView[+A, +Coll] extends SeqViewLike[A, Coll, SeqView[A, Coll]] {
+  override def flatten[B](implicit asTraversable: A => GenTraversableOnce[B]): Transformed[B] = ???
+  override def unzip[A1, A2](implicit asPair: A => (A1, A2)): (Transformed[A1], Transformed[A2]) = ???
+  override def unzip3[A1, A2, A3](implicit asTriple: A => (A1, A2, A3)): (Transformed[A1], Transformed[A2], Transformed[A3]) = ???
+}
 
 /** An object containing the necessary implicit definitions to make
  *  `SeqView`s work. Its definitions are generally not accessed directly by clients.

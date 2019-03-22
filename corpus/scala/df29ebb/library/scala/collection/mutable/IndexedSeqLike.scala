@@ -49,7 +49,7 @@ trait IndexedSeqLike[A, +Repr] extends Any with scala.collection.IndexedSeqLike[
 
   /** Creates a view of this iterable @see Iterable.View
    */
-  override def view = new IndexedSeqView[A, Repr] {
+  override def view: IndexedSeqView[A, Repr] = new IndexedSeqView[A, Repr] {
     protected lazy val underlying = self.repr
     override def iterator = self.iterator
     override def length = self.length

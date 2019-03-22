@@ -666,7 +666,7 @@ trait SeqLike[+A, +Repr] extends Any with IterableLike[A, Repr] with GenSeqLike[
    */
   def indices: Range = 0 until length
 
-  override def view = new SeqView[A, Repr] {
+  override def view: SeqView[A, Repr] = new SeqView[A, Repr] {
     protected lazy val underlying = self.repr
     override def iterator = self.iterator
     override def length = self.length

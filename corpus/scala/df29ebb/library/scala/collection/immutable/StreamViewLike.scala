@@ -51,15 +51,33 @@ extends SeqView[A, Coll]
   trait Prepended[B >: A] extends super.Prepended[B] with Transformed[B]
 
   /** boilerplate */
-  protected override def newForced[B](xs: => scala.collection.GenSeq[B]): Transformed[B] = new { val forced = xs } with AbstractTransformed[B] with Forced[B]
-  protected override def newAppended[B >: A](that: scala.collection.GenTraversable[B]): Transformed[B] = new { val rest = that } with AbstractTransformed[B] with Appended[B]
-  protected override def newPrepended[B >: A](that: scala.collection.GenTraversable[B]): Transformed[B] = new { protected[this] val fst = that } with AbstractTransformed[B] with Prepended[B]
-  protected override def newMapped[B](f: A => B): Transformed[B] = new { val mapping = f } with AbstractTransformed[B] with Mapped[B]
-  protected override def newFlatMapped[B](f: A => scala.collection.GenTraversableOnce[B]): Transformed[B] = new { val mapping = f } with AbstractTransformed[B] with FlatMapped[B]
-  protected override def newFiltered(p: A => Boolean): Transformed[A] = new { val pred = p } with AbstractTransformed[A] with Filtered
-  protected override def newSliced(_endpoints: SliceInterval): Transformed[A] = new { val endpoints = _endpoints } with AbstractTransformed[A] with Sliced
-  protected override def newDroppedWhile(p: A => Boolean): Transformed[A] = new { val pred = p } with AbstractTransformed[A] with DroppedWhile
-  protected override def newTakenWhile(p: A => Boolean): Transformed[A] = new { val pred = p } with AbstractTransformed[A] with TakenWhile
+  protected override def newForced[B](xs: => scala.collection.GenSeq[B]): Transformed[B] = new { val forced = xs } with AbstractTransformed[B] with Forced[B] {
+    override def foreach[U](f: B => U): Unit = super.foreach(f)
+  }
+  protected override def newAppended[B >: A](that: scala.collection.GenTraversable[B]): Transformed[B] = new { val rest = that } with AbstractTransformed[B] with Appended[B] {
+    override def foreach[U](f: B => U): Unit = super.foreach(f)
+  }
+  protected override def newPrepended[B >: A](that: scala.collection.GenTraversable[B]): Transformed[B] = new { protected[this] val fst = that } with AbstractTransformed[B] with Prepended[B] {
+    override def foreach[U](f: B => U): Unit = super.foreach(f)
+  }
+  protected override def newMapped[B](f: A => B): Transformed[B] = new { val mapping = f } with AbstractTransformed[B] with Mapped[B] {
+    override def foreach[U](f: B => U): Unit = super.foreach(f)
+  }
+  protected override def newFlatMapped[B](f: A => scala.collection.GenTraversableOnce[B]): Transformed[B] = new { val mapping = f } with AbstractTransformed[B] with FlatMapped[B] {
+    override def foreach[U](f: B => U): Unit = super.foreach(f)
+  }
+  protected override def newFiltered(p: A => Boolean): Transformed[A] = new { val pred = p } with AbstractTransformed[A] with Filtered {
+    override def foreach[U](f: A => U): Unit = super.foreach(f)
+  }
+  protected override def newSliced(_endpoints: SliceInterval): Transformed[A] = new { val endpoints = _endpoints } with AbstractTransformed[A] with Sliced {
+    override def foreach[U](f: A => U): Unit = super.foreach(f)
+  }
+  protected override def newDroppedWhile(p: A => Boolean): Transformed[A] = new { val pred = p } with AbstractTransformed[A] with DroppedWhile {
+    override def foreach[U](f: A => U): Unit = super.foreach(f)
+  }
+  protected override def newTakenWhile(p: A => Boolean): Transformed[A] = new { val pred = p } with AbstractTransformed[A] with TakenWhile {
+    override def foreach[U](f: A => U): Unit = super.foreach(f)
+  }
   protected override def newZipped[B](that: scala.collection.GenIterable[B]): Transformed[(A, B)] = new { val other = that } with AbstractTransformed[(A, B)] with Zipped[B]
   protected override def newZippedAll[A1 >: A, B](that: scala.collection.GenIterable[B], _thisElem: A1, _thatElem: B): Transformed[(A1, B)] = {
     new { val other = that; val thisElem = _thisElem; val thatElem = _thatElem } with AbstractTransformed[(A1, B)] with ZippedAll[A1, B]
@@ -70,4 +88,7 @@ extends SeqView[A, Coll]
   }
 
   override def stringPrefix = "StreamView"
+  override def flatten[B](implicit asTraversable: A => GenTraversableOnce[B]): Transformed[B] = ???
+  override def unzip[A1, A2](implicit asPair: A => (A1, A2)): (Transformed[A1], Transformed[A2]) = ???
+  override def unzip3[A1, A2, A3](implicit asTriple: A => (A1, A2, A3)): (Transformed[A1], Transformed[A2], Transformed[A3]) = ???
 }

@@ -76,10 +76,19 @@ self =>
   /** Boilerplate method, to override in each subclass
    *  This method could be eliminated if Scala had virtual classes
    */
-  protected override def newFiltered(p: A => Boolean): Transformed[A] = new { val pred = p } with AbstractTransformed[A] with Filtered
+  protected override def newFiltered(p: A => Boolean): Transformed[A] = new { val pred = p } with AbstractTransformed[A] with Filtered {
+    override def iterator: Iterator[A] = super.iterator
+    override def foreach[U](f: A => U): Unit = super.foreach(f)
+  }
   protected override def newSliced(_endpoints: SliceInterval): Transformed[A] = new { val endpoints = _endpoints } with AbstractTransformed[A] with Sliced
-  protected override def newDroppedWhile(p: A => Boolean): Transformed[A] = new { val pred = p } with AbstractTransformed[A] with DroppedWhile
-  protected override def newTakenWhile(p: A => Boolean): Transformed[A] = new { val pred = p } with AbstractTransformed[A] with TakenWhile
+  protected override def newDroppedWhile(p: A => Boolean): Transformed[A] = new { val pred = p } with AbstractTransformed[A] with DroppedWhile {
+    override def iterator: Iterator[A] = super.iterator
+    override def foreach[U](f: A => U): Unit = super.foreach(f)
+  }
+  protected override def newTakenWhile(p: A => Boolean): Transformed[A] = new { val pred = p } with AbstractTransformed[A] with TakenWhile {
+    override def iterator: Iterator[A] = super.iterator
+    override def foreach[U](f: A => U): Unit = super.foreach(f)
+  }
   protected override def newReversed: Transformed[A] = new AbstractTransformed[A] with Reversed
 
   override def filter(p: A => Boolean): This = newFiltered(p)
@@ -93,6 +102,10 @@ self =>
   override def splitAt(n: Int): (This, This) = (take(n), drop(n)) // !!!
   override def reverse: This = newReversed
   override def tail: IndexedSeqView[A, Coll] = if (isEmpty) super.tail else slice(1, length)
+
+  override def flatten[B](implicit asTraversable: A => GenTraversableOnce[B]): Transformed[B] = ???
+  override def unzip[A1, A2](implicit asPair: A => (A1, A2)): (Transformed[A1], Transformed[A2]) = ???
+  override def unzip3[A1, A2, A3](implicit asTriple: A => (A1, A2, A3)): (Transformed[A1], Transformed[A2], Transformed[A3]) = ???
 }
 
 /** An object containing the necessary implicit definitions to make
