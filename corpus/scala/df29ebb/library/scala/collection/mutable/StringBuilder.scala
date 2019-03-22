@@ -444,6 +444,8 @@ final class StringBuilder(private val underlying: JavaStringBuilder)
    *  @return  the string assembled by this StringBuilder
    */
   def result(): String = toString
+  override def view: scala.collection.mutable.IndexedSeqView[Char, StringBuilder] = ???
+  override def view(from: Int, until: Int): scala.collection.mutable.IndexedSeqView[Char, StringBuilder] = ???
 }
 
 object StringBuilder {
