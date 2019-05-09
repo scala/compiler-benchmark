@@ -5,7 +5,7 @@ name := "compiler-benchmark"
 
 version := "1.0-SNAPSHOT"
 
-def scala212 = "2.12.6"
+def scala212 = "2.12.8"
 def dottyLatest = "0.8.0-RC1"
 scalaVersion in ThisBuild := scala212
 val JmhConfig = config("jmh")
@@ -115,15 +115,15 @@ commands += Command.arb(profParser)((s: State, line: String) => {
   object jfr extends Profiler("jfr") {
     def command(outDir: File): String = s"-prof jmh.extras.JFR:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true'"
   }
-  object async extends Profiler("async") {
+  case class async(event: String) extends Profiler("async-" + event) {
     val framebuf = 33554432
-    def command(outDir: File): String = s"-prof jmh.extras.Async:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true;event=cpu;framebuf=$framebuf" // + ";simpleName=true" TODO add this after upgrading next sbt-jmh release
+    def command(outDir: File): String = s"-prof jmh.extras.Async:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true;event=$event;framebuf=$framebuf" // + ";simpleName=true" TODO add this after upgrading next sbt-jmh release
   }
   object perfNorm extends Profiler("perfNorm") {
     def command(outDir: File): String = "-prof perfnorm"
   }
 
-  val profs = List(jfr, perfNorm, basic, async)
+  val profs = List(jfr, perfNorm, basic, async("alloc"), async("cpu"))
   val commands: List[String] = profs.flatMap { (prof: Profiler) =>
     val outDir = file(s"target/profile-${prof.name}")
     IO.createDirectory(outDir)
