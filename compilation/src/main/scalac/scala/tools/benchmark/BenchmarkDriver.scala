@@ -8,7 +8,7 @@ import com.typesafe.config.ConfigFactory
 import scala.tools.nsc._
 
 trait BenchmarkDriver extends BaseBenchmarkDriver {
-  private var driver: MainClass = _
+  private var residentDriver: ThreadLocal[MainClass] = new ThreadLocal[MainClass]()
   private var files: List[String] = _
   private def findScalaJars = {
     System.getProperty("scala.compiler.class.path") match {
@@ -32,8 +32,12 @@ trait BenchmarkDriver extends BaseBenchmarkDriver {
         if (source == "scala")
           settings.sourcepath.value = Paths.get(ConfigFactory.load.getString("sourceAssembly.localdir")).resolve("library").toAbsolutePath.normalize.toString
         else settings.classpath.value = findScalaJars
-        if (depsClasspath != null && depsClasspath.nonEmpty)
+        if (depsClasspath != null && depsClasspath.nonEmpty) {
           settings.processArgumentString(s"-cp $depsClasspath")
+          if (source != "scala")
+            settings.classpath.value = findScalaJars + File.pathSeparator + settings.classpath.value
+        }
+
       }
 
       settings.outdir.value = tempDir.getAbsolutePath
@@ -44,22 +48,22 @@ trait BenchmarkDriver extends BaseBenchmarkDriver {
 
   def compileImpl(): Unit = {
     if (isResident) {
-      if (driver == null) {
-        driver = new MainClass
+      if (residentDriver.get() == null) {
+        val driver = new MainClass
+        residentDriver.set(driver)
         driver.process(allArgs.toArray)
         val command  = new CompilerCommand(allArgs, driver.compiler.settings)
         files = command.files
-      } else {
-        val compiler = driver.compiler
-        compiler.reporter.reset()
-        new compiler.Run() compile files
       }
-
+      val compiler = residentDriver.get().compiler
+      compiler.reporter.reset()
+      new compiler.Run() compile files
+      assert(!residentDriver.get().reporter.hasErrors)
     } else {
-      driver = new MainClass
+      val driver = new MainClass
       driver.process(allArgs.toArray)
+      assert(!driver.reporter.hasErrors)
     }
-    assert(!driver.reporter.hasErrors)
   }
 
 }
