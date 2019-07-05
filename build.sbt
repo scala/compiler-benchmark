@@ -1,6 +1,3 @@
-import sbt.complete.DefaultParsers.OptSpace
-import sbt.complete.Parser
-
 name := "compiler-benchmark"
 
 version := "1.0-SNAPSHOT"
@@ -97,42 +94,7 @@ addCommandAlias("hot", "compilation/jmh:run HotScalacBenchmark -foe true")
 
 addCommandAlias("cold", "compilation/jmh:run ColdScalacBenchmark -foe true")
 
-
-def profParser(s: State): Parser[String] = {
-  import Parser._
-  token("prof" ~> OptSpace) flatMap { _ => matched(s.combinedParser)} map (_.trim)
-}
-
-commands += Command.arb(profParser)((s: State, line: String) => {
-  val flameGraphOpts = s"--minwidth,1,--colors,java,--cp,--width,1800"
-  abstract class Profiler(val name: String) {
-    def command(outDir: File): String
-  }
-
-  object basic extends Profiler("basic") {
-    def command(outDir: File): String = "-jvmArgs -Xprof -prof hs_comp -prof gc -prof stack -prof hs_rt -prof scala.tools.nsc.ThreadCpuTimeProfiler"
-  }
-  object jfr extends Profiler("jfr") {
-    def command(outDir: File): String = s"-prof jmh.extras.JFR:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true'"
-  }
-  case class async(event: String) extends Profiler("async-" + event) {
-    val framebuf = 33554432
-    def command(outDir: File): String = s"-prof jmh.extras.Async:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true;event=$event;framebuf=$framebuf" // + ";simpleName=true" TODO add this after upgrading next sbt-jmh release
-  }
-  object perfNorm extends Profiler("perfNorm") {
-    def command(outDir: File): String = "-prof perfnorm"
-  }
-
-  val profs = List(jfr, perfNorm, basic, async("alloc"), async("cpu"))
-  val commands: List[String] = profs.flatMap { (prof: Profiler) =>
-    val outDir = file(s"target/profile-${prof.name}")
-    IO.createDirectory(outDir)
-    List(line + " -jvmArgs -Dsun.reflect.inflationThreshold=0 " + prof.command(outDir) + s" -o ${(outDir / "jmh.log").getAbsolutePath} -rf json -rff ${(outDir / "result.json").getAbsolutePath}", BasicCommandStrings.FailureWall)
-  }
-  val remainingCommands1 = (BasicCommandStrings.ClearOnFailure :: commands).map(s => Exec(s, None)) ++ s.remainingCommands
-  s.copy(remainingCommands = remainingCommands1)
-})
-
+commands ++= build.Profiler.commands
 
 def addJmh(project: Project): Project = {
   // IntelliJ SBT project import doesn't like sbt-jmh's default setup, which results the prod and test
