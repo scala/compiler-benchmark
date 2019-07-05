@@ -12,7 +12,7 @@ abstract class Profiler(val name: String) {
 object Profiler {
   def all = List(basic, jfr, asyncAlloc, asyncCpu, perfNorm)
 
-  def commands = Profiler.all.map { prof => Command.arb(profParser("prof" + prof.name.capitalize))(commandImpl(List(prof))) } :+
+  def commands = Profiler.all.map { prof => Command.arb(profParser("prof" + prof.toString.capitalize))(commandImpl(List(prof))) } :+
     Command.arb(profParser("prof"))(commandImpl(Profiler.all))
 
   def profParser(name: String)(s: State): Parser[String] = {
@@ -39,7 +39,7 @@ object jfr extends Profiler("jfr") {
 }
 sealed abstract class async(event: String) extends Profiler("async-" + event) {
   val framebuf = 33554432
-  def command(outDir: File): String = s"-prof jmh.extras.Async:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true;event=$event;framebuf=$framebuf" // + ";simpleName=true" TODO add this after upgrading next sbt-jmh release
+  def command(outDir: File): String = s"-prof jmh.extras.Async:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true;event=$event;framebuf=$framebuf" // + ";simplename=true" TODO add this after upgrading next sbt-jmh release
 }
 case object asyncCpu extends async("cpu")
 case object asyncAlloc extends async("alloc")
