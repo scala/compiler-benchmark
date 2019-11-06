@@ -61,7 +61,7 @@ This version may be a local Scala version created in with a `scala/scala` checko
 
 Install the `ArgsFile` plugin for SBT from source:
 ```
-$ curl https://gist.githubusercontent.com/retronym/78d016a3f10c62da2fd47cacac867f25/raw/65d9a1e8458d5984784ecf411d6c4d257bfdf0c1/ArgsFile.scala >  ~/.sbt/1.0/plugins/ArgsFile.scala
+$ curl https://gist.githubusercontent.com/retronym/c0a5cd3ec72b75b1ddeb88a5a01840f4/raw/9e91fef3c4f4070337f0cb4b9f7b776947df2205/ArgsFile.scala>  ~/.sbt/1.0/plugins/ArgsFile.scala
 ```
 
 In the test project, switch to a release Scala that is binary compatible with the version you want
@@ -112,7 +112,7 @@ The full path to that file can be passed to the `-source=` option to run the ben
 on that project.
 
 ```
-$ sbt 'hot -psource=@/Users/jz/code/monix/monix/jvm/target/monix-compile.args'
+$ sbt 'set scalaVersion in compilation := "2.13.2-bin-4c6c676-SNAPSHOT"' 'hot -psource=@/Users/jz/code/monix/monix/jvm/target/monix-compile.args'
 ```
 
 ### Adding dependencies
