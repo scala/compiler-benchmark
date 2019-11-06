@@ -49,9 +49,70 @@ sbt> cold -psource=better-files
 ### Changing Scala Version
 
 ```
-sbt> set scalaVersion in ThisBuild := "2.12.0-ab61fed-SNAPSHOT"
-sbt> set scalaHome in ThisBuild := Some(file("/code/scala/build/pack"))
-sbt> set scalaHome in compilation := "2.11.1" // if micro project isn't compatible with "2.11.1"
+sbt> set scalaVersion in compilation := "2.12.0-ab61fed-SNAPSHOT"
+```
+
+This version may be a local Scala version created in with a `scala/scala` checkout by
+`sbt setupPublishCore publishLocal`. I can also be a pre-built binary from a pull request
+(we have the custom resolvers configured in this build to find them.)
+
+
+### Benchmarking compilation of a SBT sub-project
+
+Install the `ArgsFile` plugin for SBT from source:
+```
+$ curl https://gist.githubusercontent.com/retronym/78d016a3f10c62da2fd47cacac867f25/raw/65d9a1e8458d5984784ecf411d6c4d257bfdf0c1/ArgsFile.scala >  ~/.sbt/1.0/plugins/ArgsFile.scala
+```
+
+In the test project, switch to a release Scala that is binary compatible with the version you want
+to benchmark, and then export the compiler option files:
+
+```
+$ cd ~/code/monix
+$ sbt clean '++2.13.1!' compile:argsFile test:argsFile
+...
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-catnap/jvm/target/monix-catnap-compile.args
+[info] Compiling 22 Scala sources to /Users/jz/code/monix/monix-catnap/jvm/target/scala-2.13/classes ...
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-eval/jvm/target/monix-eval-compile.args
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-tail/jvm/target/monix-tail-compile.args
+[info] Compiling 58 Scala sources to /Users/jz/code/monix/monix-eval/jvm/target/scala-2.13/classes ...
+[info] Compiling 73 Scala sources to /Users/jz/code/monix/monix-tail/jvm/target/scala-2.13/classes ...
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-eval/js/target/monix-eval-compile.args
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-tail/js/target/monix-tail-compile.args
+[info] Compiling 58 Scala sources to /Users/jz/code/monix/monix-eval/js/target/scala-2.13/classes ...
+[info] Compiling 73 Scala sources to /Users/jz/code/monix/monix-tail/js/target/scala-2.13/classes ...
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-java/target/monix-java-compile.args
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-reactive/jvm/target/monix-reactive-compile.args
+[info] Compiling 2 Scala sources to /Users/jz/code/monix/monix-java/target/scala-2.13/classes ...
+[info] Compiling 196 Scala sources and 1 Java source to /Users/jz/code/monix/monix-reactive/jvm/target/scala-2.13/classes ...
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-reactive/js/target/monix-reactive-compile.args
+[info] Compiling 193 Scala sources to /Users/jz/code/monix/monix-reactive/js/target/scala-2.13/classes ...
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix/jvm/target/monix-compile.args
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix/js/target/monix-compile.args
+[success] Total time: 52 s, completed 06/11/2019 5:00:34 PM
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-execution/js/target/monix-execution-test.args
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-execution/jvm/target/monix-execution-test.args
+[info] Compiling 62 Scala sources to /Users/jz/code/monix/monix-execution/jvm/target/scala-2.13/test-classes ...
+[info] Compiling 46 Scala sources to /Users/jz/code/monix/monix-execution/js/target/scala-2.13/test-classes ...
+[info] Compiling 1 Scala source to /Users/jz/code/monix/monix/jvm/target/scala-2.13/classes ...
+[info] Compiling 1 Scala source to /Users/jz/code/monix/monix/js/target/scala-2.13/classes ...
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-catnap/jvm/target/monix-catnap-test.args
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-eval/jvm/target/monix-eval-test.args
+[info] Compiling 97 Scala sources to /Users/jz/code/monix/monix-eval/jvm/target/scala-2.13/test-classes ...
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-catnap/js/target/monix-catnap-test.args
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-eval/js/target/monix-eval-test.args
+[info] Compiling 82 Scala sources to /Users/jz/code/monix/monix-eval/js/target/scala-2.13/test-classes ...
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-tail/jvm/target/monix-tail-test.args
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-reactive/jvm/target/monix-reactive-test.args
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-tail/js/target/monix-tail-test.args
+[info] Wrote compiler comand line to: /Users/jz/code/monix/monix-reactive/js/target/monix-reactive-test.args
+```
+
+The full path to that file can be passed to the `-source=` option to run the benchmark
+on that project.
+
+```
+$ sbt 'hot -psource=@/Users/jz/code/monix/monix/jvm/target/monix-compile.args'
 ```
 
 ### Adding dependencies
@@ -91,39 +152,6 @@ sbt> compilation/jmh:run CompileSourcesBenchmark -jvm /path/to/graalvm/Contents/
 ```
 
 To run only the open-source version of GraalVM add `-jvmArgs -Dgraal.CompilerConfiguration=core` to the command.
-
-### Exporting an args file from SBT
-
-
-```
-$ curl https://gist.githubusercontent.com/retronym/78d016a3f10c62da2fd47cacac867f25/raw/65d9a1e8458d5984784ecf411d6c4d257bfdf0c1/ArgsFile.scala >  ~/.sbt/0.13/plugins/ArgsFile.scala
-$ cd /code/someProject
-$ sbt core/compile:argsFilePrint
-[info] Set current project to root (in build file:/Users/jason/code/better-files/)
--deprecation
--encoding
-UTF-8
--feature
--language:implicitConversions
--language:reflectiveCalls
--unchecked
--Xfatal-warnings
--Xlint
--Yinline-warnings
--Yno-adapted-args
--Ywarn-dead-code
--Xfuture
-/Users/jason/code/better-files/core/src/main/scala/better/files/Cmds.scala
-/Users/jason/code/better-files/core/src/main/scala/better/files/File.scala
-/Users/jason/code/better-files/core/src/main/scala/better/files/Implicits.scala
-/Users/jason/code/better-files/core/src/main/scala/better/files/package.scala
-/Users/jason/code/better-files/core/src/main/scala/better/files/Scanner.scala
-/Users/jason/code/better-files/core/src/main/scala/better/files/ThreadBackedFileMonitor.scala
-[success] Total time: 0 s, completed 02/09/2016 11:51:58 AM
-```
-
-Place this output into a file. The full path to that file can be passed to the `-source=` option to run the benchmark
-on that project: `-psource=@/path/to/args/file`
 
 ### Running the benchmark without SBT or JMH's forked processes
 
