@@ -599,4 +599,6 @@ private[scala] abstract class LowPriorityImplicits {
       def apply(from: String) = immutable.IndexedSeq.newBuilder[T]
       def apply() = immutable.IndexedSeq.newBuilder[T]
     }
+
+   def copyArrayToImmutableIndexedSeq[T](xs: Array[T]): IndexedSeq[T] = ???
 }

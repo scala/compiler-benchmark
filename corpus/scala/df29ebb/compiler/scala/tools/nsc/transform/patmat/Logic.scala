@@ -155,8 +155,8 @@ trait Logic extends Debugging  {
       implicit val SymOrdering: Ordering[Sym] = Ordering.by(_.id)
     }
 
-    def /\(props: Iterable[Prop]) = if (props.isEmpty) True else And(props.toSeq: _*)
-    def \/(props: Iterable[Prop]) = if (props.isEmpty) False else Or(props.toSeq: _*)
+    def /\(props: Iterable[Prop]) = if (props.isEmpty) True else And(props.toList: _*)
+    def \/(props: Iterable[Prop]) = if (props.isEmpty) False else Or(props.toList: _*)
 
     /**
      * Simplifies propositional formula according to the following rules:
@@ -219,7 +219,7 @@ trait Logic extends Debugging  {
             opsFlattened match {
               case Seq()  => True
               case Seq(f) => f
-              case ops    => And(ops: _*)
+              case ops    => And(ops.toList: _*)
             }
           }
         case Or(fv)      =>
@@ -237,7 +237,7 @@ trait Logic extends Debugging  {
             opsFlattened match {
               case Seq()  => False
               case Seq(f) => f
-              case ops    => Or(ops: _*)
+              case ops    => Or(ops.toList: _*)
             }
           }
         case Not(Not(a)) =>
@@ -406,7 +406,7 @@ trait Logic extends Debugging  {
 
       if (Statistics.canEnable) Statistics.stopTimer(patmatAnaVarEq, start)
 
-      (And(eqAxioms: _*), pure)
+      (And(eqAxioms.toList: _*), pure)
     }
 
     type Solvable

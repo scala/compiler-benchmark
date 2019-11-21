@@ -1286,7 +1286,7 @@ self: ParIterableLike[T, Repr, Sequential] =>
     override def split = {
       val pits = pit.splitWithSignalling
       val sizes = pits.map(_.remaining)
-      val opits = othpit.psplitWithSignalling(sizes: _*)
+      val opits = othpit.psplitWithSignalling(sizes.toList: _*)
       (pits zip opits) map { p => new Zip(pbf, p._1, p._2) }
     }
     override def merge(that: Zip[U, S, That]) = result = result combine that.result
@@ -1302,7 +1302,7 @@ self: ParIterableLike[T, Repr, Sequential] =>
     override def split = if (pit.remaining <= len) {
       val pits = pit.splitWithSignalling
       val sizes = pits.map(_.remaining)
-      val opits = othpit.psplitWithSignalling(sizes: _*)
+      val opits = othpit.psplitWithSignalling(sizes.toList: _*)
       ((pits zip opits) zip sizes) map { t => new ZipAll(t._2, thiselem, thatelem, pbf, t._1._1, t._1._2) }
     } else {
       val opits = othpit.psplitWithSignalling(pit.remaining)
