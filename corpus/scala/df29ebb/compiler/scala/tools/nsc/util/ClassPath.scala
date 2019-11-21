@@ -50,7 +50,7 @@ trait ClassPath {
 
   /** The whole classpath in the form of one String.
     */
-  def asClassPathString: String = ClassPath.join(asClassPathStrings: _*)
+  def asClassPathString: String = ClassPath.join(asClassPathStrings.toList: _*)
   // for compatibility purposes
   @deprecated("use asClassPathString instead of this one", "2.11.5")
   def asClasspathString: String = asClassPathString

@@ -257,6 +257,18 @@ object ScalaRunTime {
       case _: UnsupportedOperationException | _: AssertionError => "" + arg
     }
   }
+  type ArraySeq[T] = Seq[T]
+  def genericWrapArray[T](xs: Array[T]): ArraySeq[T] = ???
+  def wrapRefArray[T <: AnyRef](xs: Array[T]): ArraySeq[T] = ???
+  def wrapIntArray(xs: Array[Int]): ArraySeq[Int] = ???
+  def wrapDoubleArray(xs: Array[Double]): ArraySeq[Double] = ???
+  def wrapLongArray(xs: Array[Long]): ArraySeq[Long] = ???
+  def wrapFloatArray(xs: Array[Float]): ArraySeq[Float] = ???
+  def wrapCharArray(xs: Array[Char]): ArraySeq[Char] = ???
+  def wrapByteArray(xs: Array[Byte]): ArraySeq[Byte] = ???
+  def wrapShortArray(xs: Array[Short]): ArraySeq[Short] = ???
+  def wrapBooleanArray(xs: Array[Boolean]): ArraySeq[Boolean] = ???
+  def wrapUnitArray(xs: Array[Unit]): ArraySeq[Unit] = ???
 
   /** stringOf formatted for use in a repl result. */
   def replStringOf(arg: Any, maxElements: Int): String = {

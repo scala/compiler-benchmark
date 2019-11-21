@@ -504,7 +504,7 @@ self =>
     def split: Seq[IterableSplitter[(T, S)]] = {
       val selfs = self.split
       val sizes = selfs.map(_.remaining)
-      val thats = that.psplit(sizes: _*)
+      val thats = that.psplit(sizes.toList: _*)
       (selfs zip thats) map { p => p._1 zipParSeq p._2 }
     }
   }

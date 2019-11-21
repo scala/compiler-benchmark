@@ -31,7 +31,7 @@ trait JavaReflectionRuntimes {
             bundleCtor.newInstance(args.c)
           } else ReflectionUtils.staticSingletonInstance(implClass)
         val implArgs = if (isBundle) args.others else args.c +: args.others
-        implMeth.invoke(implObj, implArgs.asInstanceOf[Seq[AnyRef]]: _*)
+        implMeth.invoke(implObj, implArgs.asInstanceOf[Seq[AnyRef]].toList: _*)
       }
     }
   }

@@ -859,7 +859,7 @@ class Global(var currentSettings: Settings, var reporter: Reporter)
       informProgress(s"classpath updated on entries [${subst.keys mkString ","}]")
       def mkClassPath(elems: Iterable[ClassPath]): ClassPath =
         if (elems.size == 1) elems.head
-        else AggregateClassPath.createAggregate(elems.toSeq: _*)
+        else AggregateClassPath.createAggregate(elems.toList: _*)
       val oldEntries = mkClassPath(subst.keys)
       val newEntries = mkClassPath(subst.values)
       classPath match {
@@ -1205,7 +1205,7 @@ class Global(var currentSettings: Settings, var reporter: Reporter)
       val inclusions = ss.visibleSettings collect {
         case s: ss.PhasesSetting if !(exclusions contains s) => s.value
       }
-      checkPhaseSettings(including = true, inclusions.toSeq: _*)
+      checkPhaseSettings(including = true, inclusions.toList: _*)
       checkPhaseSettings(including = false, exclusions map (_.value): _*)
 
       phase = first   //parserPhase

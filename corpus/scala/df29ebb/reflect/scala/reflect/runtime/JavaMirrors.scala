@@ -332,9 +332,9 @@ private[scala] trait JavaMirrors extends internal.SymbolTable with api.JavaUnive
       lazy val jconstr = ensureAccessible(constructorToJava(symbol))
 
       def jinvokeraw(args: Seq[Any]) =
-        if (!symbol.isConstructor) jmeth.invoke(receiver, args.asInstanceOf[Seq[AnyRef]]: _*)
-        else if (receiver == null) jconstr.newInstance(args.asInstanceOf[Seq[AnyRef]]: _*)
-        else jconstr.newInstance((receiver +: args).asInstanceOf[Seq[AnyRef]]: _*)
+        if (!symbol.isConstructor) jmeth.invoke(receiver, args.asInstanceOf[Seq[AnyRef]].toList: _*)
+        else if (receiver == null) jconstr.newInstance(args.asInstanceOf[Seq[AnyRef]].toList: _*)
+        else jconstr.newInstance((receiver +: args).asInstanceOf[Seq[AnyRef]].toList: _*)
       def jinvoke(args: Seq[Any]): Any = {
         val result = jinvokeraw(args)
         if (!symbol.isConstructor && jmeth.getReturnType == java.lang.Void.TYPE) ()
@@ -469,7 +469,7 @@ private[scala] trait JavaMirrors extends internal.SymbolTable with api.JavaUnive
           val jmeths = classOf[BoxesRunTime].getDeclaredMethods.filter(_.getName == nme.primitiveMethodName(symbol.name).toString)
           assert(jmeths.length == 1, jmeths.toList)
           val jmeth = jmeths.head
-          val result = jmeth.invoke(null, (objReceiver +: objArgs).asInstanceOf[Seq[AnyRef]]: _*)
+          val result = jmeth.invoke(null, (objReceiver +: objArgs).asInstanceOf[Seq[AnyRef]].toList: _*)
           if (jmeth.getReturnType == java.lang.Void.TYPE) ()
           else result
         }

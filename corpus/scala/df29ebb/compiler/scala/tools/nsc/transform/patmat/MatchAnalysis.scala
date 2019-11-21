@@ -489,7 +489,7 @@ trait MatchAnalysis extends MatchApproximation {
           else {
             prefix += prefHead
             current = current.tail
-          val and = And((current.head +: prefix): _*)
+          val and = And((current.head +: prefix).toList: _*)
           val model = findModelFor(eqFreePropToSolvable(and))
 
             // debug.patmat("trying to reach:\n"+ cnfString(current.head) +"\nunder prefix:\n"+ cnfString(prefix))
