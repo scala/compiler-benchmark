@@ -9,6 +9,7 @@ import java.util.stream.Collectors
 import com.typesafe.config.ConfigFactory
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable.ListBuffer
 import scala.io.Source
 import scala.io.Codec
 
@@ -86,7 +87,7 @@ object BenchmarkUtils {
   def initDeps(corpusSourcePath: Path): Seq[Path] = {
     val depsDir = Paths.get(ConfigFactory.load.getString("deps.localdir"))
     val depsFile = corpusSourcePath.resolve("deps.txt")
-    val depsClasspath = Seq.newBuilder[Path]
+    val depsClasspath = new ListBuffer[Path]
     if (Files.exists(depsFile)) {
       for (depUrlString <- Files.lines(depsFile).iterator().asScala) {
         val depUrl = new URL(depUrlString)
