@@ -3,7 +3,7 @@ name := "compiler-benchmark"
 version := "1.0-SNAPSHOT"
 
 def scala212 = "2.12.8"
-def dottyLatest = "0.8.0-RC1"
+def dottyLatest = "0.21.0-RC1"
 scalaVersion in ThisBuild := scala212
 val JmhConfig = config("jmh")
 
@@ -13,7 +13,7 @@ commands += Command.command("testAll") { s =>
     "hot -psource=scalap -wi 1 -i 1 -f1" ::
     s"++$dottyLatest" ::
     "compilation/test" ::
-    "hot -psource=vector -wi 1 -i 1 -f1" ::
+    "hot -psource=re2s -wi 1 -i 1 -f1" ::
     s"++$scala212" ::
     "micro/jmh:run -w1 -f1" ::
     s
