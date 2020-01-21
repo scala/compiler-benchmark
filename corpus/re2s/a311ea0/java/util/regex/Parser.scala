@@ -733,7 +733,7 @@ class Parser(wholeRegexp: String, _flags: Int) {
         case '*' | '+' | '?' =>
           repeatPos = t.pos()
           val op: Int =
-            t.pop match {
+            t.pop() match {
               case '*' => ROP.STAR
               case '+' => ROP.PLUS
               case '?' => ROP.QUEST
