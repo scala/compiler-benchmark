@@ -5,4 +5,4 @@ logLevel := Level.Warn
 addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.3.7")
 
 // sbt-dotty plugin - to support `scalaVersion := "0.x"`
-addSbtPlugin("ch.epfl.lamp" % "sbt-dotty" % "0.3.4")
+addSbtPlugin("ch.epfl.lamp" % "sbt-dotty" % "0.4.0")

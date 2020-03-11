@@ -9,8 +9,7 @@ trait BenchmarkDriver extends BaseBenchmarkDriver {
     implicit val ctx = new ContextBase().initialCtx.fresh
     ctx.setSetting(ctx.settings.usejavacp, true)
     if (depsClasspath != null) {
-      ctx.setSetting(ctx.settings.classpath,
-                     depsClasspath.mkString(File.pathSeparator))
+      ctx.setSetting(ctx.settings.classpath, depsClasspath)
     }
     ctx.setSetting(ctx.settings.migration, false)
     ctx.setSetting(ctx.settings.outputDir, dotty.tools.io.AbstractFile.getDirectory(tempDir.getAbsolutePath))
