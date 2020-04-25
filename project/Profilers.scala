@@ -39,7 +39,9 @@ case object jfr extends Profiler("jfr") {
 }
 sealed abstract class async(event: String) extends Profiler("async-" + event) {
   val framebuf = 33554432
-  def command(outDir: File): String = s"-prof jmh.extras.Async:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true;event=$event;framebuf=$framebuf" // + ";simplename=true" TODO add this after upgrading next sbt-jmh release
+  def command(outDir: File): String = {
+    s"""-prof "jmh.extras.Async:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true;event=$event;framebuf=${framebuf}" """
+  } // + ";simplename=true" TODO add this after upgrading next sbt-jmh release
 }
 case object asyncCpu extends async("cpu")
 case object asyncAlloc extends async("alloc")
