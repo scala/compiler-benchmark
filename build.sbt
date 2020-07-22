@@ -2,8 +2,8 @@ name := "compiler-benchmark"
 
 version := "1.0-SNAPSHOT"
 
-def scala212 = "2.12.11"
-def dottyLatest = "0.22.0-RC1"
+def scala212 = "2.12.12"
+def dottyLatest = "0.25.0"
 scalaVersion in ThisBuild := scala212
 val JmhConfig = config("jmh")
 
