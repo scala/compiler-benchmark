@@ -35,7 +35,7 @@ case object basic extends Profiler("basic") {
   def command(outDir: File): String = "-jvmArgs -Xprof -prof hs_comp -prof gc -prof stack -prof hs_rt -prof scala.tools.nsc.ThreadCpuTimeProfiler"
 }
 case object jfr extends Profiler("jfr") {
-  def command(outDir: File): String = s"-prof jmh.extras.JFR:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true'"
+  def command(outDir: File): String = s"""-prof "jmh.extras.JFR:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true" """
 }
 sealed abstract class async(event: String) extends Profiler("async-" + event) {
   val framebuf = 33554432
