@@ -15,6 +15,7 @@ trait BenchmarkDriver extends BaseBenchmarkDriver {
     ctx.setSetting(ctx.settings.outputDir, dotty.tools.io.AbstractFile.getDirectory(tempDir.getAbsolutePath))
     ctx.setSetting(ctx.settings.language, List("Scala2"))
     ctx.setSetting(ctx.settings.YdropComments, true)
+    ctx.setSetting(ctx.settings.silentWarnings, true)
     val compiler = new dotty.tools.dotc.Compiler
     val reporter = dotty.tools.dotc.Bench.doCompile(compiler, allArgs)
     assert(!reporter.hasErrors)
