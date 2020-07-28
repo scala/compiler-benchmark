@@ -72,6 +72,7 @@ public class ScalacBenchmarkRunner {
     }
 
     public static void main(String[] args) throws Exception {
+        System.out.println(java.util.Arrays.asList(args));
         CommandLineOptions opts = new CommandLineOptions(args);
         // Support `-h/-l/lp/lprof/lrf`.
         if (opts.shouldHelp() || opts.shouldList() || opts.shouldListProfilers() || opts.shouldListResultFormats() || opts.shouldListWithParams()) {
