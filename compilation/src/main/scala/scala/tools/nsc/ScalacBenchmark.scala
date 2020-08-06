@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit
 import com.typesafe.config.ConfigFactory
 import org.openjdk.jmh.annotations.Mode._
 import org.openjdk.jmh.annotations._
+import org.openjdk.jmh.profile.AsyncProfiler
 
 import scala.tools.benchmark.BenchmarkDriver
 
@@ -22,6 +23,20 @@ trait BaseBenchmarkDriver {
   def compilerArgs: List[String]
   def sourceFiles: List[String]
   def isResident: Boolean = false
+  def compileProfiled(): Unit = {
+    val profiler: AsyncProfiler.JavaApi = try {
+      AsyncProfiler.JavaApi.getInstance()
+    } catch {
+      case _: LinkageError => null
+    }
+    if (profiler != null) profiler.filterThread(Thread.currentThread(), true)
+    try {
+      compileImpl()
+    } finally {
+      if (profiler != null) profiler.filterThread(Thread.currentThread(), false)
+    }
+  }
+  def compileImpl(): Unit
 }
 
 @State(Scope.Benchmark)
@@ -123,7 +138,7 @@ object ScalacBenchmarkStandalone {
 @Fork(value = 16, jvmArgs = Array("-XX:CICompilerCount=2", "-Xms2G", "-Xmx2G", "-Xss2M"))
 class ColdScalacBenchmark extends ScalacBenchmark {
   @Benchmark
-  def compile(): Unit = compileImpl()
+  def compile(): Unit = compileProfiled()
 }
 
 @BenchmarkMode(Array(org.openjdk.jmh.annotations.Mode.SampleTime))
@@ -133,7 +148,7 @@ class ColdScalacBenchmark extends ScalacBenchmark {
 @Fork(value = 3, jvmArgs = Array("-Xms2G", "-Xmx2G", "-Xss2M"))
 class WarmScalacBenchmark extends ScalacBenchmark {
   @Benchmark
-  def compile(): Unit = compileImpl()
+  def compile(): Unit = compileProfiled()
 }
 
 @BenchmarkMode(Array(org.openjdk.jmh.annotations.Mode.SampleTime))
@@ -143,5 +158,5 @@ class WarmScalacBenchmark extends ScalacBenchmark {
 @Fork(value = 3, jvmArgs = Array("-Xms2G", "-Xmx2G", "-Xss2M"))
 class HotScalacBenchmark extends ScalacBenchmark {
   @Benchmark
-  def compile(): Unit = compileImpl()
+  def compile(): Unit = compileProfiled()
 }

@@ -10,7 +10,7 @@ abstract class Profiler(val name: String) {
   val flameGraphOpts = s"--minwidth,1,--colors,java,--cp,--width,1800"
 }
 object Profiler {
-  def all = List(basic, jfr, asyncAlloc, asyncCpu, perfNorm)
+  def all = List(basic, jfr, asyncAlloc, asyncCpu, asyncWall, perfNorm)
 
   def commands = Profiler.all.map { prof => Command.arb(profParser("prof" + prof.toString.capitalize))(commandImpl(List(prof))) } :+
     Command.arb(profParser("prof"))(commandImpl(Profiler.all))
@@ -40,11 +40,12 @@ case object jfr extends Profiler("jfr") {
 sealed abstract class async(event: String) extends Profiler("async-" + event) {
   val framebuf = 33554432
   def command(outDir: File): String = {
-    s"""-prof "jmh.extras.Async:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true;event=$event;framebuf=${framebuf}" """
+    s"""-prof "async:dir=${outDir.getAbsolutePath};libPath=${System.getenv("ASYNC_PROFILER_DIR")}/build/libasyncProfiler.so;minwidth=1;width=1800;verbose=true;event=$event;filter=${event == "wall"};flat=40;trace=10;framebuf=${framebuf};output=flamegraph,jfr,text" """
   } // + ";simplename=true" TODO add this after upgrading next sbt-jmh release
 }
 case object asyncCpu extends async("cpu")
 case object asyncAlloc extends async("alloc")
+case object asyncWall extends async("wall")
 case object perfNorm extends Profiler("perfNorm") {
   def command(outDir: File): String = "-prof perfnorm"
 }

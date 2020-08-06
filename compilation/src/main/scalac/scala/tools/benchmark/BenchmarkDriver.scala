@@ -4,6 +4,7 @@ import java.io.File
 import java.nio.file._
 
 import com.typesafe.config.ConfigFactory
+import org.openjdk.jmh.profile.AsyncProfiler
 
 import scala.tools.nsc._
 
