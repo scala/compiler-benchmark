@@ -1,4 +1,4 @@
-val jmhV = "1.24" // duplicated in build.sbt
+val jmhV = "1.25" // duplicated in build.sbt
 
 libraryDependencies ++= List(
   "org.openjdk.jmh"     % "jmh-core"                 % jmhV,
