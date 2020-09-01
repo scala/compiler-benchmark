@@ -35,12 +35,12 @@ case object basic extends Profiler("basic") {
   def command(outDir: File): String = "-jvmArgs -Xprof -prof hs_comp -prof gc -prof stack -prof hs_rt -prof scala.tools.nsc.ThreadCpuTimeProfiler"
 }
 case object jfr extends Profiler("jfr") {
-  def command(outDir: File): String = s"""-prof "jmh.extras.JFR:dir=${outDir.getAbsolutePath};flameGraphOpts=$flameGraphOpts;verbose=true" """
+  def command(outDir: File): String = s"""-prof "jfr:dir=${outDir.getAbsolutePath};stackDepth=1024;postProcessor=scala.bench.JfrToFlamegraph;verbose=true" """
 }
 sealed abstract class async(event: String) extends Profiler("async-" + event) {
   val framebuf = 33554432
   def command(outDir: File): String = {
-    s"""-prof "async:dir=${outDir.getAbsolutePath};libPath=${System.getenv("ASYNC_PROFILER_DIR")}/build/libasyncProfiler.so;minwidth=1;width=1800;verbose=true;event=$event;filter=${event == "wall"};flat=40;trace=10;framebuf=${framebuf};output=flamegraph,jfr,text" """
+    s"""-prof -jvmArgs -XX:+UnlockCommercialFeatures "async:dir=${outDir.getAbsolutePath};libPath=${System.getenv("ASYNC_PROFILER_DIR")}/build/libasyncProfiler.so;minwidth=1;width=1800;verbose=true;event=$event;filter=${event == "wall"};flat=40;trace=10;framebuf=${framebuf};output=flamegraph,jfr,text" """
   } // + ";simplename=true" TODO add this after upgrading next sbt-jmh release
 }
 case object asyncCpu extends async("cpu")
