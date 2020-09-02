@@ -96,15 +96,10 @@ addCommandAlias("cold", "compilation/jmh:run ColdScalacBenchmark -foe true")
 
 commands ++= build.Profiler.commands
 
-// duplicated in project/build.sbt
-val jmhV = "1.25"
-
 def addJmh(project: Project): Project = {
   // IntelliJ SBT project import doesn't like sbt-jmh's default setup, which results the prod and test
   // output paths overlapping. This is because sbt-jmh declares the `jmh` config as extending `test`, but
   // configures `classDirectory in Jmh := classDirectory in Compile`.
-  project.enablePlugins(JmhPlugin).overrideConfigs(JmhConfig.extend(Compile)).settings(
-    version in Jmh := jmhV
-  )
+  project.enablePlugins(JmhPlugin).overrideConfigs(JmhConfig.extend(Compile))
 }
 

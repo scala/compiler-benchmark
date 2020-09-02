@@ -40,8 +40,10 @@ case object jfr extends Profiler("jfr") {
 sealed abstract class async(event: String) extends Profiler("async-" + event) {
   val framebuf = 33554432
   def command(outDir: File): String = {
-    s"""-prof "async:dir=${outDir.getAbsolutePath};libPath=${System.getenv("ASYNC_PROFILER_DIR")}/build/libasyncProfiler.so;minwidth=1;width=1800;verbose=true;event=$event;filter=${event == "wall"};flat=40;trace=10;framebuf=${framebuf};output=flamegraph,jfr,text" """
-  } // + ";simplename=true" TODO add this after upgrading next sbt-jmh release
+    val r = s"""-prof "async:dir=${outDir.getAbsolutePath};libPath=${System.getenv("ASYNC_PROFILER_DIR")}/build/libasyncProfiler.so;minwidth=1;width=1800;verbose=true;event=$event;filter=${event == "wall"};flat=40;trace=10;framebuf=${framebuf};output=flamegraph,jfr,text" """
+    println(r)
+    r
+  }
 }
 case object asyncCpu extends async("cpu")
 case object asyncAlloc extends async("alloc")
