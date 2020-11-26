@@ -1367,7 +1367,7 @@ abstract class BCodeBodyBuilder extends BCodeSkelBuilder {
     import java.lang.invoke.LambdaMetafactory.{FLAG_MARKERS, FLAG_SERIALIZABLE}
     def flagIf(b: Boolean, flag: Int): Int = if (b) flag else 0
     val flags = FLAG_MARKERS | flagIf(serializable, FLAG_SERIALIZABLE)
-    val bsmArgs = Seq(samMethodType, implMethodHandle, instantiatedMethodType, Int.box(flags), Int.box(markerInterfaces.length)) ++ markerInterfaces
+    val bsmArgs = List(samMethodType, implMethodHandle, instantiatedMethodType, Int.box(flags), Int.box(markerInterfaces.length)) ++ markerInterfaces
     jmethod.visitInvokeDynamicInsn(samName, invokedType, lambdaMetaFactoryAltMetafactoryHandle, bsmArgs: _*)
   }
 
