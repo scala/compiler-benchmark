@@ -19,7 +19,7 @@ commands += Command.command("testAll") { s =>
     s
 }
 
-resolvers += "scala-integration" at "https://scala-ci.typesafe.com/artifactory/scala-integration/"
+resolvers in ThisBuild += "scala-integration" at "https://scala-ci.typesafe.com/artifactory/scala-integration/"
 
 // Convenient access to builds from PR validation
 resolvers in ThisBuild ++= (
