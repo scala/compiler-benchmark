@@ -97,7 +97,7 @@ addCommandAlias("cold", "compilation/jmh:run ColdScalacBenchmark -foe true")
 commands ++= build.Profiler.commands
 
 // duplicated in project/build.sbt
-val jmhV = "1.27"
+val jmhV = System.getProperty("jmh.version", "1.30")
 
 def addJmh(project: Project): Project = {
   // IntelliJ SBT project import doesn't like sbt-jmh's default setup, which results the prod and test
