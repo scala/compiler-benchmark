@@ -48,7 +48,7 @@ class ScalacBenchmark extends BenchmarkDriver {
   var extraArgs: String = _
 
   @Param(value = Array("../corpus"))
-  var corpusPath: String = "../corpus"
+    var corpusPath: String = "../corpus"
 
   // This parameter is set by ScalacBenchmarkRunner / UploadingRunner based on the Scala version.
   // When running the benchmark directly the "latest" symlink is used.
