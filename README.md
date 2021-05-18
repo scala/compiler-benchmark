@@ -132,9 +132,18 @@ for merges and sets of commits that we're backtesting (UI on https://scala-ci.ty
 
 ### Collecting profiling data
 
-```
-sbt> .../jmh:run Benchmark -prof jmh.extras.JFR // Java Flight Recorder
-```
+#### Async Profiler
+
+  - [Install](https://github.com/jvm-profiling-tools/async-profiler/releases) async-profiler 2.x.
+  - export `ASYNC_PROFILER_DIR=/path/to/async-profiler` (the directory containing `build`)
+  - Create a JFR profile and flamegraphs with CPU or allocation tracing: `{profAsyncCpu, profAsyncAlloc} hot -psource=scala -f1`
+  - Create a combined JFR profile with CPU and allocation tracing: `profAsyncCpuAlloc hot -psource=scala -f1`
+     - This can be converted to flamegraphs with the converter provided by async-profiler: `java -cp converter.jar jfr2flame`
+       or by using the convenience sbt command `sbt jfr2flame`.
+
+#### Java Flight Recorder
+
+ - `profJfr hot -psource=scala -f1`
 
 ### Using GraalVM
 

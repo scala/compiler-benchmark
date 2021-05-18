@@ -47,8 +47,9 @@ class ScalacBenchmark extends BenchmarkDriver {
   @Param(value = Array(""))
   var extraArgs: String = _
 
-  @Param(value = Array("../corpus"))
-  var corpusPath: String = "../corpus"
+  final val DefaultCorpusPath = ""
+  @Param(value = Array(DefaultCorpusPath))
+  var corpusPath: String = DefaultCorpusPath
 
   // This parameter is set by ScalacBenchmarkRunner / UploadingRunner based on the Scala version.
   // When running the benchmark directly the "latest" symlink is used.
@@ -93,7 +94,7 @@ class ScalacBenchmark extends BenchmarkDriver {
     BenchmarkUtils.deleteRecursive(tempDir.toPath)
   }
 
-  def corpusSourcePath: Path = Paths.get(s"$corpusPath/$source/$corpusVersion")
+  def corpusSourcePath: Path = Paths.get(s"${if (corpusPath == DefaultCorpusPath) "../corpus" else corpusPath}/$source/$corpusVersion")
 
   @Setup(Level.Trial) def initDepsClasspath(): Unit = {
     val classPath = BenchmarkUtils.initDeps(corpusSourcePath)
