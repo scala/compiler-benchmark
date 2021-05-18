@@ -3,9 +3,10 @@ package scala.tools.nsc
 import java.io._
 import java.nio.file._
 import java.util.concurrent.TimeUnit
-
 import org.openjdk.jmh.annotations.Mode
 import org.openjdk.jmh.annotations._
+
+import scala.bench.IOUtils
 
 @State(Scope.Benchmark)
 @BenchmarkMode(Array(org.openjdk.jmh.annotations.Mode.SampleTime))
@@ -166,7 +167,7 @@ class HotSbtBenchmark {
   @TearDown(Level.Trial) def terminate(): Unit = {
     processOutputReader.close()
     sbtProcess.destroyForcibly()
-    BenchmarkUtils.deleteRecursive(tempDir)
-    BenchmarkUtils.deleteRecursive(scalaHome)
+    IOUtils.deleteRecursive(tempDir)
+    IOUtils.deleteRecursive(scalaHome)
   }
 }

@@ -64,6 +64,15 @@ lazy val compilation = addJmh(project).settings(
   fork in (Test, test) := true // jmh scoped tasks run with fork := true.
 ).settings(addJavaOptions).dependsOn(infrastructure)
 
+lazy val javaCompilation = addJmh(project).settings(
+  description := "Black box benchmark of the java compiler",
+  crossPaths := false,
+  mainClass in (Jmh, run) := Some("scala.bench.ScalacBenchmarkRunner"),
+  libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
+  testOptions in Test += Tests.Argument(TestFrameworks.JUnit),
+  fork in (Test, test) := true // jmh scoped tasks run with fork := true.
+).settings(addJavaOptions).dependsOn(infrastructure)
+
 lazy val micro = addJmh(project).settings(
   description := "Finer grained benchmarks of compiler internals",
   libraryDependencies += scalaOrganization.value % "scala-compiler" % scalaVersion.value
