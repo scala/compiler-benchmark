@@ -1,3 +1,4 @@
+
 name := "compiler-benchmark"
 
 version := "1.0-SNAPSHOT"
@@ -26,10 +27,12 @@ resolvers in ThisBuild ++= (
   if (scalaVersion.value.endsWith("-SNAPSHOT"))
     List(
       "pr-scala snapshots" at "https://scala-ci.typesafe.com/artifactory/scala-pr-validation-snapshots/",
-      Resolver.mavenLocal)
+      )
   else
     Nil
 )
+
+resolvers in ThisBuild += Resolver.mavenLocal
 
 lazy val infrastructure = addJmh(project).settings(
   description := "Infrastrucuture to persist benchmark results annotated with metadata from Git",
@@ -61,7 +64,7 @@ lazy val compilation = addJmh(project).settings(
   mainClass in (Jmh, run) := Some("scala.bench.ScalacBenchmarkRunner"),
   libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
   testOptions in Test += Tests.Argument(TestFrameworks.JUnit),
-  fork in (Test, test) := true // jmh scoped tasks run with fork := true.
+  fork in (Test, test) := true, // jmh scoped tasks run with fork := true.
 ).settings(addJavaOptions).dependsOn(infrastructure)
 
 lazy val micro = addJmh(project).settings(
@@ -97,7 +100,7 @@ addCommandAlias("cold", "compilation/jmh:run ColdScalacBenchmark -foe true")
 commands ++= build.Profiler.commands
 
 // duplicated in project/build.sbt
-val jmhV = "1.27"
+val jmhV = System.getProperty("jmh.version", "1.30")
 
 def addJmh(project: Project): Project = {
   // IntelliJ SBT project import doesn't like sbt-jmh's default setup, which results the prod and test

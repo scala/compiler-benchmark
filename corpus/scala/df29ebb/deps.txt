@@ -1,1 +1,1 @@
-http://repo1.maven.org/maven2/org/scala-lang/modules/scala-asm/5.1.0-scala-2/scala-asm-5.1.0-scala-2.jar
+https://repo1.maven.org/maven2/org/scala-lang/modules/scala-asm/5.1.0-scala-2/scala-asm-5.1.0-scala-2.jar
