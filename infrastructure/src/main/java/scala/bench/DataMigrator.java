@@ -7,6 +7,7 @@ import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -40,10 +41,13 @@ public class DataMigrator {
                     List<String> newFieldNames = new ArrayList<>(series.getColumns());
                     int javaVersionIndex = newFieldNames.indexOf(JAVA_VERSION_TAG_NAME);
                     newFieldNames.remove(javaVersionIndex);
+                    assert (newFieldNames.get(0).equals("time"));
+                    newFieldNames.remove(0);
                     Point.Builder builder = Point.measurement(newMeasure);
                     Map<String, String> newTags = new HashMap<>(series.getTags());
                     List<Object> newValues = new ArrayList<>(series.getValues().get(0));
                     Object removed = newValues.remove(javaVersionIndex);
+                    String time = (String) newValues.remove(0);
                     newTags.put(JAVA_VERSION_TAG_NAME, (String) removed);
                     newTags.entrySet().removeIf(x -> x.getValue() == null || x.getValue().equals(""));
                     builder.tag(newTags);
@@ -53,6 +57,8 @@ public class DataMigrator {
                         newFieldsMap.put(newFieldNames.get(i), newValues.get(i));
                     }
                     builder.fields(newFieldsMap);
+                    Instant parse = Instant.parse(time);
+                    builder.time(parse.toEpochMilli(), TimeUnit.MILLISECONDS);
                     Point point = builder.build();
                     batchPoints.point(point);
                 }
