@@ -104,7 +104,7 @@ public class UploadingOutputFormat extends DelegatingOutputFormat {
                 pointBuilder.tag("branch", "<none>");
             }
             pointBuilder.tag("hostId", getHostId());
-            pointBuilder.addField("javaVersion", System.getProperty("java.runtime.version"));
+            pointBuilder.tag("javaVersion", params.getJdkVersion());
             pointBuilder.addField("inputArguments", inputArguments.stream().collect(Collectors.joining(" ")));
             pointBuilder.tag("scalaVersion", scalaVersion);
 
