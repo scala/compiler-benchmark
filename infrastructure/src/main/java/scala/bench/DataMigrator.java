@@ -6,7 +6,6 @@ import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -54,7 +53,13 @@ public class DataMigrator {
                     LinkedHashMap<String, Object> newFieldsMap = new LinkedHashMap<>();
                     assert (newFieldNames.size() == newValues.size());
                     for (int i = 0; i < newFieldNames.size(); i++) {
-                        newFieldsMap.put(newFieldNames.get(i), newValues.get(i));
+                        String fieldName = newFieldNames.get(i);
+                        boolean isLong = fieldName.equals("sampleCount");
+                        if (isLong) {
+                            newFieldsMap.put(fieldName, ((Number) newValues.get(i)).longValue());
+                        } else {
+                            newFieldsMap.put(fieldName, newValues.get(i));
+                        }
                     }
                     builder.fields(newFieldsMap);
                     Instant parse = Instant.parse(time);
