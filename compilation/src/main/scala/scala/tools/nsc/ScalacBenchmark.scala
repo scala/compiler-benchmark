@@ -3,12 +3,13 @@ package scala.tools.nsc
 import java.io.File
 import java.nio.file._
 import java.util.concurrent.TimeUnit
-
 import com.typesafe.config.ConfigFactory
 import org.openjdk.jmh.annotations.Mode._
 import org.openjdk.jmh.annotations._
 import org.openjdk.jmh.profile.AsyncProfiler
+import org.openjdk.jmh.runner.Runner
 
+import scala.bench.IOUtils
 import scala.tools.benchmark.BenchmarkDriver
 
 trait BaseBenchmarkDriver {
@@ -74,7 +75,7 @@ class ScalacBenchmark extends BenchmarkDriver {
     else {
       val sourceDir = findSourceDir
       val sourceAssemblyDir = Paths.get(ConfigFactory.load.getString("sourceAssembly.localdir"))
-      BenchmarkUtils.deleteRecursive(sourceAssemblyDir)
+      IOUtils.deleteRecursive(sourceAssemblyDir)
       BenchmarkUtils.prepareSources(sourceDir, sourceAssemblyDir, scalaVersion)
     }
 
@@ -160,4 +161,16 @@ class WarmScalacBenchmark extends ScalacBenchmark {
 class HotScalacBenchmark extends ScalacBenchmark {
   @Benchmark
   def compile(): Unit = compileProfiled()
+}
+
+object BakeOff {
+  def main(args: Array[String]): Unit = {
+    import org.openjdk.jmh.runner.options.Options
+    import org.openjdk.jmh.runner.options.OptionsBuilder
+    import org.openjdk.jmh.runner.options.TimeValue
+    import org.openjdk.jmh.runner.options.VerboseMode
+    val baseOpts = new OptionsBuilder().include(classOf[HotScalacBenchmark].getName).warmupTime(TimeValue.milliseconds(200)).measurementTime(TimeValue.milliseconds(200)).warmupIterations(5).measurementIterations(5).forks(2).verbosity(VerboseMode.SILENT).build
+    new OptionsBuilder().parent(baseOpts).jvmArgsPrepend("-classpath", "-")
+    new Runner(baseOpts)
+  }
 }

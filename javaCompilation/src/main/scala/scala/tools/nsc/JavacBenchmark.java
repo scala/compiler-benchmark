@@ -97,8 +97,7 @@ public class JavacBenchmark {
         tempFile.mkdir();
         tempDir = tempFile;
     }
-    @TearDown(Level.Trial) public void clearTemp() {
-        BenchmarkUtils.deleteRecursive(tempDir.toPath());
+    @TearDown(Level.Trial) public void clearTemp() throws IOException {
+        scala.bench.IOUtils.deleteRecursive(tempDir.toPath());
     }
-
 }
