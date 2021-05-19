@@ -29,12 +29,16 @@ public class GitWalker {
                 .retentionPolicy("autogen")
                 .consistency(InfluxDB.ConsistencyLevel.ALL)
                 .build();
-        createPoints("2.13.x", "fc1aea6712", batchPoints, repo, branchesMap);
-        createPoints("2.12.x", "132a0587ab", batchPoints, repo, branchesMap);
-        createPoints("v2.12.0", "05016d9035", batchPoints, repo, branchesMap);
-        createPoints("2.11.x", "7ac15a1210", batchPoints, repo, branchesMap);
-        createPoints("2.10.x", "cc672b023e", batchPoints, repo, branchesMap);
-        createPoints("2.9.x", "33e1dac4e4", batchPoints, repo, branchesMap);
+        createPoints("2.13.x", null,"fc1aea6712", batchPoints, repo, branchesMap);
+        createPoints("2.12.x", null, "132a0587ab", batchPoints, repo, branchesMap);
+
+        // There used to be a release branch v2.12.0. Looks to be deleted now? Use the v2.12.0 tag as the tip of this
+        // virtual branch.
+        createPoints("v2.12.0", "9a6ace1637053c094bfd395de540fe43c658b335","05016d9035", batchPoints, repo, branchesMap);
+
+        createPoints("2.11.x", null, "7ac15a1210", batchPoints, repo, branchesMap);
+        createPoints("2.10.x", null, "cc672b023e", batchPoints, repo, branchesMap);
+        createPoints("2.9.x", null, "33e1dac4e4", batchPoints, repo, branchesMap);
         return new GitWalkerResult(batchPoints, branchesMap, repo);
     }
 
@@ -50,14 +54,17 @@ public class GitWalker {
 
     static long adjustCommitTime(RevCommit revCommit) {
         int numParentsWithSameCommitTime = countParentsWithSameCommitTime(revCommit);
-        return (long) revCommit.getCommitTime() * 1000L + numParentsWithSameCommitTime * 10;
+        return (long) revCommit.getCommitTime() * 1000L + numParentsWithSameCommitTime * 10L;
     }
 
     public void upload(BatchPoints batchPoints) {
 
     }
 
-    private static BatchPoints createPoints(String branch, String forkPoint, BatchPoints batchPoints, Repository repo, Map<String, String> branchesMap) {
+    private static BatchPoints createPoints(String branch, String branchRef, String forkPoint, BatchPoints batchPoints, Repository repo, Map<String, String> branchesMap) {
+        if (branchRef != null) {
+            branch = branchRef;
+        }
         try {
             ObjectId resolvedBranch = resolve(branch, repo);
             ObjectId resolvedForkPoint = resolve(forkPoint, repo);
