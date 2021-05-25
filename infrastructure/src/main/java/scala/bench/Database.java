@@ -30,20 +30,7 @@ public class Database {
         client.connectTimeout(10, TimeUnit.SECONDS);
         client.readTimeout(120, TimeUnit.SECONDS);
         client.writeTimeout(120, TimeUnit.SECONDS);
-
-        // workaround https://github.com/influxdata/influxdb-java/issues/268
-        client.addNetworkInterceptor(chain -> {
-            HttpUrl.Builder fixedUrl = chain.request().url().newBuilder().encodedPath("/influx/" + chain.request().url().encodedPath().replaceFirst("/influxdb", ""));
-            return chain.proceed(chain.request().newBuilder().url(fixedUrl.build()).build());
-        });
-
-        client.authenticator((route, response) -> {
-            String credential = Credentials.basic(influxUser, influxPassword);
-            return response.request().newBuilder()
-                    .header("Authorization", credential)
-                    .build();
-        });
-        InfluxDB influxDB = InfluxDBFactory.connect(influxUrl, influxUser, influxPassword, client);
+        InfluxDB influxDB = InfluxDBFactory.connect(influxUrl, influxUser, influxPassword, client, InfluxDB.ResponseFormat.MSGPACK);
         // influxDB.setLogLevel(InfluxDB.LogLevel.FULL);
         return influxDB;
     }

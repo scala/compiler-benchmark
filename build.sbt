@@ -39,7 +39,7 @@ lazy val infrastructure = addJmh(project).settings(
   autoScalaLibrary := false,
   crossPaths := false,
   libraryDependencies ++= Seq(
-    "org.influxdb" % "influxdb-java" % "2.5", // TODO update to 2.6 when released for fix for https://github.com/influxdata/influxdb-java/issues/269
+    "org.influxdb" % "influxdb-java" % "2.21",
     "org.eclipse.jgit" % "org.eclipse.jgit" % "4.6.0.201612231935-r",
     "com.google.guava" % "guava" % "21.0",
     "org.apache.commons" % "commons-lang3" % "3.5",
