@@ -194,6 +194,14 @@ function setupShield() {
   checkFail $? "shield kernel processes" "$log"
   logOk "moved kernel processes to 'system' CPU set"
 
+  # Avoid JDK 16 warning which messes up JMH. 
+  # Is there as better way to do this?
+  #
+  # $/usr/lib/jvm/jdk-16.0.1+9/bin/java -version
+  # [0.000s][warning][os,container] Duplicate cpuset controllers detected. Picking /sys/fs/cgroup/cpuset, skipping /cpusets.
+  # openjdk version "16.0.1" 2021-04-20
+  sudo umount /cpusets
+
   checkShield
 }
 
