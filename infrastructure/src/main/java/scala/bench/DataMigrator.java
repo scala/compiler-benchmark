@@ -5,6 +5,7 @@ import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
+import org.influxdb.impl.TimeUtil;
 
 import java.time.Instant;
 import java.util.*;
@@ -31,39 +32,32 @@ public class DataMigrator {
             //time written
             //---- -------
             //0    14076
-            String oldMeasure = "result_backup_20210519";
+            String oldMeasure = "result_backup_20210525";
             String newMeasure = "result";
-
             QueryResult queryResult = influxDB.query(new Query("select * from " + oldMeasure + " group by *", "scala_benchmark"));
             for (QueryResult.Result result : queryResult.getResults()) {
                 for (QueryResult.Series series : result.getSeries()) {
-                    List<String> newFieldNames = new ArrayList<>(series.getColumns());
-                    int javaVersionIndex = newFieldNames.indexOf(JAVA_VERSION_TAG_NAME);
-                    newFieldNames.remove(javaVersionIndex);
-                    assert (newFieldNames.get(0).equals("time"));
-                    newFieldNames.remove(0);
                     Point.Builder builder = Point.measurement(newMeasure);
                     Map<String, String> newTags = new HashMap<>(series.getTags());
+                    String javaVersion = newTags.get(JAVA_VERSION_TAG_NAME);
+                    if (javaVersion.equals("1.8.0_131-b11")) {
+                        newTags.put(JAVA_VERSION_TAG_NAME, "1.8.0_131");
+                    }
+
+                    assert (series.getValues().size() == 1);
                     List<Object> newValues = new ArrayList<>(series.getValues().get(0));
-                    Object removed = newValues.remove(javaVersionIndex);
-                    String time = (String) newValues.remove(0);
-                    newTags.put(JAVA_VERSION_TAG_NAME, (String) removed);
-                    newTags.entrySet().removeIf(x -> x.getValue() == null || x.getValue().equals(""));
                     builder.tag(newTags);
+
+                    List<String> newFieldNames = new ArrayList<>(series.getColumns());
                     LinkedHashMap<String, Object> newFieldsMap = new LinkedHashMap<>();
                     assert (newFieldNames.size() == newValues.size());
                     for (int i = 0; i < newFieldNames.size(); i++) {
                         String fieldName = newFieldNames.get(i);
-                        boolean isLong = fieldName.equals("sampleCount");
-                        if (isLong) {
-                            newFieldsMap.put(fieldName, ((Number) newValues.get(i)).longValue());
-                        } else {
-                            newFieldsMap.put(fieldName, newValues.get(i));
-                        }
+                        newFieldsMap.put(fieldName, newValues.get(i));
                     }
                     builder.fields(newFieldsMap);
-                    Instant parse = Instant.parse(time);
-                    builder.time(parse.toEpochMilli(), TimeUnit.MILLISECONDS);
+                    long epochMillis = (long) newValues.remove(0) / 1000L / 1000L;
+                    builder.time(epochMillis, TimeUnit.MILLISECONDS);
                     Point point = builder.build();
                     batchPoints.point(point);
                 }
