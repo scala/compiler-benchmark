@@ -1,29 +1,28 @@
-
 name := "compiler-benchmark"
 
 version := "1.0-SNAPSHOT"
 
-def scala212 = "2.12.12"
+def scala212 = "2.12.15"
 def dottyLatest = "0.25.0"
-scalaVersion in ThisBuild := scala212
+ThisBuild / scalaVersion := scala212
 val JmhConfig = config("jmh")
 
 commands += Command.command("testAll") { s =>
-  "test:compile" ::
+  "Test/compile" ::
     "compilation/test" ::
     "hot -psource=scalap -wi 1 -i 1 -f1" ::
     s"++$dottyLatest" ::
     "compilation/test" ::
     "hot -psource=re2s -wi 1 -i 1 -f1" ::
     s"++$scala212" ::
-    "micro/jmh:run -w1 -f1" ::
+    "micro/Jmh/run -w1 -f1" ::
     s
 }
 
-resolvers in ThisBuild += "scala-integration" at "https://scala-ci.typesafe.com/artifactory/scala-integration/"
+ThisBuild / resolvers += "scala-integration" at "https://scala-ci.typesafe.com/artifactory/scala-integration/"
 
 // Convenient access to builds from PR validation
-resolvers in ThisBuild ++= (
+ThisBuild / resolvers ++= (
   if (scalaVersion.value.endsWith("-SNAPSHOT"))
     List(
       "pr-scala snapshots" at "https://scala-ci.typesafe.com/artifactory/scala-pr-validation-snapshots/",
@@ -32,7 +31,7 @@ resolvers in ThisBuild ++= (
     Nil
 )
 
-resolvers in ThisBuild += Resolver.mavenLocal
+ThisBuild / resolvers += Resolver.mavenLocal
 
 lazy val infrastructure = addJmh(project).settings(
   description := "Infrastrucuture to persist benchmark results annotated with metadata from Git",
@@ -61,19 +60,19 @@ lazy val compilation = addJmh(project).settings(
   crossScalaVersions := List(scala212, dottyLatest),
   unmanagedSourceDirectories.in(Compile) +=
     sourceDirectory.in(Compile).value / (if (isDotty.value) "dotc" else "scalac"),
-  mainClass in (Jmh, run) := Some("scala.bench.ScalacBenchmarkRunner"),
+  Jmh / run / mainClass := Some("scala.bench.ScalacBenchmarkRunner"),
   libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
-  testOptions in Test += Tests.Argument(TestFrameworks.JUnit),
-  fork in (Test, test) := true, // jmh scoped tasks run with fork := true.
+  Test / testOptions += Tests.Argument(TestFrameworks.JUnit),
+  Test / test / fork := true, // jmh scoped tasks run with fork := true.
 ).settings(addJavaOptions).dependsOn(infrastructure)
 
 lazy val javaCompilation = addJmh(project).settings(
   description := "Black box benchmark of the java compiler",
   crossPaths := false,
-  mainClass in (Jmh, run) := Some("scala.bench.ScalacBenchmarkRunner"),
+  Jmh / run / mainClass := Some("scala.bench.ScalacBenchmarkRunner"),
   libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
-  testOptions in Test += Tests.Argument(TestFrameworks.JUnit),
-  fork in (Test, test) := true // jmh scoped tasks run with fork := true.
+  Test / testOptions += Tests.Argument(TestFrameworks.JUnit),
+  Test / test/ fork := true // jmh scoped tasks run with fork := true.
 ).settings(addJavaOptions).dependsOn(infrastructure)
 
 lazy val micro = addJmh(project).settings(
@@ -116,7 +115,7 @@ def addJmh(project: Project): Project = {
   // output paths overlapping. This is because sbt-jmh declares the `jmh` config as extending `test`, but
   // configures `classDirectory in Jmh := classDirectory in Compile`.
   project.enablePlugins(JmhPlugin).overrideConfigs(JmhConfig.extend(Compile)).settings(
-    version in Jmh := jmhV
+    Jmh / version := jmhV
   )
 }
 
