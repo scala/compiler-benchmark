@@ -58,8 +58,8 @@ lazy val compilation = addJmh(project).settings(
     else scalaOrganization.value % "scala-compiler" % scalaVersion.value
   },
   crossScalaVersions := List(scala212, dottyLatest),
-  unmanagedSourceDirectories.in(Compile) +=
-    sourceDirectory.in(Compile).value / (if (isDotty.value) "dotc" else "scalac"),
+  Compile / unmanagedSourceDirectories +=
+    (Compile / sourceDirectory).value / (if (isDotty.value) "dotc" else "scalac"),
   Jmh / run / mainClass := Some("scala.bench.ScalacBenchmarkRunner"),
   libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
   Test / testOptions += Tests.Argument(TestFrameworks.JUnit),

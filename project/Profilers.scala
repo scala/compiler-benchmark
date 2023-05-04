@@ -6,7 +6,7 @@ import java.io.File
 import sbt._
 import sbt.complete.DefaultParsers.OptSpace
 import sbt.complete.Parser
-import sbt.internal.inc.classpath.ClasspathUtilities
+import sbt.internal.inc.classpath.ClasspathUtil
 
 import java.util.stream.Collectors
 
@@ -32,7 +32,7 @@ object Profiler {
     for (jfrFile <- jfrFiles) {
       val converterJar = file(System.getenv("ASYNC_PROFILER_DIR")) / "build" / "converter.jar"
       val (_, si) = Project.extract(state).runTask(scalaInstance, state)
-      val run = new Run(cp => ClasspathUtilities.makeLoader(cp, si), trapExit = true)
+      val run = new Run(cp => ClasspathUtil.makeLoader(cp.map(_.toPath), si), trapExit = true)
       def jfr2flame(forward: Boolean, event: String): Unit = {
         val jfrFileNameString = jfrFile.toAbsolutePath.toString
         val flameFileName = jfrFileNameString.replaceAll(""".jfr$""", s"${if (event == "cpu") "" else "-" + event}-${if (forward) "forward" else "reverse"}.html")
