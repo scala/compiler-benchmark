@@ -101,9 +101,9 @@ lazy val addJavaOptions = javaOptions ++= {
   )
 }
 
-addCommandAlias("hot", "compilation/jmh:run HotScalacBenchmark -foe true")
+addCommandAlias("hot", "compilation/Jmh/run HotScalacBenchmark -foe true")
 
-addCommandAlias("cold", "compilation/jmh:run ColdScalacBenchmark -foe true")
+addCommandAlias("cold", "compilation/Jmh/run ColdScalacBenchmark -foe true")
 
 commands ++= build.Profiler.commands
 
