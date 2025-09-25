@@ -89,7 +89,7 @@ public class ThreadCpuTimeProfiler implements InternalProfiler {
         private final long ops;
 
         public NormTimeResult(String prefix, long cycles, long instructions) {
-            super(ResultRole.SECONDARY, Defaults.PREFIX + prefix, of(Double.NaN), "---", AggregationPolicy.AVG);
+            super(ResultRole.SECONDARY, prefix, of(Double.NaN), "---", AggregationPolicy.AVG);
             this.prefix = prefix;
             this.scalar = cycles;
             this.ops = instructions;
@@ -111,7 +111,7 @@ public class ThreadCpuTimeProfiler implements InternalProfiler {
 
         @Override
         protected Aggregator<NormTimeResult> getIterationAggregator() {
-            NormTimeResultAggregator normTimeResultAggregator = new NormTimeResultAggregator(Defaults.PREFIX + prefix);
+            NormTimeResultAggregator normTimeResultAggregator = new NormTimeResultAggregator(prefix);
             return (Aggregator<NormTimeResult>) (Object) normTimeResultAggregator;
         }
 

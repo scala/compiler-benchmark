@@ -2,19 +2,14 @@ name := "compiler-benchmark"
 
 version := "1.0-SNAPSHOT"
 
-def scala212 = "2.12.15"
-def dottyLatest = "0.25.0"
-ThisBuild / scalaVersion := scala212
+def scala213 = "2.13.16"
+ThisBuild / scalaVersion := scala213
 val JmhConfig = config("jmh")
 
 commands += Command.command("testAll") { s =>
   "Test/compile" ::
     "compilation/test" ::
     "hot -psource=scalap -wi 1 -i 1 -f1" ::
-    s"++$dottyLatest" ::
-    "compilation/test" ::
-    "hot -psource=re2s -wi 1 -i 1 -f1" ::
-    s"++$scala212" ::
     "micro/Jmh/run -w1 -f1" ::
     s
 }
@@ -53,15 +48,12 @@ lazy val compilation = addJmh(project).settings(
   // We should be able to switch this project to a broad range of Scala versions for comparative
   // benchmarking. As such, this project should only depend on the high level `MainClass` compiler API.
   description := "Black box benchmark of the compiler",
-  libraryDependencies += {
-    if (isDotty.value) "ch.epfl.lamp" %% "dotty-compiler" % scalaVersion.value
-    else scalaOrganization.value % "scala-compiler" % scalaVersion.value
-  },
-  crossScalaVersions := List(scala212, dottyLatest),
+  libraryDependencies += scalaOrganization.value % "scala-compiler" % scalaVersion.value,
+  crossScalaVersions := List(scala213),
   Compile / unmanagedSourceDirectories +=
-    (Compile / sourceDirectory).value / (if (isDotty.value) "dotc" else "scalac"),
+    (Compile / sourceDirectory).value / "scalac",
   Jmh / run / mainClass := Some("scala.bench.ScalacBenchmarkRunner"),
-  libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
+  libraryDependencies += "com.github.sbt" % "junit-interface" % "0.13.2" % Test,
   Test / testOptions += Tests.Argument(TestFrameworks.JUnit),
   Test / test / fork := true, // jmh scoped tasks run with fork := true.
 ).settings(addJavaOptions).dependsOn(infrastructure)
@@ -70,7 +62,7 @@ lazy val javaCompilation = addJmh(project).settings(
   description := "Black box benchmark of the java compiler",
   crossPaths := false,
   Jmh / run / mainClass := Some("scala.bench.ScalacBenchmarkRunner"),
-  libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
+  libraryDependencies += "com.github.sbt" % "junit-interface" % "0.13.2" % Test,
   Test / testOptions += Tests.Argument(TestFrameworks.JUnit),
   Test / test/ fork := true // jmh scoped tasks run with fork := true.
 ).settings(addJavaOptions).dependsOn(infrastructure)
@@ -101,14 +93,14 @@ lazy val addJavaOptions = javaOptions ++= {
   )
 }
 
-addCommandAlias("hot", "compilation/jmh:run HotScalacBenchmark -foe true")
+addCommandAlias("hot", "compilation/Jmh/run HotScalacBenchmark -foe true")
 
-addCommandAlias("cold", "compilation/jmh:run ColdScalacBenchmark -foe true")
+addCommandAlias("cold", "compilation/Jmh/run ColdScalacBenchmark -foe true")
 
 commands ++= build.Profiler.commands
 
 // duplicated in project/build.sbt
-val jmhV = System.getProperty("jmh.version", "1.31")
+val jmhV = System.getProperty("jmh.version", "1.37")
 
 def addJmh(project: Project): Project = {
   // IntelliJ SBT project import doesn't like sbt-jmh's default setup, which results the prod and test
