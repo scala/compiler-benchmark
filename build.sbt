@@ -2,9 +2,9 @@ name := "compiler-benchmark"
 
 version := "1.0-SNAPSHOT"
 
-def scala212 = "2.12.15"
+def scala213 = "2.13.16"
 def dottyLatest = "0.25.0"
-ThisBuild / scalaVersion := scala212
+ThisBuild / scalaVersion := scala213
 val JmhConfig = config("jmh")
 
 commands += Command.command("testAll") { s =>
@@ -14,7 +14,7 @@ commands += Command.command("testAll") { s =>
     s"++$dottyLatest" ::
     "compilation/test" ::
     "hot -psource=re2s -wi 1 -i 1 -f1" ::
-    s"++$scala212" ::
+    s"++$scala213" ::
     "micro/Jmh/run -w1 -f1" ::
     s
 }
@@ -57,11 +57,11 @@ lazy val compilation = addJmh(project).settings(
     if (isDotty.value) "ch.epfl.lamp" %% "dotty-compiler" % scalaVersion.value
     else scalaOrganization.value % "scala-compiler" % scalaVersion.value
   },
-  crossScalaVersions := List(scala212, dottyLatest),
+  crossScalaVersions := List(scala213, dottyLatest),
   Compile / unmanagedSourceDirectories +=
     (Compile / sourceDirectory).value / (if (isDotty.value) "dotc" else "scalac"),
   Jmh / run / mainClass := Some("scala.bench.ScalacBenchmarkRunner"),
-  libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
+  libraryDependencies += "com.github.sbt" % "junit-interface" % "0.13.2" % Test,
   Test / testOptions += Tests.Argument(TestFrameworks.JUnit),
   Test / test / fork := true, // jmh scoped tasks run with fork := true.
 ).settings(addJavaOptions).dependsOn(infrastructure)
@@ -70,7 +70,7 @@ lazy val javaCompilation = addJmh(project).settings(
   description := "Black box benchmark of the java compiler",
   crossPaths := false,
   Jmh / run / mainClass := Some("scala.bench.ScalacBenchmarkRunner"),
-  libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
+  libraryDependencies += "com.github.sbt" % "junit-interface" % "0.13.2" % Test,
   Test / testOptions += Tests.Argument(TestFrameworks.JUnit),
   Test / test/ fork := true // jmh scoped tasks run with fork := true.
 ).settings(addJavaOptions).dependsOn(infrastructure)
