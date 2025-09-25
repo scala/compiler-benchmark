@@ -3,7 +3,6 @@ name := "compiler-benchmark"
 version := "1.0-SNAPSHOT"
 
 def scala213 = "2.13.16"
-def dottyLatest = "0.25.0"
 ThisBuild / scalaVersion := scala213
 val JmhConfig = config("jmh")
 
@@ -11,10 +10,6 @@ commands += Command.command("testAll") { s =>
   "Test/compile" ::
     "compilation/test" ::
     "hot -psource=scalap -wi 1 -i 1 -f1" ::
-    s"++$dottyLatest" ::
-    "compilation/test" ::
-    "hot -psource=re2s -wi 1 -i 1 -f1" ::
-    s"++$scala213" ::
     "micro/Jmh/run -w1 -f1" ::
     s
 }
@@ -53,13 +48,10 @@ lazy val compilation = addJmh(project).settings(
   // We should be able to switch this project to a broad range of Scala versions for comparative
   // benchmarking. As such, this project should only depend on the high level `MainClass` compiler API.
   description := "Black box benchmark of the compiler",
-  libraryDependencies += {
-    if (isDotty.value) "ch.epfl.lamp" %% "dotty-compiler" % scalaVersion.value
-    else scalaOrganization.value % "scala-compiler" % scalaVersion.value
-  },
-  crossScalaVersions := List(scala213, dottyLatest),
+  libraryDependencies += scalaOrganization.value % "scala-compiler" % scalaVersion.value,
+  crossScalaVersions := List(scala213),
   Compile / unmanagedSourceDirectories +=
-    (Compile / sourceDirectory).value / (if (isDotty.value) "dotc" else "scalac"),
+    (Compile / sourceDirectory).value / "scalac",
   Jmh / run / mainClass := Some("scala.bench.ScalacBenchmarkRunner"),
   libraryDependencies += "com.github.sbt" % "junit-interface" % "0.13.2" % Test,
   Test / testOptions += Tests.Argument(TestFrameworks.JUnit),
