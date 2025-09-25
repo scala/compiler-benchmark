@@ -564,7 +564,7 @@ private[collection] final class CNode[K, V](val bitmap: Int, val array: Array[Ba
     new CNode[K, V](bmp, tmparray, gen).toContracted(lev)
   }
 
-  private[concurrent] def string(lev: Int): String = "CNode %x\n%s".format(bitmap, array.map(_.string(lev + 1)).mkString("\n"))
+  def string(lev: Int): String = "CNode %x\n%s".format(bitmap, array.map(_.string(lev + 1)).mkString("\n"))
 
   /* quiescently consistent - don't call concurrently to anything involving a GCAS!! */
   private def collectElems: Seq[(K, V)] = array flatMap {

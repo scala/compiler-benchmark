@@ -24,7 +24,8 @@ object MainBench extends Driver with EvalLoop {
     var start = System.nanoTime()
     for (i <- 0 until NIter) {
       if (i == NIter-1) {
-        theCompiler.settings.Ystatistics.default.get foreach theCompiler.settings.Ystatistics.add
+        val s = theCompiler.settings
+        s.Ystatistics.default.get foreach s.Ystatistics.add
         Statistics.enabled = true
       }
       process(args)

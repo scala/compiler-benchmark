@@ -36,6 +36,8 @@ final class StringBuilder(private val underlying: JavaStringBuilder)
          with ReusableBuilder[Char, String]
          with Serializable {
 
+  override def isEmpty: Boolean = underlying.length() == 0
+
   override protected[this] def thisCollection: StringBuilder = this
   override protected[this] def toCollection(repr: StringBuilder): StringBuilder = repr
 
